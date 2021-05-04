@@ -1,3 +1,6 @@
+////
+// CONVERTER FUNCTION
+////
 function numCoordToString(x, y)
 {
   return String.fromCharCode(97+x)+""+(y+1);
@@ -80,7 +83,8 @@ function dispboard(board, whiteOnTop = false)
 }
 
 var selectedSquares = {
-  from: null
+  from: null,
+  to: null
 }
 
 function squareClicked(which)
@@ -89,15 +93,54 @@ function squareClicked(which)
   let s = stringToSquare(id);
   
   let moves = Game.game.board.getValidMoves();
-  
+  // if we're selecting the from square
   if(selectedSquares.from == null)
   {
-    
-    for(let i = 0; i < moves.length; i++)
+    let validFromSquare = false;
+    for(let i = 0; i < moves.size(); i++)
     {
       let posFrom = moves.get(i).from;
+      if(s.eq(posFrom))
+      {
+        validFromSquare = true;
+        break;
+      }
     }
     
-    selectedSquares.from = s;
+    if(validFromSquare)
+      selectedSquares.from = s;
+    else
+      selectedSquares.from = null;
+  }
+  
+  //if we're selecting the destination square
+  else
+  {
+    let validToSquare = false;
+    for(let i =0; i < moves.size(); i++)
+    {
+      let posMove = moves.get(i);
+      // if the move is from the previously selected from square
+      if(posMove.from.eq(selectedSquares.from))
+      {
+        if(posMove.to.eq(s))
+        {
+          validToSquare = true;
+          break;
+        }
+      }
+    }
+    
+    if(validToSquare)
+    {
+      console.log("les gooo")
+      let move = new Module.Move(selectedSquares.from, s);
+      console.log(move);
+      Game.game.commitMove(move);
+      dispboard(Game.game.board);
+    }
+    
+    selectedSquares.from = null;
+    selectedSquares.to = null;
   }
 }
