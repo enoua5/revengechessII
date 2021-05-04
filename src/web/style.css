@@ -1,0 +1,47 @@
+body
+{
+  margin: /*10px*/0;
+  text-align: center;
+  background: black;
+}
+#gamearea
+{
+  width: 100%;
+  display: inline-grid;
+  grid-template-rows: [header] 30px [mainarea] auto;
+  grid-template-columns: [board] auto [info] 25%; 
+}
+#option-bar
+{
+  grid-column: board / span 2;
+  grid-row-start: header;
+}
+#board
+{
+  grid-column-start: board;
+  grid-row-start: mainarea;
+  aspect-ratio: 1/1;
+  
+  display: inline-grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+#game-info
+{
+  grid-column-start: info;
+  grid-row-start: mainarea;
+}
+.square
+{
+  margin: 0px;
+  /*display: inline-block;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.square img
+{
+  width: 80%;
+  height: 80%;
+}

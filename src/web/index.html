@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Revenge Chess</title>
+    <link href="style.css" rel="stylesheet"/>
+    <style>
+      .black_square
+      {
+        background-color: #00aa00;
+      }
+      .white_square
+      {
+        background-color: #aaffaa;
+      }
+    </style>
+    <script src = "src/board.js"></script>
+    <script>
+      //TODO this should all be its own file. Or several.
+    
+      function l(what){return document.getElementById(what)}
+      
+      
+    
+      var Module = {
+        onRuntimeInitialized: function() {
+          let game = new Module.Game();
+          let engine = new Module.Engine();
+          dispboard(game.board);
+        }
+      };
+    
+      function onload()
+      {
+        for(let y = 7; y >= 0; y--)
+        {
+          for(let x = 0; x < 8; x++)
+          {
+            let s = document.createElement("div");
+            s.classList.add("square");
+            s.id = "square_"+numCoordToString(x,y);
+            let color = (x+y)%2 == 1 ? "white" : "black";
+            s.classList.add(color+"_square");
+            //tr.appendChild(td);
+          l("board").appendChild(s);
+          }
+        }
+        
+        setInterval(()=>{
+          let ratio = l("container").clientWidth/l("container").clientHeight;
+          if(ratio == 0) ratio = 1.2;
+          ratio = ratio.toFixed(2);
+          
+          if(innerWidth > innerHeight*ratio)
+          {
+            l("container").style.width = (innerHeight*ratio*0.95)+"px";
+          }
+          else
+          {
+            l("container").style.width = (innerWidth*0.95)+"px";
+          }
+          // fallback for if aspectratio doesn't work
+          // breaks if done unconditionally
+          if(!("aspectRatio" in document.body.style))
+            l("board").style.height = l("board").clientWidth + "px";
+        },50);
+      }
+    </script>
+    
+    <script src="revengechess.js"></script>
+  </head>
+  <body onload="onload()">
+    <div id="container" style="text-align: center; display: inline-block">
+      <div id = "gamearea">
+        <div id="option-bar" style="background-color:green"></div>
+        <div id="board" style="background-color:blue"></div>
+        <div id="game-info" style="background-color:red"></div>
+      </div>
+    </div>
+  </body>
+</html>

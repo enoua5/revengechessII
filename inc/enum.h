@@ -1,0 +1,86 @@
+#pragma once
+
+enum PlayerColor : bool
+{
+  BLACK=0,
+  WHITE=1
+};
+
+enum PieceType : unsigned char
+{
+  PAWN=0,
+  ROOK=1,
+  KNIGHT=2,
+  BISHOP=3,
+  KING=4,
+  QUEEN=5,
+  NO=6
+};
+
+enum BoardSide : bool
+{
+  KINGSIDE=1,
+  QUEENSIDE=0
+};
+
+enum File : unsigned char
+{
+  NONE=8,
+  A=0,
+  B=1,
+  C=2,
+  D=3,
+  E=4,
+  F=5,
+  G=6,
+  H=7
+};
+
+enum PieceIdentifier : unsigned char
+{
+  WHITE_QUEENSIDE_ROOK=0,
+  WHITE_QUEENSIDE_KNIGHT=1,
+  WHITE_QUEENSIDE_BISHOP=2,
+  WHITE_QUEEN=3,
+  WHITE_KINGSIDE_ROOK=4,
+  WHITE_KINGSIDE_KNIGHT=5,
+  WHITE_KINGSIDE_BISHOP=6,
+  WHITE_KING=7,
+  WHITE_A_PAWN=8,
+  WHITE_B_PAWN=9,
+  WHITE_C_PAWN=10,
+  WHITE_D_PAWN=11,
+  WHITE_E_PAWN=12,
+  WHITE_F_PAWN=13,
+  WHITE_G_PAWN=14,
+  WHITE_H_PAWN=15,
+  
+  BLACK_QUEENSIDE_ROOK=16,
+  BLACK_QUEENSIDE_KNIGHT=17,
+  BLACK_QUEENSIDE_BISHOP=18,
+  BLACK_QUEEN=19,
+  BLACK_KINGSIDE_ROOK=20,
+  BLACK_KINGSIDE_KNIGHT=21,
+  BLACK_KINGSIDE_BISHOP=22,
+  BLACK_KING=23,
+  BLACK_A_PAWN=24,
+  BLACK_B_PAWN=25,
+  BLACK_C_PAWN=26,
+  BLACK_D_PAWN=27,
+  BLACK_E_PAWN=28,
+  BLACK_F_PAWN=29,
+  BLACK_G_PAWN=30,
+  BLACK_H_PAWN=31,
+  
+  EMPTY=32
+};
+
+enum GameResult : char
+{
+  WHITE_VICTORY,
+  BLACK_VICTORY,
+  STALEMATE,
+  ONGOING,
+  
+  ABORT
+};
