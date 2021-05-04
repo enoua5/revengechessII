@@ -15,17 +15,18 @@
     </style>
     <script src = "src/board.js"></script>
     <script>
-      //TODO this should all be its own file. Or several.
-    
       function l(what){return document.getElementById(what)}
       
+      var Game = {
+        game: null,
+        engine: null
+      }
       
-    
       var Module = {
         onRuntimeInitialized: function() {
-          let game = new Module.Game();
-          let engine = new Module.Engine();
-          dispboard(game.board);
+          Game.game = new Module.Game();
+          Game.engine = new Module.Engine();
+          dispboard(Game.game.board);
         }
       };
     
@@ -40,6 +41,7 @@
             s.id = "square_"+numCoordToString(x,y);
             let color = (x+y)%2 == 1 ? "white" : "black";
             s.classList.add(color+"_square");
+            s.onclick=()=>{squareClicked(s)}
             //tr.appendChild(td);
           l("board").appendChild(s);
           }

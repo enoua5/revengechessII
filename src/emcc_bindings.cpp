@@ -80,6 +80,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .function("isValid", &Square::isValid)
     .function("toString", &Square::toString)
     .function("dist", &Square::dist)
+    .function("eq", &Square::eq)
   ;
   
   class_<Move>("Move")

@@ -23,6 +23,8 @@ class Square
     #endif
     ;
     
+    bool eq(const Square& other) const;
+    
     unsigned char toIndex() const;
     Square translate(char df, char dr) const;
     bool isValid() const;

@@ -8,6 +8,12 @@ function indexToStringCoord(i)
   let y = Math.floor(i/8);
   return numCoordToString(x,y)
 }
+function stringToSquare(s)
+{
+  let f = s.charCodeAt(0)-97;
+  let r = s.charCodeAt(1)-49;
+  return new Module.Square(f,r);
+}
 
 
 function whiteCurrentlyOnTop()
@@ -70,5 +76,28 @@ function dispboard(board, whiteOnTop = false)
       let c = board_dom.removeChild(children[i]);
       board_dom.appendChild(c);
     }
+  }
+}
+
+var selectedSquares = {
+  from: null
+}
+
+function squareClicked(which)
+{
+  let id = which.id.split("square_")[1];
+  let s = stringToSquare(id);
+  
+  let moves = Game.game.board.getValidMoves();
+  
+  if(selectedSquares.from == null)
+  {
+    
+    for(let i = 0; i < moves.length; i++)
+    {
+      let posFrom = moves.get(i).from;
+    }
+    
+    selectedSquares.from = s;
   }
 }

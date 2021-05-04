@@ -56,6 +56,11 @@ unsigned char Square::dist(const Square other) const
   );
 }
 
+bool Square::eq(const Square& other) const
+{
+  return *this == other;
+}
+    
 bool operator==(const Square& a, const Square& b)
 {
   return a.file == b.file && a.rank == b.rank;
