@@ -3,6 +3,7 @@ body
   margin: /*10px*/0;
   text-align: center;
   background: black;
+  user-select: none;
 }
 #gamearea
 {
@@ -39,7 +40,6 @@ body
   justify-content: center;
   align-items: center;
 }
-
 .square img
 {
   width: 80%;

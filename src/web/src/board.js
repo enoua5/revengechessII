@@ -1,6 +1,4 @@
-////
-// CONVERTER FUNCTION
-////
+////////////////////////////////////////////////////////////////////////////////
 function numCoordToString(x, y)
 {
   return String.fromCharCode(97+x)+""+(y+1);
@@ -18,6 +16,7 @@ function stringToSquare(s)
   return new Module.Square(f,r);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 function whiteCurrentlyOnTop()
 {
@@ -82,6 +81,8 @@ function dispboard(board, whiteOnTop = false)
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 var selectedSquares = {
   from: null,
   to: null
@@ -108,7 +109,11 @@ function squareClicked(which)
     }
     
     if(validFromSquare)
+    {
       selectedSquares.from = s;
+      // display selected indicator
+      which.classList.add("selected");
+    }
     else
       selectedSquares.from = null;
   }
@@ -116,6 +121,11 @@ function squareClicked(which)
   //if we're selecting the destination square
   else
   {
+    // remove the selected piece indicator
+    let sel = document.querySelector(".square.selected");
+    if(sel)
+      sel.classList.remove("selected");
+  
     let validToSquare = false;
     for(let i =0; i < moves.size(); i++)
     {

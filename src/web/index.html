@@ -3,7 +3,7 @@
   <head>
     <title>Revenge Chess</title>
     <link href="style.css" rel="stylesheet"/>
-    <style>
+    <style id = "setable_styles">
       .black_square
       {
         background-color: #00aa00;
@@ -12,9 +12,13 @@
       {
         background-color: #aaffaa;
       }
-      body
+      .black_square.selected
       {
-        user-select: none;
+          box-shadow: inset 0 0 20px #f0f;
+      }
+      .white_square.selected
+      {
+          box-shadow: inset 0 0 20px #808;
       }
     </style>
     <script src = "src/board.js"></script>
