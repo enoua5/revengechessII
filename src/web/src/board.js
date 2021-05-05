@@ -133,9 +133,7 @@ function squareClicked(which)
     
     if(validToSquare)
     {
-      console.log("les gooo")
       let move = new Module.Move(selectedSquares.from, s);
-      console.log(move);
       Game.game.commitMove(move);
       dispboard(Game.game.board);
     }
