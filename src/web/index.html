@@ -20,6 +20,14 @@
       {
           box-shadow: inset 0 0 20px #808;
       }
+      .possible_move:empty::after
+      {
+          background: #8888;
+      }
+      .possible_move:not(:empty)::after
+      {
+        background: radial-gradient(transparent 50%, #8888 50%);
+      }
     </style>
     <script src = "src/board.js"></script>
     <script>

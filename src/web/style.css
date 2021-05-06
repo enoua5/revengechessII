@@ -39,9 +39,28 @@ body
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 .square img
 {
   width: 80%;
   height: 80%;
+}
+
+.possible_move:empty::after
+{
+    content: "";
+    display: block;
+    border-radius: 100%;
+    width: 50%;
+    height: 50%;
+}
+.possible_move:not(:empty)::after
+{
+  content:"";
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  border-radius: 100%;
 }

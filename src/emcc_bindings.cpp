@@ -204,6 +204,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .field("result", &SearchResult::result)
     .field("depth", &SearchResult::depth)
     .field("pv", &SearchResult::pv)
+    .field("bm", &SearchResult::bm)
   ;
   
   class_<Engine>("Engine")
