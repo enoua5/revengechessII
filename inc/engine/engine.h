@@ -20,6 +20,7 @@ struct SearchResult
   int score;
   GameResult result;
   int depth;
+  Move bm;
   #ifndef __EMSCRIPTEN__
     std::list<Move> pv;
   #else

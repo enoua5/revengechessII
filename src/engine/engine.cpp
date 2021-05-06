@@ -203,7 +203,7 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
     }
   }
   
-  
+  res.bm = res.pv.back();
   return res;
 }
 SearchResult Engine::solve(const Board& board, const float seconds)
