@@ -60,6 +60,11 @@ bool Square::eq(const Square& other) const
 {
   return *this == other;
 }
+
+bool Move::eq(const Move& other) const
+{
+  return *this == other;
+}
     
 bool operator==(const Square& a, const Square& b)
 {

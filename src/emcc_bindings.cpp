@@ -90,6 +90,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .property("to", &Move::to)
     .property("promotion", &Move::promotion)
     .function("toString", &Move::toString)
+    .function("eq", &Move::eq)
   ;
 
   class_<Board>("Board")

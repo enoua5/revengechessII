@@ -47,6 +47,8 @@ class Move
     Square to;
     PieceType promotion; // needed on very few moves, but hey
     
+    bool eq(const Move& other) const;
+    
     std::string toString() const;
 };
 

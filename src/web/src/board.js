@@ -11,6 +11,11 @@ function indexToStringCoord(i)
 }
 function stringToSquare(s)
 {
+  if(s.split("square_").length > 1)
+  {
+    s = s.split("square_")[1];
+  }
+  s = s.toLowerCase();
   let f = s.charCodeAt(0)-97;
   let r = s.charCodeAt(1)-49;
   return new Module.Square(f,r);
@@ -81,6 +86,43 @@ function dispboard(board, whiteOnTop = false)
   }
 }
 
+function dispValidDestinations()
+{
+  let moves = [];
+  if(selectedSquares.from != null)
+  {
+    let moves_vector = Game.game.board.getValidMoves();
+    for(let i = 0; i < moves_vector.size(); i++)
+    {
+      let move = moves_vector.get(i);
+      // only add it to the list if it's from the selected square
+      if(move.from.eq(selectedSquares.from))
+      {
+        moves.push(move);
+      }
+    }
+  }
+  
+  for(let i of l("board").children)
+  {
+    let valid_dest = false;
+    for(let m of moves)
+    {
+      // if the square we're looking at is the destination square
+      if(stringToSquare(i.id).eq(m.to))
+      {
+        i.classList.add("possible_move");
+        valid_dest = true;
+        break;
+      }
+    }
+    if(!valid_dest)
+    {
+      i.classList.remove("possible_move");
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 var selectedSquares = {
@@ -90,8 +132,7 @@ var selectedSquares = {
 
 function squareClicked(which)
 {
-  let id = which.id.split("square_")[1];
-  let s = stringToSquare(id);
+  let s = stringToSquare(which.id);
   
   let moves = Game.game.board.getValidMoves();
   // if we're selecting the from square
@@ -113,9 +154,13 @@ function squareClicked(which)
       selectedSquares.from = s;
       // display selected indicator
       which.classList.add("selected");
+      dispValidDestinations();
     }
     else
+    {
       selectedSquares.from = null;
+      dispValidDestinations();
+    }
   }
   
   //if we're selecting the destination square
@@ -150,5 +195,7 @@ function squareClicked(which)
     
     selectedSquares.from = null;
     selectedSquares.to = null;
+    // clear indicators
+    dispValidDestinations();
   }
 }
