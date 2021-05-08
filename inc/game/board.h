@@ -12,6 +12,7 @@ class Board
 {
   public:
     Board();
+    Board(const Board*);
   
     PlayerColor turn 
     #ifndef __EMSCRIPTEN__

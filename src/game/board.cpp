@@ -128,6 +128,17 @@ Board::Board()
   pieces[BLACK_H_PAWN] = Piece(BLACK, PAWN, 7, 6);
 }
 
+Board::Board(const Board* other)
+{
+  turn = other->turn;
+  pawnEnPassantFile = other->pawnEnPassantFile;
+  halfMoveClock = other->halfMoveClock;
+  for(int i = 0; i < 64; i++)
+    playField[i] = other->playField[i];
+  for(int i = 0; i < 32; i++)
+    pieces[i] = other->pieces[i];
+}
+
 std::vector<Move> Board::getValidMoves(PieceIdentifier id) const
 {
   std::vector<Move> moves;
@@ -196,7 +207,7 @@ std::vector<Move> Board::getValidMoves(PlayerColor c) const
 
 Board Board::makeMove(const Move move, bool trusted) const
 {
-  Board next = *this;
+  Board next(this);
   next.gameMoves.push_back(move);
   
   // if we didn't already check the validity, do that now

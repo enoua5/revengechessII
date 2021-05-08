@@ -85,10 +85,16 @@ int Engine::king_squares[64] = {
 	20, 30, 10,  0,  0, 10, 30, 20
 };
 
+#ifdef DEBUG
+  std::list<Move> consider;
+  int crash_depth;
+#endif
+
 SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int beta)
 {
   #ifdef DEBUG
     nodes_searched ++;
+    crash_depth = depth;
   #endif
   std::vector<Move> moves = board.getValidMoves();
   
@@ -116,13 +122,21 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
   
   SearchResult best = SearchResult(Engine::neg_inf-1, ONGOING, depth);
   
+  
+
   for(std::vector<Move>::iterator i = moves.begin(); i != moves.end(); i++)
   {
+    #ifdef DEBUG
+      consider = best.pv;
+      consider.push_back(*i);
+    #endif
+    
     if(abort)
       break;
-      
+    
     Board next = board.makeMove(*i, true);
     SearchResult sr = alpha_beta(next, depth - 1, -beta, -alpha);
+    
     if(sr.result != STALEMATE)
       sr.score *= -1;
     
@@ -160,6 +174,9 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
   abort = false;
   this->endtime = endtime;
 
+  // TODO fix after debugging
+  SearchResult sr;
+  
   
   SearchResult res(0, ABORT, 0);
   int depth = 1;
@@ -174,8 +191,8 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
         std::cout << "Ply " << depth << ": ";
       #endif
       
-      
-      SearchResult sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
+      // TODO fix after debugging
+      sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
       
       #ifdef DEBUG
         std::cout << "Searched " << nodes_searched << ", ";
@@ -196,11 +213,20 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
       if(res.result != ONGOING)
         break;
     }
+    #ifdef DEBUG
     catch(const std::bad_alloc& e)
     {
       std::cerr << "bad_alloc caught: "<< e.what() << std::endl;
+      std::cerr << "Crash depth: " << crash_depth << std::endl;
+      std::cerr << "Bad PV: " << std::endl;
+      
+      for(auto& it : consider)
+      {
+        std::cout << it.toString() << std::endl;
+      }
       break;
     }
+    #endif
   }
   
   res.bm = res.pv.back();
