@@ -25,10 +25,12 @@ function stringToSquare(s)
 
 function whiteCurrentlyOnTop()
 {
-  return l("board").firstChild.id=="square_a1";
+  return l("board").firstChild.id=="square_h1";
 }
-function dispboard(board, whiteOnTop = false)
+function dispboard(board)
 {
+  let whiteOnTop = Settings.whiteOnTop; // TODO not how this is gonna work...
+  
   for(let i = 0; i < 64; i++)
   {
     let s = l("square_"+indexToStringCoord(i));
@@ -39,37 +41,9 @@ function dispboard(board, whiteOnTop = false)
     if(p == Module.PieceIdentifier.EMPTY)
       continue;
     
-    // piece together the url of the piece imgage bit by bit
-    // TODO look up table would probably be better
-    let src = "img/pieces/";
-    src += (Module.colorOfPiece(p) == Module.PlayerColor.BLACK) ? "b":"w";
-    switch(Module.typeOfPiece(p))
-    {
-      case Module.PieceType.PAWN:
-        src+="p";
-      break;
-      case Module.PieceType.ROOK:
-        src+="r";
-      break;
-      case Module.PieceType.KNIGHT:
-        src+="n";
-      break;
-      case Module.PieceType.BISHOP:
-        src+="b";
-      break;
-      case Module.PieceType.QUEEN:
-        src+="q";
-      break;
-      case Module.PieceType.KING:
-        src+="k";
-      break;
-    }
-    src+=".svg";
     
-    let img = document.createElement("img");
-    img.src = src;
-    
-    s.appendChild(img);
+    let typeAfterPromotion = Module.getBoardPiece(Game.game.board, p.value).type;
+    s.appendChild(createPieceImage(Module.colorOfPiece(p), typeAfterPromotion));
   }
   
   
@@ -130,6 +104,147 @@ var selectedSquares = {
   to: null
 }
 
+function destroyPromotionSelectBoxes()
+{
+  let boxes = document.querySelectorAll(".promotion_selector");
+  if(boxes.length > 1) console.warn(boxes.length + " promotion selectors were on the board at the same time. Look into that.");
+  
+  for(let i of boxes)
+  {
+    i.remove();
+  }
+}
+
+function cancelPromotion()
+{
+  selectedSquares.from = null;
+  selectedSquares.to = null;
+  destroyPromotionSelectBoxes();
+  dispValidDestinations();
+}
+
+function createPromotionSelectBox(flip, side)
+{
+  if(flip == undefined)
+    flip = false;
+  if(side == undefined)
+    side = false;
+
+  let select_box = document.createElement("div");
+  select_box.classList.add("promotion_selector");
+  let selections = document.createElement("div");
+  select_box.appendChild(selections);
+  let cancel_button = document.createElement("button");
+  cancel_button.innerText = "X"; // TODO replace with image
+  select_box.appendChild(cancel_button);
+  cancel_button.onclick = cancelPromotion; // do not call, we're linking the actual funciton pointer
+  
+  
+  let turn = Game.game.board.turn;
+  let king = createPieceImage(turn, Module.PieceType.KING);
+  king.onclick = ()=>selectPromotion('k');
+  console.log(king)
+  selections.appendChild(king);
+  let queen = createPieceImage(turn, Module.PieceType.QUEEN);
+  queen.onclick = ()=>selectPromotion('q');
+  selections.appendChild(queen);
+  let rook = createPieceImage(turn, Module.PieceType.ROOK);
+  rook.onclick = ()=>selectPromotion('r');
+  selections.appendChild(rook);
+  let bishop = createPieceImage(turn, Module.PieceType.BISHOP);
+  bishop.onclick = ()=>selectPromotion('b');
+  selections.appendChild(bishop);
+  let knight = createPieceImage(turn, Module.PieceType.KNIGHT);
+  knight.onclick = ()=>selectPromotion('n');
+  selections.appendChild(knight);
+  let pawn = createPieceImage(turn, Module.PieceType.PAWN);
+  pawn.onclick = ()=>selectPromotion('p');
+  selections.appendChild(pawn);
+  
+  if(flip)
+    selections.style.top = "-200%";
+  if(side == "left")
+    selections.style.left = "0%";
+  if(side == "right")
+    selections.style.left = "-200%"
+  
+  return select_box;
+}
+
+function createPieceImage(color, type)
+{
+  // piece together the url of the piece imgage bit by bit
+  // TODO look up table would probably be better
+  let src = "img/pieces/";
+  src += (color == Module.PlayerColor.BLACK) ? "b":"w";
+  switch(type)
+  {
+    case Module.PieceType.PAWN:
+      src+="p";
+    break;
+    case Module.PieceType.ROOK:
+      src+="r";
+    break;
+    case Module.PieceType.KNIGHT:
+      src+="n";
+    break;
+    case Module.PieceType.BISHOP:
+      src+="b";
+    break;
+    case Module.PieceType.QUEEN:
+      src+="q";
+    break;
+    case Module.PieceType.KING:
+      src+="k";
+    break;
+  }
+  src+=".svg";
+  
+  let img = document.createElement("img");
+  img.src = src;
+  return img;
+}
+
+function selectPromotion(p)
+{
+  let promo = Module.PieceType.NO;
+  switch(p)
+  {
+    case 'p':
+      promo = Module.PieceType.PAWN;
+    break;
+    case 'r':
+      promo = Module.PieceType.ROOK;
+    
+    break;
+    case 'n':
+      promo = Module.PieceType.KNIGHT;
+    
+    break;
+    case 'b':
+      promo = Module.PieceType.BISHOP;
+    
+    break;
+    case 'q':
+      promo = Module.PieceType.QUEEN;
+    
+    break;
+    case 'k':
+      promo = Module.PieceType.KING;
+    
+    break;
+    default:
+      cancelPromotion();
+  }
+  
+  
+  let move = new Module.Move(selectedSquares.from, selectedSquares.to, promo);
+  Game.game.commitMove(move);
+  dispboard(Game.game.board);
+  cancelPromotion(); // perhaps a bad name. Just clears the selection box
+}
+
+
 function squareClicked(which)
 {
   let s = stringToSquare(which.id);
@@ -188,6 +303,34 @@ function squareClicked(which)
     
     if(validToSquare)
     {
+      // if the moving peice is a pawn ...
+      let pieceID = Module.getPlayField(Game.game.board, selectedSquares.from.toIndex()).value;
+      let trueType = Module.getBoardPiece(Game.game.board, pieceID).type
+      
+      if(trueType == Module.PieceType.PAWN)
+      {
+        // and is ending up on the last file ...
+        if(s.rank == 0 || s.rank == 7)
+        {
+          // then the move isn't complete. A promotion must be selected!
+          selectedSquares.to = s;
+          
+          // we have to find out if it's on the bottom or on a side
+          let index = indexOfElement(which);
+          let on_bottom = index >= 56;
+          let file = index % 8;
+          let side = false;
+          if(file == 0)
+            side = "left"
+          if(file == 7)
+            side = "right"
+          
+          let select_box = createPromotionSelectBox(on_bottom, side);
+          which.appendChild(select_box);
+          return;
+        }
+      }
+      
       let move = new Module.Move(selectedSquares.from, s);
       Game.game.commitMove(move);
       dispboard(Game.game.board);

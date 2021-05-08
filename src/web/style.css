@@ -41,7 +41,7 @@ body
   align-items: center;
   position: relative;
 }
-.square img
+.square>img
 {
   width: 80%;
   height: 80%;
@@ -63,4 +63,28 @@ body
   display: block;
   position: absolute;
   border-radius: 100%;
+}
+
+.promotion_selector
+{
+  width: 80%;
+  height: 80%;
+  background: white;
+  position: absolute;
+  z-index: 1;
+}
+.promotion_selector>div
+{
+  background: white;
+  width: 300%;
+  height: 200%;
+  position: absolute;
+  z-index: 1;
+  
+  left: -100%; /* JS switches this to 0% for promotion at the left-most column, and -200% for right-most */
+  top: 100%; /* JS switches this to -200% for promotion at the bottom of the screen */
+}
+.promotion_selector>div>img
+{
+  width: 30%;
 }

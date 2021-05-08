@@ -29,9 +29,14 @@
         background: radial-gradient(transparent 50%, #baaa 50%);
       }
     </style>
+    <script src = "src/util.js"></script>
     <script src = "src/board.js"></script>
     <script>
       function l(what){return document.getElementById(what)}
+      
+      var Settings = {
+        whiteOnTop: false // TODO not how this will work in the end
+      }
       
       var Game = {
         game: null,
