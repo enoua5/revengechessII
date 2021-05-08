@@ -13,7 +13,7 @@ all: $(EXE) $(JSEXE)
 
 native: $(EXE)
 	
-web: $(JSEXE)
+web: $(JSEXE) webui
 
 webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/*
 
@@ -30,7 +30,7 @@ $(EXE): src/native_main.cpp src/version.cpp src/engine/* src/game/* src/ui/* inc
 	mkdir -p $(NDIR)
 	$(NCC) $(NOPTIONS) -o $(EXE) -I inc/ src/native_main.cpp src/game/*.cpp src/ui/*.cpp src/engine/*.cpp src/version.cpp
 	
-$(JSEXE): src/emcc_bindings.cpp src/version.cpp src/engine/* src/game/* inc/* webui
+$(JSEXE): src/emcc_bindings.cpp src/version.cpp src/engine/* src/game/* inc/*
 	mkdir -p $(WDIR)
 	$(WCC) $(WOPTIONS) -o $(JSEXE) -I inc/ src/game/*.cpp src/engine/*.cpp src/emcc_bindings.cpp src/version.cpp
 	
