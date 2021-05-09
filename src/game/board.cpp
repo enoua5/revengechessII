@@ -173,6 +173,19 @@ std::vector<Move> Board::getValidMoves(PieceIdentifier id) const
   return moves;
 }
 
+PieceIdentifier Board::getPlayField(unsigned char i)
+{
+  if(i >= 64)
+    return EMPTY;
+  return playField[i];
+}
+Piece Board::getBoardPiece(unsigned char i)
+{
+  if(i >= 32)
+    return Piece();
+  return pieces[i];
+}
+
 std::vector<Move> Board::getValidMoves() const
 {
   return getValidMoves(this->turn);
@@ -208,7 +221,6 @@ std::vector<Move> Board::getValidMoves(PlayerColor c) const
 Board Board::makeMove(const Move move, bool trusted) const
 {
   Board next(this);
-  next.gameMoves.push_back(move);
   
   // if we didn't already check the validity, do that now
   if(!trusted)

@@ -22,3 +22,11 @@ Piece::Piece(PieceIdentifier id)
   home = homeOfPiece(id);
   current = home;
 }
+
+
+PieceIdentifier Piece::getCapture(unsigned int i)
+{
+  if(i >= numCaptures)
+    return EMPTY;
+  return captures[i];
+}

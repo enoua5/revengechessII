@@ -34,6 +34,9 @@ class Board
     PieceIdentifier playField[64];
     Piece pieces[32];
     
+    PieceIdentifier getPlayField(unsigned char i);
+    Piece getBoardPiece(unsigned char i);
+    
     std::vector<Move> getValidMoves() const;
     std::vector<Move> getValidMoves(PlayerColor) const;
     std::vector<Move> getValidMoves(PieceIdentifier) const; // get all moves for a particular piece.
@@ -49,8 +52,6 @@ class Board
     void addBishopMoves(std::vector<Move>&, const Piece) const;
     void addQueenMoves(std::vector<Move>&, const Piece) const;
     void addKingMoves(std::vector<Move>&, const Piece) const;
-    
-    std::vector<Move> gameMoves;//TODO this is here for debugging. Remove?
 };
 
 

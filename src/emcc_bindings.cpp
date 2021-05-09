@@ -12,29 +12,6 @@
 
 using namespace emscripten;
 
-PieceIdentifier getPieceCapture(Piece& p, unsigned char i)
-{
-  if(i >= 17)
-    return EMPTY;
-  if(i >= p.numCaptures)
-    return EMPTY;
-  return p.captures[i];
-}
-
-PieceIdentifier getPlayField(Board& b, unsigned char i)
-{
-  if(i >= 64)
-    return EMPTY;
-  return b.playField[i];
-}
-
-Piece getBoardPiece(Board& b, unsigned char i)
-{
-  if(i >= 32)
-    return Piece();
-  return b.pieces[i];
-}
-
 Version core_v(){return Game::version;}
 Version engine_v(){return Engine::version;}
 
@@ -66,10 +43,9 @@ EMSCRIPTEN_BINDINGS(mod)
     .property("numCaptures", &Piece::numCaptures)
     .property("home", &Piece::home)
     .property("current", &Piece::current)
+    .function("getCapture", &Piece::getCapture)
   ;
   
-  function("getPieceCapture", &getPieceCapture);
-
   class_<Square>("Square")
     .constructor<unsigned char>()
     .constructor<unsigned char, unsigned char>()
@@ -98,17 +74,15 @@ EMSCRIPTEN_BINDINGS(mod)
     .property("turn", &Board::turn)
     .property("pawnEnPassantFile", &Board::pawnEnPassantFile)
     .property("halfMoveClock", &Board::halfMoveClock)
+    .function("getPlayField", &Board::getPlayField)
+    .function("getBoardPiece", &Board::getBoardPiece)
     .function("getValidMoves", select_overload<std::vector<Move>(void) const>(&Board::getValidMoves))
     .function("getValidMoves", select_overload<std::vector<Move>(PlayerColor) const>(&Board::getValidMoves))
     .function("getValidMoves", select_overload<std::vector<Move>(PieceIdentifier) const>(&Board::getValidMoves))
     .function("makeMove", &Board::makeMove)
     .function("getGameResult", &Board::getGameResult)
     .function("hasKing", &Board::hasKing)
-    .property("gameMoves", &Board::gameMoves)
   ;
-  
-  function("getPlayField", &getPlayField);
-  function("getBoardPiece", &getBoardPiece);
   
   enum_<PlayerColor>("PlayerColor")
     .value("BLACK", BLACK)

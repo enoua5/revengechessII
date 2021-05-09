@@ -39,5 +39,7 @@ class Piece
     
     Square home;
     Square current;
+    
+    PieceIdentifier getCapture(unsigned int i);
 };
 

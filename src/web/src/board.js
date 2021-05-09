@@ -36,13 +36,13 @@ function dispboard(board)
     let s = l("square_"+indexToStringCoord(i));
     s.innerHTML = "";
     
-    let p = Module.getPlayField(board, i);
+    let p = board.getPlayField(i);
     
     if(p == Module.PieceIdentifier.EMPTY)
       continue;
     
     
-    let typeAfterPromotion = Module.getBoardPiece(Game.game.board, p.value).type;
+    let typeAfterPromotion = board.getBoardPiece(p.value).type;
     s.appendChild(createPieceImage(Module.colorOfPiece(p), typeAfterPromotion));
   }
   
@@ -143,7 +143,6 @@ function createPromotionSelectBox(flip, side)
   let turn = Game.game.board.turn;
   let king = createPieceImage(turn, Module.PieceType.KING);
   king.onclick = ()=>selectPromotion('k');
-  console.log(king)
   selections.appendChild(king);
   let queen = createPieceImage(turn, Module.PieceType.QUEEN);
   queen.onclick = ()=>selectPromotion('q');
@@ -304,8 +303,8 @@ function squareClicked(which)
     if(validToSquare)
     {
       // if the moving peice is a pawn ...
-      let pieceID = Module.getPlayField(Game.game.board, selectedSquares.from.toIndex()).value;
-      let trueType = Module.getBoardPiece(Game.game.board, pieceID).type
+      let pieceID = Game.game.board.getPlayField(selectedSquares.from.toIndex()).value;
+      let trueType = Game.game.board.getBoardPiece(pieceID).type
       
       if(trueType == Module.PieceType.PAWN)
       {
