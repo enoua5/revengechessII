@@ -1,0 +1,1 @@
+The [chess piece SVG](https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/) file used in this project are created by [Clker-Free-Vector-Images](https://pixabay.com/users/clker-free-vector-images-3736/), licenced under [Pixabay Licence](https://pixabay.com/service/license/).
