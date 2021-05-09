@@ -47,7 +47,7 @@ body
   height: 80%;
 }
 
-.possible_move:empty::after
+.possible_move:empty::after, .respawn_point:empty::after
 {
     content: "";
     display: block;
@@ -55,7 +55,7 @@ body
     width: 50%;
     height: 50%;
 }
-.possible_move:not(:empty)::after
+.possible_move:not(:empty)::after, .respawn_point:not(:empty)::after
 {
   content:"";
   width: 100%;

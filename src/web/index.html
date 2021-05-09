@@ -26,7 +26,15 @@
       }
       .possible_move:not(:empty)::after
       {
-        background: radial-gradient(transparent 50%, #baaa 50%);
+        background: radial-gradient(transparent 50%, #aaaa 50%);
+      }
+      .respawn_point:empty::after
+      {
+          background: #f44a;
+      }
+      .respawn_point:not(:empty)::after
+      {
+        background: radial-gradient(transparent 50%, #f44a 50%);
       }
     </style>
     <script src = "src/util.js"></script>
@@ -63,6 +71,8 @@
             let color = (x+y)%2 == 1 ? "white" : "black";
             s.classList.add(color+"_square");
             s.onclick=()=>{squareClicked(s)}
+            s.onmouseenter=()=>{squareHovered(s)}
+            s.onmouseleave=()=>{squareUnhovered(s)}
             //tr.appendChild(td);
           l("board").appendChild(s);
           }

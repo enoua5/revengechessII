@@ -58,6 +58,8 @@ function dispboard(board)
       board_dom.appendChild(c);
     }
   }
+  
+  squareHovered(selectedSquares.hover); // rehover the square not that things have moved around
 }
 
 function dispValidDestinations()
@@ -101,7 +103,8 @@ function dispValidDestinations()
 
 var selectedSquares = {
   from: null,
-  to: null
+  to: null,
+  hover: null
 }
 
 function destroyPromotionSelectBoxes()
@@ -243,6 +246,59 @@ function selectPromotion(p)
   cancelPromotion(); // perhaps a bad name. Just clears the selection box
 }
 
+function dispRespawnSquares(respawnSquares)
+{
+  for(let i of l("board").children)
+  {
+    if(respawnSquares.indexOf(i.id) != -1)
+      i.classList.add("respawn_point");
+    else
+      i.classList.remove("respawn_point");
+  }
+}
+
+function squareHovered(which)
+{
+  if(which == null)
+  {
+    dispRespawnSquares([]);
+    return;
+  }
+  selectedSquares.hover = which;
+  let s = stringToSquare(which.id);
+  let pid = Game.game.board.getPlayField(s.toIndex());
+  if(pid == Module.PieceIdentifier.EMPTY)
+  {
+    dispRespawnSquares([]);
+    return;
+  }
+  let p = Game.game.board.getBoardPiece(pid.value);
+  
+  
+  
+  let captures = [];
+  for(let i = 0; i < p.numCaptures; i++)
+    captures.push(p.getCapture(i));
+  
+  let respawnSquares = [];
+  for(let cap of captures)
+  {
+    let piece = Game.game.board.getBoardPiece(cap.value);
+    let home = piece.home;
+    respawnSquares.push("square_"+numCoordToString(home.file, home.rank));
+  }
+  
+  dispRespawnSquares(respawnSquares);
+}
+
+function squareUnhovered(which)
+{
+  if(which == selectedSquares.hover)
+  {
+    selectedSquares.hover = null;
+    dispRespawnSquares([]);
+  }
+}
 
 function squareClicked(which)
 {
