@@ -47,15 +47,16 @@ body
   height: 80%;
 }
 
-.possible_move:empty::after, .respawn_point:empty::after
+.possible_move:empty::after, .respawn_point::after
 {
     content: "";
     display: block;
     border-radius: 100%;
     width: 50%;
     height: 50%;
+  position: absolute;
 }
-.possible_move:not(:empty)::after, .respawn_point:not(:empty)::after
+.possible_move:not(:empty)::after, .respawn_point:not(:empty):not(.selected)::after
 {
   content:"";
   width: 100%;

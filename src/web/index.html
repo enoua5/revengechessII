@@ -28,11 +28,11 @@
       {
         background: radial-gradient(transparent 50%, #aaaa 50%);
       }
-      .respawn_point:empty::after
+      .respawn_point::after
       {
           background: #f44a;
       }
-      .respawn_point:not(:empty)::after
+      .respawn_point:not(:empty):not(.selected)::after
       {
         background: radial-gradient(transparent 50%, #f44a 50%);
       }
@@ -105,8 +105,8 @@
     <div id="container" style="text-align: center; display: inline-block">
       <div id = "gamearea">
         <div id="option-bar" style="background-color:green"></div>
-        <div id="board" style="background-color:blue"></div>
-        <div id="game-info" style="background-color:red"></div>
+        <div id="board"></div>
+        <div id="game-info" style="background-color:grey"></div>
       </div>
     </div>
   </body>
