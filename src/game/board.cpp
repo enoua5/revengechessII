@@ -278,7 +278,7 @@ Board Board::makeMove(const Move move, bool trusted) const
     if(move.to.file == 2)
     {
       // queenside castle
-      
+      castled = true;
       // move rook beside king
       next.playField[move.from.toIndex()-1] = next.playField[move.from.toIndex()-4];
       // move king
@@ -294,7 +294,7 @@ Board Board::makeMove(const Move move, bool trusted) const
     else if(move.to.file == 6)
     {
       // king side castle
-      
+      castled = true;
       // move rook beside king
       next.playField[move.from.toIndex()+1] = next.playField[move.from.toIndex()+3];
       // move king

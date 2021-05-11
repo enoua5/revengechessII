@@ -39,8 +39,8 @@ void UI::startUI(Game& game)
     UI::printBoard(game.board);
     
     std::string input;
-    //std::cin >> input;
-    input = "play";
+    std::cin >> input;
+    //input = "play";
     
     if(input == "moves")
     {
