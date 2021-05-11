@@ -4,7 +4,7 @@ WDIR = $(BDIR)web/
 EXE = $(NDIR)revengechess
 JSEXE = $(WDIR)revengechess.js
 NCC = g++
-WCC = emcc
+WCC = em++
 NOPTIONS = -Wall -g -Ofast
 WOPTIONS = -O3 -s WASM=1 --bind --no-entry -g4 --source-map-base /
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
