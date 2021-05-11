@@ -17,15 +17,14 @@ struct SearchResult
 {
   SearchResult() : score(0), result(ABORT), depth(0) {}
   SearchResult(int s, GameResult r, int d) : score(s), result(r), depth(d) {}
+  SearchResult(const SearchResult&);
+  SearchResult(const SearchResult*);
+  ~SearchResult();
   int score;
   GameResult result;
   int depth;
   Move bm;
-  #ifndef __EMSCRIPTEN__
-    std::list<Move> pv;
-  #else
-    std::vector<Move> pv;
-  #endif
+  std::vector<Move> pv;
   
 };
 
@@ -45,15 +44,11 @@ class Engine
     
     volatile bool abort;
   private:
-    SearchResult alpha_beta(const Board& board, int depth, int alpha, int beta);
+    SearchResult* alpha_beta(const Board& board, int depth, int alpha, int beta);
     int eval_piece(const Board&, const Piece) const;
     
     Time endtime;
-    #ifndef __EMSCRIPTEN__
-      std::list<Move> pv;
-    #else
-      std::vector<Move> pv;
-    #endif
+    std::vector<Move> pv;
     
     static const int PAWN_VAL = 100;
     static const int BISHOP_VAL = 340;

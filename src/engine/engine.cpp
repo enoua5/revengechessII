@@ -85,7 +85,28 @@ int Engine::king_squares[64] = {
 	20, 30, 10,  0,  0, 10, 30, 20
 };
 
-SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int beta)
+SearchResult::SearchResult(const SearchResult& other)
+{
+  score = other.score;
+  result = other.result;
+  depth = other.depth;
+  bm = other.bm;
+  pv = std::vector<Move>(other.pv);
+}
+SearchResult::SearchResult(const SearchResult* other)
+{
+  score = other->score;
+  result = other->result;
+  depth = other->depth;
+  bm = other->bm;
+  pv = std::vector<Move>(other->pv);
+}
+SearchResult::~SearchResult()
+{
+  pv.clear();
+}
+
+SearchResult* Engine::alpha_beta(const Board& board, int depth, int alpha, int beta)
 {
   #ifdef DEBUG
     nodes_searched ++;
@@ -97,14 +118,14 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
   {
     if(clock_res::now() > endtime)
       abort = true;
-    return SearchResult(static_eval(board), gr, 0);
+    return new SearchResult(static_eval(board), gr, 0);
   }
   if(moves.empty())
   {
     if(clock_res::now() > endtime)
       abort = true;
       
-    return SearchResult(-100, STALEMATE, 0);
+    return new SearchResult(-100, STALEMATE, 0);
   }
   
   if(!pv.empty())
@@ -114,7 +135,7 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
     mo.order(board, moves);
   }
   
-  SearchResult best = SearchResult(Engine::neg_inf-1, ONGOING, depth);
+  SearchResult* best = new SearchResult(Engine::neg_inf-1, ONGOING, depth);
   
   
 
@@ -125,22 +146,25 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
       break;
     
     Board next = board.makeMove(*i, true);
-    SearchResult sr = alpha_beta(next, depth - 1, -beta, -alpha);
+    SearchResult* sr = alpha_beta(next, depth - 1, -beta, -alpha);
     
-    if(sr.result != STALEMATE)
-      sr.score *= -1;
+    if(sr->result != STALEMATE)
+      sr->score *= -1;
     
-    if(sr.score > best.score)
+    if(sr->score > best->score)
     {
-      best = sr;
-      best.depth++;
-      best.pv.push_back(*i);
+      delete best;
+      best = new SearchResult(sr);
+      best->depth++;
+      best->pv.push_back(*i);
     }
     
-    if(sr.score > alpha)
+    if(sr->score > alpha)
     {
-      alpha = sr.score;
+      alpha = sr->score;
     }
+    
+    delete sr;
     
     if(alpha >= beta)
     {
@@ -153,7 +177,8 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
   
   if(abort)
   {
-    return SearchResult(0,ABORT,0);
+    delete best;
+    return new SearchResult(0,ABORT,0);
   }
   
   return best;
@@ -164,41 +189,45 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
   abort = false;
   this->endtime = endtime;
 
-  SearchResult res(0, ABORT, 0);
+  SearchResult* res = new SearchResult(0, ABORT, 0);
   int depth = 1;
   while(!abort)
   {
+    #ifdef DEBUG
     try
     {
-      #ifdef DEBUG
-        nodes_searched = 0;
-        branches_pruned = 0;
+      nodes_searched = 0;
+      branches_pruned = 0;
       
-        std::cout << "Ply " << depth << ": ";
-      #endif
+      std::cout << "Ply " << depth << ": ";
+    #endif
       
-      SearchResult sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
+      SearchResult* sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
       
       #ifdef DEBUG
         std::cout << "Searched " << nodes_searched << ", ";
         std::cout << "Pruned " << branches_pruned << ". ";
       #endif
     
-      if(sr.result != ABORT)
+      if(sr->result != ABORT)
       {
-        res = sr;
-        pv = sr.pv;
+        delete res;
+        res = new SearchResult(sr);
+        pv = std::vector<Move>(sr->pv);
         #ifdef DEBUG
-          std::cout << "BM: " << sr.pv.back().toString() << ", score: " << sr.score;
+          std::cout << "BM: " << sr->pv.back().toString() << ", score: " << sr->score;
         #endif
       }
       #ifdef DEBUG
         std::cout << std::endl;
       #endif
-      if(res.result != ONGOING)
+      
+      delete sr;
+      
+      if(res->result != ONGOING)
         break;
-    }
     #ifdef DEBUG
+    }
     catch(const std::bad_alloc& e)
     {
       std::cerr << "bad_alloc caught: "<< e.what() << std::endl;
@@ -207,8 +236,10 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
     #endif
   }
   
-  res.bm = res.pv.back();
-  return res;
+  res->bm = res->pv.back();
+  SearchResult ret(res);
+  delete res;
+  return ret;
 }
 SearchResult Engine::solve(const Board& board, const float seconds)
 {

@@ -39,8 +39,8 @@ void UI::startUI(Game& game)
     UI::printBoard(game.board);
     
     std::string input;
-    //std::cin >> input;
-    input = "play";
+    std::cin >> input;
+    //input = "play";
     
     if(input == "moves")
     {
@@ -67,7 +67,7 @@ void UI::startUI(Game& game)
       
       std::cout << ms.pv.back().toString() << ", score: " << ms.score << std::endl;
       std::cout << ms.depth << " ply, res: " << ms.result << std::endl;
-      for(std::list<Move>::iterator i = ms.pv.end(); i != ms.pv.begin(); /**/)
+      for(std::vector<Move>::iterator i = ms.pv.end(); i != ms.pv.begin(); /**/)
         std::cout << (*(--i)).toString() << " ";
       
       game.commitMove(ms.pv.back());
