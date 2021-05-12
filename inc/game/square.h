@@ -1,4 +1,5 @@
 #pragma once
+#include "debug.h"
 
 #include "enum.h"
 #include "game/square.h"
@@ -40,12 +41,17 @@ class Square
 class Move
 {
   public:
-    Move(){}; // only here to make other constructors shut up
+    Move(); // only here to make other constructors shut up
     Move(Square t, Square f,PieceType p = NO);
     
     Square from;
     Square to;
     PieceType promotion; // needed on very few moves, but hey
+    
+    #ifdef DEBUG
+      std::string info;
+      static std::string info_template;
+    #endif
     
     bool eq(const Move& other) const;
     

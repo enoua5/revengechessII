@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "game/board.h"
 #include "game/square.h"
 #include "pieceID.h"
@@ -16,6 +17,10 @@ bool Board::validDestination(const Square to, const Piece p) const
 
 void Board::addPawnMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "PAWN";
+  #endif
+
   char dir = p.color == WHITE ? 1 : -1;
   
   Square from = p.current;
@@ -63,6 +68,10 @@ void Board::addPawnMoves(std::vector<Move>& moves, const Piece p) const
 }
 void Board::addRookMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "ROOK";
+  #endif
+
   Square from = p.current;
   
 
@@ -122,6 +131,10 @@ void Board::addRookMoves(std::vector<Move>& moves, const Piece p) const
 }
 void Board::addKnightMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "KNIGHT";
+  #endif
+
   Square from = p.current;
   Square to;
   
@@ -160,6 +173,10 @@ void Board::addKnightMoves(std::vector<Move>& moves, const Piece p) const
 }
 void Board::addBishopMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "BISHOP";
+  #endif
+
   Square from = p.current;
   
 
@@ -221,6 +238,10 @@ void Board::addBishopMoves(std::vector<Move>& moves, const Piece p) const
 }
 void Board::addQueenMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "QUEEN";
+  #endif
+
   Square from = p.current;
   Square to;
   
@@ -348,6 +369,10 @@ void Board::addQueenMoves(std::vector<Move>& moves, const Piece p) const
 }
 void Board::addKingMoves(std::vector<Move>& moves, const Piece p) const
 {
+  #ifdef DEBUG
+    Move::info_template = "KING:NORMAL";
+  #endif
+
   Square from = p.current;
   Square to;
   
@@ -381,6 +406,10 @@ void Board::addKingMoves(std::vector<Move>& moves, const Piece p) const
   {
     if(!this->pieces[idFromStats(p.color, ROOK, A)].hasMoved)
     {
+      #ifdef DEBUG
+        Move::info_template = "KING:CASTLE:QUEENSIDE";
+      #endif
+
       unsigned char ind = from.toIndex();
       bool all_empty = true;
       for(char i = -1; i >= -3; i--)
@@ -396,6 +425,10 @@ void Board::addKingMoves(std::vector<Move>& moves, const Piece p) const
     }
     if(!this->pieces[idFromStats(p.color, ROOK, H)].hasMoved)
     {
+      #ifdef DEBUG
+        Move::info_template = "KING:CASTLE:KINGSIDE";
+      #endif
+      
       unsigned char ind = from.toIndex();
       bool all_empty = true;
       for(char i = 1; i <= 2; i++)

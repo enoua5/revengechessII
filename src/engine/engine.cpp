@@ -1,8 +1,5 @@
-#include "engine/engine.h" // DEBUG flag found inside
-
-#ifdef DEBUG
-  #include <iostream>
-#endif
+#include "engine/engine.h"
+#include "debug.h"
 
 #include <chrono>
 #include <list>
@@ -168,9 +165,9 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
   int depth = 1;
   while(!abort)
   {
+    #ifdef DEBUG
     try
     {
-      #ifdef DEBUG
         nodes_searched = 0;
         branches_pruned = 0;
       
@@ -197,8 +194,8 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
       #endif
       if(res.result != ONGOING)
         break;
-    }
     #ifdef DEBUG
+    }
     catch(const std::bad_alloc& e)
     {
       std::cerr << "bad_alloc caught: "<< e.what() << std::endl;

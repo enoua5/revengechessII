@@ -5,8 +5,8 @@ EXE = $(NDIR)revengechess
 JSEXE = $(WDIR)revengechess.js
 NCC = g++
 WCC = em++
-NOPTIONS = -Wall -g -Ofast
-WOPTIONS = -O3 -s WASM=1 --bind --no-entry -g4 --source-map-base /
+NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
+WOPTIONS = -O0 -s WASM=1 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
 all: $(EXE) $(JSEXE)

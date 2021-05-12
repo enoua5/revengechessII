@@ -1,3 +1,5 @@
+#include "debug.h" 
+
 #include "game/board.h"
 #include "game/square.h"
 #include "enum.h"
@@ -217,7 +219,7 @@ std::vector<Move> Board::getValidMoves(PlayerColor c) const
   
   return moves;
 }
-
+int valgrind_test_please_remove = 0;
 Board Board::makeMove(const Move move, bool trusted) const
 {
   Board next(this);
@@ -248,6 +250,15 @@ Board Board::makeMove(const Move move, bool trusted) const
   // save these to reduce recalcs
   PieceIdentifier attacking = this->playField[move.from.toIndex()];
   PieceIdentifier defending = this->playField[move.to.toIndex()];
+  
+  #ifdef DEBUG
+    if(attacking == EMPTY)
+    {
+       std::cerr << "Attempt to move EMPTY. Aborting." << std::endl;
+       std::cerr << "Illegal move was: " << move.toString() << std::endl;
+       return next;
+    }
+  #endif
   
   // various features of this are useful
   Piece* mover = &next.pieces[attacking];
@@ -282,7 +293,7 @@ Board Board::makeMove(const Move move, bool trusted) const
       // move rook beside king
       next.playField[move.from.toIndex()-1] = next.playField[move.from.toIndex()-4];
       // move king
-      next.playField[move.from.toIndex()] = attacking;
+      next.playField[move.to.toIndex()] = attacking;
       
       // update the rook's position now, because it won't be later, unlike the king's
       next.pieces[next.playField[move.from.toIndex()-1]].current = Square(move.from.toIndex()-1);
@@ -298,7 +309,7 @@ Board Board::makeMove(const Move move, bool trusted) const
       // move rook beside king
       next.playField[move.from.toIndex()+1] = next.playField[move.from.toIndex()+3];
       // move king
-      next.playField[move.from.toIndex()] = attacking;
+      next.playField[move.to.toIndex()] = attacking;
       
       // update the rook's position now, because it won't be later, unlike the king's
       next.pieces[next.playField[move.from.toIndex()+1]].current = Square(move.from.toIndex()+1);
@@ -367,6 +378,12 @@ Board Board::makeMove(const Move move, bool trusted) const
   }
     
   next.turn = (PlayerColor)!next.turn;
+  
+  #ifdef DEBUG
+    if(next.playField[move.to.toIndex()] == EMPTY)
+      std::cerr << "DESTINATION SQUARE LEFT EMPTY BY MOVE: " << move.toString() << std::endl;
+  #endif
+  
   return next;
   
 }

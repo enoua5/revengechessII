@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "game/square.h"
 
-Square::Square() : file(0), rank(0) {}
+Square::Square() : file(0), rank(0), valid(false) {}
 
 Square::Square(unsigned char f, unsigned char r)
 {
@@ -22,8 +22,22 @@ bool Square::isValid() const
   return valid;
 }
 
+#ifdef DEBUG
+  std::string Move::info_template = "";
+#endif
+
+Move::Move() : from(-1, -1), to(-1, -1), promotion(NO)
+{
+  #ifdef DEBUG
+    info = Move::info_template;
+  #endif
+}
+
 Move::Move(Square f, Square t, PieceType p) :  from(f.file, f.rank), to(t.file, t.rank)
 {
+  #ifdef DEBUG
+    info = Move::info_template;
+  #endif
   promotion = p;
 }
 
@@ -44,7 +58,11 @@ std::string Square::toString() const
 
 std::string Move::toString() const
 {
-  return from.toString()+to.toString();
+  return
+  #ifdef DEBUG
+    info + ":" +
+  #endif
+  from.toString()+to.toString();
 }
 
 
