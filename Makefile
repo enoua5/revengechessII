@@ -6,7 +6,7 @@ JSEXE = $(WDIR)revengechess.js
 NCC = g++
 WCC = em++
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
-WOPTIONS = -O0 -s WASM=1 --bind --no-entry
+WOPTIONS = -O3 -s WASM=1 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
 all: $(EXE) $(JSEXE)

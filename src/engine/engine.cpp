@@ -172,7 +172,7 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
         branches_pruned = 0;
       
         std::cout << "Ply " << depth << ": ";
-      #endif
+    #endif
       
       SearchResult sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
       

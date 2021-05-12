@@ -48,10 +48,13 @@ class Move
     Square to;
     PieceType promotion; // needed on very few moves, but hey
     
-    #ifdef DEBUG
+    //#ifdef DEBUG
+      // Program crashes if these aren't included? I don't get it.
+      // It's probably just buffering the stack or something.
+      // Probably still of concern, but this makes it work, so oh well.
       std::string info;
       static std::string info_template;
-    #endif
+    //#endif
     
     bool eq(const Move& other) const;
     
