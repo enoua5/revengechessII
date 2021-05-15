@@ -49,11 +49,11 @@ body
 
 .possible_move:empty::after, .respawn_point::after
 {
-    content: "";
-    display: block;
-    border-radius: 100%;
-    width: 50%;
-    height: 50%;
+  content: "";
+  display: block;
+  border-radius: 100%;
+  width: 50%;
+  height: 50%;
   position: absolute;
 }
 .possible_move:not(:empty)::after, .respawn_point:not(:empty):not(.selected)::after
@@ -100,15 +100,19 @@ body
 }
 .black_square.selected
 {
-    box-shadow: inset 0 0 20px var(--selected-black-color);
+  box-shadow: inset 0 0 20px var(--selected-black-color);
 }
 .white_square.selected
 {
-    box-shadow: inset 0 0 20px var(--selected-white-color);
+  box-shadow: inset 0 0 20px var(--selected-white-color);
+}
+.square.prev_move
+{
+  background: var(--prev-move-color);
 }
 .possible_move:not(.respawn_point):empty::after
 {
-    background: var(--possible-move-color);
+  background: var(--possible-move-color);
 }
 .possible_move:not(.respawn_point):not(:empty)::after
 {
@@ -116,7 +120,7 @@ body
 }
 .respawn_point::after
 {
-    background: var(--respawn-point-color);
+  background: var(--respawn-point-color);
 }
 .respawn_point:not(:empty):not(.selected)::after
 {
