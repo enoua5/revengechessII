@@ -20,6 +20,10 @@ function stringToSquare(s)
   let r = s.charCodeAt(1)-49;
   return new Module.Square(f,r);
 }
+function squareToBoard(s)
+{
+  return l("square_"+(s.toString().toLowerCase()));
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -59,7 +63,8 @@ function dispboard(board)
     }
   }
   
-  squareHovered(selectedSquares.hover); // rehover the square not that things have moved around
+  dispPrevMove();
+  squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
 }
 
 function dispValidDestinations()
@@ -99,12 +104,56 @@ function dispValidDestinations()
   }
 }
 
+function clearPrevMove()
+{
+  let HTML_list = document.getElementsByClassName("prev_move");
+  // document.get[whatever]() returns an HTMLCollection
+  // HTMLCollections have weird behaviour when itterating and modifying
+  // Namely, they are removed from the collection if their selector no longer matches
+  // So, we're moving it to a list
+  let list = [];
+  for(let i of HTML_list)
+  {
+    list.push(i);
+  }
+  
+  for(let i in list)
+  {
+    list[i].classList.remove("prev_move")
+  }
+}
+
+function dispPrevMove()
+{
+  if(selectedSquares.prev_move == null)
+    return;
+    
+  clearPrevMove();
+  
+  // not really needed, but don't trust that the squares you're getting are valid
+  try
+  {
+    let fromSquare = squareToBoard(selectedSquares.prev_move.from);
+    let toSquare = squareToBoard(selectedSquares.prev_move.to);
+    fromSquare.classList.add("prev_move");
+    toSquare.classList.add("prev_move");
+  }
+  catch(e)
+  {
+    console.trace(e);
+    console.error("Something went wrong with displaying the previous move.");
+    console.warn("If this was not triggered intentially, there is probably a much larger problem at play")
+  }
+  
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 var selectedSquares = {
   from: null,
   to: null,
-  hover: null
+  hover: null,
+  prev_move: null
 }
 
 function destroyPromotionSelectBoxes()
@@ -241,6 +290,7 @@ function selectPromotion(p)
   
   
   let move = new Module.Move(selectedSquares.from, selectedSquares.to, promo);
+  selectedSquares.prev_move = move;
   Game.game.commitMove(move);
   dispboard(Game.game.board);
   cancelPromotion(); // perhaps a bad name. Just clears the selection box
@@ -387,6 +437,7 @@ function squareClicked(which)
       }
       
       let move = new Module.Move(selectedSquares.from, s);
+      selectedSquares.prev_move = move;
       Game.game.commitMove(move);
       dispboard(Game.game.board);
     }
