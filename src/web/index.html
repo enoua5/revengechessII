@@ -2,41 +2,18 @@
 <html>
   <head>
     <title>Revenge Chess</title>
-    <link href="style.css" rel="stylesheet"/>
     <style id = "setable_styles">
-      .black_square
+      :root
       {
-        background-color: #09a;
-      }
-      .white_square
-      {
-        background-color: #acf;
-      }
-      .black_square.selected
-      {
-          box-shadow: inset 0 0 20px #f0f;
-      }
-      .white_square.selected
-      {
-          box-shadow: inset 0 0 20px #808;
-      }
-      .possible_move:empty::after
-      {
-          background: #aaaa;
-      }
-      .possible_move:not(:empty)::after
-      {
-        background: radial-gradient(transparent 50%, #aaaa 50%);
-      }
-      .respawn_point::after
-      {
-          background: #f44a;
-      }
-      .respawn_point:not(:empty):not(.selected)::after
-      {
-        background: radial-gradient(transparent 50%, #f44a 50%);
+        --black-square-color: #09a;
+        --white-square-color: #acf;
+        --selected-black-color: #f0f;
+        --selected-white-color: #808;
+        --possible-move-color: #aaaa;
+        --respawn-point-color: #f44a;
       }
     </style>
+    <link href="style.css" rel="stylesheet"/>
     <script src = "src/util.js"></script>
     <script src = "src/board.js"></script>
     <script>
