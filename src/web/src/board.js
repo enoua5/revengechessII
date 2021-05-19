@@ -352,7 +352,9 @@ function squareUnhovered(e, which)
 
 function droppedOutside()
 {
-  squareToBoard(selectedSquares.from).classList.remove("selected");
+  if(selectedSquares.from == null)
+    return;
+  squareToBoard(selectedSquares.from).firstChild.style.opacity = "1"; squareToBoard(selectedSquares.from).classList.remove("selected");
   selectedSquares.from = null;
   selectedSquares.to = null;
   dispValidDestinations();
@@ -360,6 +362,8 @@ function droppedOutside()
 
 function squareClicked(e, which)
 {
+  console.log(e)
+  console.log(which)
   if(e.type == "drop")
     e.preventDefault()
   

@@ -52,6 +52,7 @@
             
             s.ondragstart=(e)=>{squareClicked(e,s)}
             s.ondrop=(e)=>{squareClicked(e,s)}
+            s.ondragend=droppedOutside;
             s.ondragenter=(e)=>{e.preventDefault()}
             s.ondragover=(e)=>{e.preventDefault()}
             
