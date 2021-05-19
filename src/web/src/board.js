@@ -350,9 +350,21 @@ function squareUnhovered(e, which)
   }
 }
 
+function droppedOutside()
+{
+  squareToBoard(selectedSquares.from).classList.remove("selected");
+  selectedSquares.from = null;
+  selectedSquares.to = null;
+  dispValidDestinations();
+}
+
 function squareClicked(e, which)
 {
+  if(e.type == "drop")
+    e.preventDefault()
+  
   let s = stringToSquare(which.id);
+  
   
   let moves = Game.game.board.getValidMoves();
   // if we're selecting the from square

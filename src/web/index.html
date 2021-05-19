@@ -49,6 +49,12 @@
             let color = (x+y)%2 == 1 ? "white" : "black";
             s.classList.add(color+"_square");
             s.onclick=(e)=>{squareClicked(e,s)}
+            
+            s.ondragstart=(e)=>{squareClicked(e,s)}
+            s.ondrop=(e)=>{squareClicked(e,s)}
+            s.ondragenter=(e)=>{e.preventDefault()}
+            s.ondragover=(e)=>{e.preventDefault()}
+            
             s.onmouseenter=(e)=>{squareHovered(e,s)}
             s.onmouseleave=(e)=>{squareUnhovered(e,s)}
             //tr.appendChild(td);
