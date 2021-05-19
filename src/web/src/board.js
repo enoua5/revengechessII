@@ -362,8 +362,6 @@ function droppedOutside()
 
 function squareClicked(e, which)
 {
-  console.log(e)
-  console.log(which)
   if(e.type == "drop")
     e.preventDefault()
   
