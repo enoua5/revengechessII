@@ -383,6 +383,13 @@ function squareClicked(e, which)
     
     if(validFromSquare)
     {
+      if(e.type == "dragstart")
+      {
+        //using this as opposed to display: none, visibility: hidden, or hidden = true, because Chrome disables the drag events for hidden elements.
+        which.firstChild.style.opacity = "0";
+      }
+      
+      
       selectedSquares.from = s;
       // display selected indicator
       which.classList.add("selected");
@@ -398,6 +405,11 @@ function squareClicked(e, which)
   //if we're selecting the destination square
   else
   {
+    if(e.type == "drop")
+    {
+      squareToBoard(selectedSquares.from).firstChild.style.opacity = "1"
+    }
+  
     // remove the selected piece indicator
     let sel = document.querySelector(".square.selected");
     if(sel)
