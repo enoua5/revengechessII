@@ -48,9 +48,9 @@
             s.id = "square_"+numCoordToString(x,y);
             let color = (x+y)%2 == 1 ? "white" : "black";
             s.classList.add(color+"_square");
-            s.onclick=()=>{squareClicked(s)}
-            s.onmouseenter=()=>{squareHovered(s)}
-            s.onmouseleave=()=>{squareUnhovered(s)}
+            s.onclick=(e)=>{squareClicked(e,s)}
+            s.onmouseenter=(e)=>{squareHovered(e,s)}
+            s.onmouseleave=(e)=>{squareUnhovered(e,s)}
             //tr.appendChild(td);
           l("board").appendChild(s);
           }

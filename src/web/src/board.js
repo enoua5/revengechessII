@@ -307,7 +307,7 @@ function dispRespawnSquares(respawnSquares)
   }
 }
 
-function squareHovered(which)
+function squareHovered(e, which)
 {
   if(which == null)
   {
@@ -341,7 +341,7 @@ function squareHovered(which)
   dispRespawnSquares(respawnSquares);
 }
 
-function squareUnhovered(which)
+function squareUnhovered(e, which)
 {
   if(which == selectedSquares.hover)
   {
@@ -350,7 +350,7 @@ function squareUnhovered(which)
   }
 }
 
-function squareClicked(which)
+function squareClicked(e, which)
 {
   let s = stringToSquare(which.id);
   
