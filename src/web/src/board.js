@@ -338,11 +338,13 @@ function squareHovered(e, which)
     respawnSquares.push("square_"+numCoordToString(home.file, home.rank));
   }
   
+  showPieceInfo(pid, captures);
   dispRespawnSquares(respawnSquares);
 }
 
 function squareUnhovered(e, which)
 {
+  clearPieceInfo();
   if(which == selectedSquares.hover)
   {
     selectedSquares.hover = null;

@@ -17,6 +17,7 @@
     <link href="style.css" rel="stylesheet"/>
     <script src = "src/util.js"></script>
     <script src = "src/board.js"></script>
+    <script src = "src/infopane.js"></script>
     <script>
       function l(what){return document.getElementById(what)}
       
@@ -91,7 +92,12 @@
       <div id = "gamearea">
         <div id="option-bar" style="background-color:green"></div>
         <div id="board"></div>
-        <div id="game-info" style="background-color:grey"></div>
+        <div id="game-info" style="background-color:grey">
+        
+          <div id="piece-stats">
+            <h5 id="piece-name"></h5>
+          </div>
+        </div>
       </div>
     </div>
   </body>
