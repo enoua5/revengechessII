@@ -44,7 +44,7 @@ function showPieceInfo(pid, captures)
   l("piece-name").style.fontSize = default_fontsize;
   // some fiddling to get the text the right size
   // for loop instead of while, to avoid hanging
-  for(let i = 0; i < 10; i++)
+  for(let i = 0; i < 30; i++)
   {
     l("piece-name").innerText = "*";
     let natural_height = l("piece-name").getBoundingClientRect().height;
