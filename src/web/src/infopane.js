@@ -38,27 +38,32 @@ function showPieceInfo(pid, captures)
     "ERROR"
   ])[pid.value];
 
+  resizeTextToLine(l("piece-name"), name, 0.9, 30);
+}
+
+function resizeTextToLine(text, value, factor, max_iter)
+{
   // reset the font size so we don't get fucky nonsense frame-to-frame
-  let default_fontsize = getDefaultProperty(l("piece-name").tagName, "fontSize");
+  let default_fontsize = getDefaultProperty(text.tagName, "fontSize");
   let fontsize = parseFloat(default_fontsize);
-  l("piece-name").style.fontSize = default_fontsize;
+  text.style.fontSize = default_fontsize;
   // some fiddling to get the text the right size
   // for loop instead of while, to avoid hanging
-  for(let i = 0; i < 30; i++)
+  for(let i = 0; i < max_iter; i++)
   {
-    l("piece-name").innerText = "*";
-    let natural_height = l("piece-name").getBoundingClientRect().height;
+    text.innerText = "*";
+    let natural_height = text.getBoundingClientRect().height;
     
-    l("piece-name").innerText = name;
-    let current_height = l("piece-name").getBoundingClientRect().height;
+    text.innerText = value;
+    let current_height = text.getBoundingClientRect().height;
     
     // text is is one line, we break here
     if(current_height <= natural_height)
       break;
       
     // if the text is taking up two lines...
-    fontsize *= 0.9;
-    l("piece-name").style.fontSize = fontsize+"px";
+    fontsize *= factor;
+    text.style.fontSize = fontsize+"px";
   }
 }
 
