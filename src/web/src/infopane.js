@@ -38,10 +38,12 @@ function showPieceInfo(pid, captures)
     "ERROR"
   ])[pid.value];
 
+  l("piece-img").src = createPieceImage(Module.colorOfPiece(pid), Module.typeOfPiece(pid)).src;
   resizeTextToLine(l("piece-name"), name, 0.9, 30);
 }
 
 function clearPieceInfo()
 {
+  l("piece-img").src = "";
   l("piece-name").innerText = "";
 }

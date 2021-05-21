@@ -126,3 +126,13 @@ body
 {
   background: radial-gradient(transparent 50%, var(--respawn-point-color) 50%);
 }
+
+#piece-name
+{
+  display: inline;
+}
+
+.info-piece-img
+{
+  width: 10%;
+}
