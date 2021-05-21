@@ -15,7 +15,7 @@ native: $(EXE)
 	
 web: $(JSEXE) webui
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/*
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js
 
 test: $(EXE)
 	$(EXE)
@@ -50,7 +50,15 @@ $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
 	
-$(WDIR)src/*: src/web/src/*
+$(WDIR)src/board.js: src/web/src/board.js
 	mkdir -p $(WDIR)src
-	cp src/web/src/* $(WDIR)src/
+	cp src/web/src/board.js $(WDIR)src/
+	
+$(WDIR)src/infopane.js: src/web/src/infopane.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/infopane.js $(WDIR)src/
+	
+$(WDIR)src/util.js: src/web/src/util.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/util.js $(WDIR)src/
 	
