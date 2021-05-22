@@ -39,9 +39,10 @@ function getDefaultProperty(tag, prop)
   {
     const elem = document.createElement(tag)
     document.body.appendChild(elem)
-    const defaultStyles = Object.assign({}, window.getComputedStyle(elem))
+    const defaultStyles = window.getComputedStyle(elem)
+    let val = defaultStyles[prop];
     document.body.removeChild(elem)
-    return defaultStyles[prop]
+    return val;
   }
   catch(err)
   {
