@@ -64,6 +64,7 @@ function dispboard(board)
   }
   
   dispPrevMove();
+  clearPieceInfo();
   squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
 }
 
