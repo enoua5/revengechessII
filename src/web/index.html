@@ -64,18 +64,42 @@
           }
         }
         
+        var prevFrameWindowSize = {
+          width: null,
+          height: null,
+          twoFrames: false
+        };
+        
         setInterval(()=>{
+          // if the window has not been resized in the last two frames, do nothing.
+          if(prevFrameWindowSize.width == window.innerWidth
+            && prevFrameWindowSize.height == window.innerHeight)
+          {
+            if(prevFrameWindowSize.twoFrames)
+              return;
+            prevFrameWindowSize.twoFrames = true;
+          }
+          else
+          {
+            prevFrameWindowSize.twoFrames = false;
+          }
+          
+          prevFrameWindowSize.width = window.innerWidth;
+          prevFrameWindowSize.height = window.innerHeight;
+          
+          
+        
           let ratio = l("container").clientWidth/l("container").clientHeight;
           if(ratio == 0) ratio = 1.2;
           ratio = ratio.toFixed(2);
           
-          if(innerWidth > innerHeight*ratio)
+          if(window.innerWidth > window.innerHeight*ratio)
           {
-            l("container").style.width = (innerHeight*ratio*0.95)+"px";
+            l("container").style.width = (window.innerHeight*ratio*0.95)+"px";
           }
           else
           {
-            l("container").style.width = (innerWidth*0.95)+"px";
+            l("container").style.width = (window.innerWidth*0.95)+"px";
           }
           // fallback for if aspectratio doesn't work
           // breaks if done unconditionally
