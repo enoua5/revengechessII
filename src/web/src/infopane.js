@@ -51,6 +51,24 @@ function showPieceInfo(pid, captures)
   let numCaptures = piece.numCaptures;
   for(let i = 0; i < numCaptures; i++)
   {
+    // if we're on the sixth element, and this isn't the last one
+    // checking i = 5 because zero-index
+    if(i == 5 && numCaptures != 6)
+    {
+      // just display a note saying there's more
+      let li = document.createElement("li");
+      let nameBox = document.createElement("p");
+      nameBox.classList.add("info-piece-name");
+      li.appendChild(nameBox);
+      l("capture-list").appendChild(li);
+      
+      let text = `+${numCaptures - i} more`;
+      
+      resizeTextToLine(nameBox, text, 0.8, 30);
+      
+      break;
+    }
+  
     // find the id of the captured piece
     let cid = piece.getCapture(i);
     // create a box for the new lines
