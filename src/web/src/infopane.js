@@ -68,6 +68,11 @@ function showPieceInfo(pid, captures)
     let name = getPieceName(cid);
     resizeTextToLine(nameBox, name, 0.8, 30);
     
+    // resize the li element to fit snuggly with it's contents.
+    // not 100% sure why this is needed, my guess is that the li tries
+    // making room for its bullets
+    li.style.height = nameBox.getBoundingClientRect().height + "px";
+    
   }
 }
 
