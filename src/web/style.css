@@ -29,6 +29,8 @@ body
 }
 #game-info
 {
+  background-color: var(--side-bar-color);
+  color: var(--side-bar-text);
   padding-left: 0.5em;
   padding-right: 0.5em;
   grid-column-start: info;
@@ -100,13 +102,9 @@ body
 {
   background-color: var(--white-square-color);
 }
-.black_square.selected
+.selected
 {
-  box-shadow: inset 0 0 20px var(--selected-black-color);
-}
-.white_square.selected
-{
-  box-shadow: inset 0 0 20px var(--selected-white-color);
+  background-color: var(--selected-color);
 }
 .square.prev_move
 {
