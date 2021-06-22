@@ -89,7 +89,7 @@ function showPieceInfo(pid, captures)
     // resize the li element to fit snuggly with it's contents.
     // not 100% sure why this is needed, my guess is that the li tries
     // making room for its bullets
-    li.style.height = nameBox.getBoundingClientRect().height + "px";
+    li.style.height = img.getBoundingClientRect().height + 5 + "px";
     
   }
 }
