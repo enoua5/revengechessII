@@ -76,6 +76,10 @@ void UI::startUI(Game& game)
     {
       std::cout << (char)(game.board.pawnEnPassantFile+'A') << std::endl;
     }
+    else if(input == "time")
+    {
+      std::cout << game.clock.getWhiteTime() << " - " << game.clock.getBlackTime();
+    }
     else if(input == "version")
     {
       Game::version.print();

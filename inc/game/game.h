@@ -4,6 +4,7 @@
 #include "enum.h"
 #include "game/board.h"
 #include "game/square.h"
+#include "game/clock.h"
 
 #ifndef __EMSCRIPTEN__
   #include <stack>
@@ -19,6 +20,7 @@ class Game
     Game();
     
     Board board;
+    Clock clock;
     
     #ifndef __EMSCRIPTEN__
       std::stack<Board> prevBoards;
