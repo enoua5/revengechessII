@@ -17,7 +17,7 @@ class Timer
 {
   public:
     // all times in milliseconds
-    Timer(unsigned int startingTime = 5*60*1000, unsigned int increment = 15000, IncrementMethod inct = BRONSTEIN);
+    Timer(unsigned int startingTime = /*5*60**/1000, unsigned int increment = 15000, IncrementMethod inct = BRONSTEIN);
     unsigned int update(); // returns timeLeft
     unsigned int toggle(); // returns timeLeft
     //void set_running(bool);
