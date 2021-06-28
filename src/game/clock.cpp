@@ -1,11 +1,11 @@
 #include "game/clock.h"
 
-Time get_current_time()
+TimerTime get_current_time()
 {
   return std::chrono::time_point_cast<timer_res>(std::chrono::system_clock::now());
 }
 
-unsigned int time_to_mill(Time t)
+unsigned int time_to_mill(TimerTime t)
 {
   auto epoch = t.time_since_epoch();
   auto value = std::chrono::duration_cast<timer_res>(epoch);
@@ -36,11 +36,17 @@ unsigned int Timer::update() // returns timeLeft
     {
       if(timeSpentThisTurn > increment)
       {
-        timeLeft = timeLeftAtStartOfTurn - timeSpentThisTurn + increment;
+        if(timeLeftAtStartOfTurn < timeSpentThisTurn + increment)
+          timeLeft = 0;
+        else
+          timeLeft = timeLeftAtStartOfTurn - timeSpentThisTurn + increment;
       }
     }
     else
     {
+      if(timeLeftAtStartOfTurn < timeSpentThisTurn)
+        timeLeft = 0;
+      else
         timeLeft = timeLeftAtStartOfTurn - timeSpentThisTurn;
     }
   }
@@ -101,7 +107,7 @@ Clock::Clock(unsigned int startingTimeWhite, unsigned int incrementWhite, Increm
   white_timer = Timer(startingTimeWhite, incrementWhite, inctWhite);
   black_timer = Timer(startingTimeBlack, incrementBlack, inctBlack);
 }
-void Clock::toggle()
+unsigned int Clock::toggle()
 {
   if(white_timer.isRunning() || black_timer.isRunning())
   {
@@ -110,7 +116,7 @@ void Clock::toggle()
     black_timer.toggle();
   }
   
-  white_timer.toggle();
+  return white_timer.toggle();
 }
 unsigned int Clock::getWhiteTime()
 {
@@ -119,6 +125,22 @@ unsigned int Clock::getWhiteTime()
 unsigned int Clock::getBlackTime()
 {
   return black_timer.update();
+}
+void Clock::stop()
+{
+  if(white_timer.isRunning())
+    white_timer.toggle();
+  if(black_timer.isRunning())
+    black_timer.toggle();
+}
+
+bool Clock::isWhiteRunning()
+{
+  return white_timer.isRunning();
+}
+bool Clock::isBlackRunning()
+{
+  return black_timer.isRunning();
 }
 
 GameResult Clock::getResultFromFlag()

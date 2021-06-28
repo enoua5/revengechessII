@@ -33,10 +33,14 @@ void Game::takeBack()
 void Game::commitMove(Move m)
 {
   clock.toggle();
-  board = board.makeMove(m);
+  if(clock.getResultFromFlag() == ONGOING)
+    board = board.makeMove(m);
   #ifndef __EMSCRIPTEN__
     prevBoards.push(board);
   #else
     prevBoards.push_back(board);
   #endif
+  
+  if(board.getGameResult() != ONGOING)
+    clock.stop();
 }

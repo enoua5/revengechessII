@@ -100,3 +100,45 @@ function clearPieceInfo()
   l("piece-name").innerText = "";
   l("capture-list").innerText = "";
 }
+
+function setTimeOn(clockElement, time)
+{
+  let seconds = Math.floor(time);
+  let mill = (time - seconds) * 1000;
+  let minutes = Math.floor(seconds / 60);
+  seconds %= 60;
+  
+  let mainTime = (seconds+"").padStart(2, "0")+".";
+  if(minutes > 0)
+    mainTime = (minutes+"").padStart(2, "0")+":"+mainTime;
+  
+  clockElement.innerHTML = "";
+  
+  let mainBox = document.createElement("span");
+  mainBox.classList.add("timer-main-text");
+  mainBox.innerText = mainTime;
+  clockElement.appendChild(mainBox);
+  
+  let millBox = document.createElement("span");
+  millBox.classList.add("timer-milliseconds");
+  millBox.innerText = (Math.floor(mill/10)+"").padEnd(2, "0");
+  clockElement.appendChild(millBox);
+}
+
+function showTimes()
+{
+//  l("white_clock").innerText = Game.game.clock.getWhiteTime() / 1000;
+//  l("black_clock").innerText = Game.game.clock.getBlackTime() / 1000;
+  
+  setTimeOn(l("white_clock"), Game.game.clock.getWhiteTime() / 1000);
+  if(Game.game.clock.isWhiteRunning())
+    l("white_clock").classList.add("active_clock");
+  else
+    l("white_clock").classList.remove("active_clock");
+  
+  setTimeOn(l("black_clock"), Game.game.clock.getBlackTime() / 1000);
+  if(Game.game.clock.isBlackRunning())
+    l("black_clock").classList.add("active_clock");
+  else
+    l("black_clock").classList.remove("active_clock");
+}

@@ -108,6 +108,8 @@
             l("board").style.height = l("board").clientWidth + "px";
         },50);
       }
+      
+      setInterval(showTimes, 50)
     </script>
     
     <script src="revengechess.js"></script>
@@ -118,7 +120,10 @@
         <div id="option-bar" style="background-color:green"></div>
         <div id="board"></div>
         <div id="game-info">
-        
+          <div id="clocks">
+            <div id="white_clock"></div>
+            <div id="black_clock"></div>
+          </div>
           <div id="piece-stats">
             <div>
               <img id="piece-img" class="info-piece-img"></img>

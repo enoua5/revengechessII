@@ -165,3 +165,29 @@ body
 {
   font-size: 5vh;
 }
+
+#white_clock:not(.active_clock)
+{
+  background-color: #aaa;
+  color: #000;
+}
+#white_clock.active_clock
+{
+  background-color: #fff;
+  color: #000;
+}
+#black_clock:not(.active_clock)
+{
+  background-color: #666;
+  color: #fff;
+}
+#black_clock.active_clock
+{
+  background-color: #000;
+  color: #fff;
+}
+.timer-milliseconds
+{
+  font-size: 0.5em;
+}
+

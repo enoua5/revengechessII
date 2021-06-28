@@ -4,7 +4,7 @@
 #include "enum.h"
 #include <chrono>
 typedef std::chrono::milliseconds timer_res;
-typedef std::chrono::time_point<std::chrono::system_clock> Time;
+typedef std::chrono::time_point<std::chrono::system_clock> TimerTime;
 
 enum IncrementMethod
 {
@@ -17,7 +17,7 @@ class Timer
 {
   public:
     // all times in milliseconds
-    Timer(unsigned int startingTime = 5*60*1000, unsigned int increment = 15000, IncrementMethod inct = INCREMENT);
+    Timer(unsigned int startingTime = 5*60*1000, unsigned int increment = 15000, IncrementMethod inct = BRONSTEIN);
     unsigned int update(); // returns timeLeft
     unsigned int toggle(); // returns timeLeft
     //void set_running(bool);
@@ -28,7 +28,7 @@ class Timer
     
     bool running;
     unsigned int timeLeft;
-    Time lastToggle;
+    TimerTime lastToggle;
     unsigned int timeLeftAtStartOfTurn;
     unsigned int timeSpentThisTurn;
     
@@ -40,9 +40,12 @@ class Clock
     Clock();
     Clock(unsigned int startingTime, unsigned int increment, IncrementMethod inct);
     Clock(unsigned int startingTimeWhite, unsigned int incrementWhite, IncrementMethod inctWhite, unsigned int startingTimeBlack, unsigned int incrementBlack, IncrementMethod inctBlack);
-    void toggle();
+    unsigned int toggle();
+    void stop();
     unsigned int getWhiteTime();
     unsigned int getBlackTime();
+    bool isWhiteRunning();
+    bool isBlackRunning();
     GameResult getResultFromFlag();
   protected:
     Timer white_timer;

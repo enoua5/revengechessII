@@ -9,6 +9,7 @@
 #include "game/piece.h"
 #include "game/game.h"
 #include "engine/engine.h"
+#include "game/clock.h"
 
 using namespace emscripten;
 
@@ -170,8 +171,28 @@ EMSCRIPTEN_BINDINGS(mod)
     .constructor<>()
     .property("board", &Game::board)
     .property("prevBoards", &Game::prevBoards)
+    .property("clock", &Game::clock)
     .function("takeBack", &Game::takeBack)
     .function("commitMove", &Game::commitMove)
+  ;
+  
+  class_<Clock>("Clock")
+    .constructor<>()
+    .constructor<unsigned int, unsigned int, IncrementMethod>()
+    .constructor<unsigned int, unsigned int, IncrementMethod, unsigned int, unsigned int, IncrementMethod>()
+    .function("toggle", &Clock::toggle)
+    .function("stop", &Clock::stop)
+    .function("getBlackTime", &Clock::getBlackTime)
+    .function("getWhiteTime", &Clock::getWhiteTime)
+    .function("isWhiteRunning", &Clock::isWhiteRunning)
+    .function("isBlackRunning", &Clock::isBlackRunning)
+    .function("getResultFromFlag", &Clock::getResultFromFlag)
+  ;
+  
+  enum_<IncrementMethod>("IncrementMethod")
+    .value("INCREMENT", INCREMENT)
+    .value("DELAY", DELAY)
+    .value("BRONSTEIN", BRONSTEIN)
   ;
   
   value_object<SearchResult>("SearchResult")
