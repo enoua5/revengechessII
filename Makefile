@@ -15,7 +15,7 @@ native: $(EXE)
 	
 web: $(JSEXE) webui
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js
 
 test: $(EXE)
 	$(EXE)
@@ -61,4 +61,13 @@ $(WDIR)src/infopane.js: src/web/src/infopane.js
 $(WDIR)src/util.js: src/web/src/util.js
 	mkdir -p $(WDIR)src
 	cp src/web/src/util.js $(WDIR)src/
+
+$(WDIR)engine.worker.js: src/web/engine.worker.js
+	mkdir -p $(WDIR)src
+	cp src/web/engine.worker.js $(WDIR)
+
+$(WDIR)src/ai.js: src/web/src/ai.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/ai.js $(WDIR)src/
+	
 	

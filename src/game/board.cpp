@@ -9,6 +9,10 @@
 #include <iterator>
 #include <exception>
 
+#ifdef __EMSCRIPTEN__
+  #include "nlohmann/json.hpp"
+#endif
+
 Board::Board()
 {
   turn = WHITE;
@@ -140,6 +144,304 @@ Board::Board(const Board* other)
   for(int i = 0; i < 32; i++)
     pieces[i] = other->pieces[i];
 }
+
+#ifdef __EMSCRIPTEN__
+  std::string Board::serialize()
+  {
+    /*
+      Why did I serialize this manually?
+      - Because I hadn't downloaded the JSON library yet
+        when I wrote this part.
+      
+      Why didn't I update it after?
+      - Laziness.
+      
+      Feel free to fix up this function, but for now it works.
+     */
+    std::string json = "{\"turn\": ";
+    json += (turn == WHITE) ? "true" : "false";
+    json += ", \"pawnEnPassantFile\": ";
+    std::string files[] = {"\"A\"",
+                           "\"B\"",
+                           "\"C\"",
+                           "\"D\"",
+                           "\"E\"",
+                           "\"F\"",
+                           "\"G\"",
+                           "\"H\"",
+                           "\"X\""};
+    json += files[pawnEnPassantFile];
+    json += ", \"halfMoveClock\": " + std::to_string((int)halfMoveClock);
+
+    json += ", \"pieces\": [";
+    for(int i = 0; i < 32; i++)
+    {
+      auto p = pieces[i];
+      
+      if(i != 0)
+        json += ", ";
+      json += "{";
+     
+      json += "\"isOnBoard\": ";
+      json += p.isOnBoard ? "true" : "false";
+      json += ", \"hasMoved\": ";
+      json += p.hasMoved ? "true" : "false";
+      json += ", \"color\": ";
+      json += (p.color == WHITE) ? "true" : "false";
+      json += ", \"type\": ";
+      
+      std::string pieceTypes[] = {
+        "\"PAWN\"",
+        "\"ROOK\"",
+        "\"KNIGHT\"",
+        "\"BISHOP\"",
+        "\"KING\"",
+        "\"QUEEN\"",
+        "\"NO\"",
+      };
+      json += pieceTypes[p.type];
+    
+      json += ", \"home\": ";
+      json += "\"" + p.home.toString() + "\"";
+      json += ", \"current\": ";
+      json += "\"" + p.current.toString() + "\"";
+      
+      json += ", \"captures\": [";
+      std::string ids[] = {
+        "\"WHITE_QUEENSIDE_ROOK\"",
+        "\"WHITE_QUEENSIDE_KNIGHT\"",
+        "\"WHITE_QUEENSIDE_BISHOP\"",
+        "\"WHITE_QUEEN\"",
+        "\"WHITE_KINGSIDE_ROOK\"",
+        "\"WHITE_KINGSIDE_KNIGHT\"",
+        "\"WHITE_KINGSIDE_BISHOP\"",
+        "\"WHITE_KING\"",
+        "\"WHITE_A_PAWN\"",
+        "\"WHITE_B_PAWN\"",
+        "\"WHITE_C_PAWN\"",
+        "\"WHITE_D_PAWN\"",
+        "\"WHITE_E_PAWN\"",
+        "\"WHITE_F_PAWN\"",
+        "\"WHITE_G_PAWN\"",
+        "\"WHITE_H_PAWN\"",
+        
+        "\"BLACK_QUEENSIDE_ROOK\"",
+        "\"BLACK_QUEENSIDE_KNIGHT\"",
+        "\"BLACK_QUEENSIDE_BISHOP\"",
+        "\"BLACK_QUEEN\"",
+        "\"BLACK_KINGSIDE_ROOK\"",
+        "\"BLACK_KINGSIDE_KNIGHT\"",
+        "\"BLACK_KINGSIDE_BISHOP\"",
+        "\"BLACK_KING\"",
+        "\"BLACK_A_PAWN\"",
+        "\"BLACK_B_PAWN\"",
+        "\"BLACK_C_PAWN\"",
+        "\"BLACK_D_PAWN\"",
+        "\"BLACK_E_PAWN\"",
+        "\"BLACK_F_PAWN\"",
+        "\"BLACK_G_PAWN\"",
+        "\"BLACK_H_PAWN\"",
+        
+        "\"EMPTY\""
+      };
+      for(int c = 0; c < p.numCaptures; c++)
+      {
+        if(c != 0)
+          json += ", ";
+        json += ids[p.captures[c]];
+      }
+      json += "]";
+      
+      json += "}"; 
+      
+    }
+    json += "]";
+    
+    json += "}";
+    return json;
+  }
+  Square squareFromString(std::string coord)
+  {
+    // more-or-less copied from ui.cpp
+    // TODO may be good to refactor this into shared code
+    unsigned char file = coord[0];
+    unsigned char rank = coord[1];
+    
+    file |= 0x20; // to lowercase
+    // to 0-7 range
+    file -= 'a';
+    rank -= '1';
+    
+    return Square(file, rank);
+  }
+  Board::Board(std::string data) // deserialize
+  {
+    // init the play field. This will be filled in later
+    // when parsing the individual pieces.
+    for(int i = 0; i < 64; i++)
+      playField[i] = EMPTY;
+      
+    nlohmann::json parsed = nlohmann::json::parse(data);
+    
+    turn = parsed.value("turn", true) ? WHITE : BLACK;
+    switch(parsed.value("pawnEnPassantFile", "X")[0])
+    {
+      case 'A':
+        pawnEnPassantFile = A;
+        break;
+      case 'B':
+        pawnEnPassantFile = B;
+        break;
+      case 'C':
+        pawnEnPassantFile = C;
+        break;
+      case 'D':
+        pawnEnPassantFile = D;
+        break;
+      case 'E':
+        pawnEnPassantFile = E;
+        break;
+      case 'F':
+        pawnEnPassantFile = F;
+        break;
+      case 'G':
+        pawnEnPassantFile = G;
+        break;
+      case 'H':
+        pawnEnPassantFile = H;
+        break;
+      default:
+        pawnEnPassantFile = NONE;
+    }
+    halfMoveClock = parsed.value("halfMoveClock", 0);
+    
+    
+    
+    nlohmann::json piece_list = parsed.value("pieces", nlohmann::json::array());
+    
+    int i = 0;
+    for(auto& parsed_piece : piece_list)
+    {
+      if(i >= 32)
+        break;
+      
+      pieces[i].color = parsed_piece.value("color", true) ? WHITE : BLACK;
+      pieces[i].hasMoved = parsed_piece.value("hasMoved", false);
+      
+      std::string typeStr = parsed_piece.value("type", "NO");
+      if(typeStr == "PAWN")
+        pieces[i].type = PAWN;
+      else if(typeStr == "ROOK")
+        pieces[i].type = ROOK;
+      else if(typeStr == "KNIGHT")
+        pieces[i].type = KNIGHT;
+      else if(typeStr == "BISHOP")
+        pieces[i].type = BISHOP;
+      else if(typeStr == "KING")
+        pieces[i].type = KING;
+      else if(typeStr == "QUEEN")
+        pieces[i].type = QUEEN;
+      else
+        pieces[i].type = NO;
+      
+      // this will be updated further on
+      pieces[i].numCaptures = 0;
+      
+      pieces[i].home = squareFromString(parsed_piece.value("home", "A1"));
+      
+      bool isOnBoard = parsed_piece.value("isOnBoard", false);
+      pieces[i].isOnBoard = isOnBoard;
+      if(isOnBoard)
+      {
+        Square current = squareFromString(parsed_piece.value("current", "A1"));
+        pieces[i].current = current;
+        
+        playField[current.toIndex()] = (PieceIdentifier)i;
+        
+        nlohmann::json capture_list = parsed_piece.value("captures", nlohmann::json::array());
+        int numCaptures = 0;
+        for(auto& captured : capture_list)
+        {
+          if(numCaptures >= 17)
+            break;
+          
+          PieceIdentifier capID = EMPTY;
+          if(captured == "WHITE_QUEENSIDE_ROOK")
+            capID = WHITE_QUEENSIDE_ROOK;
+          else if(captured == "WHITE_QUEENSIDE_KNIGHT")
+            capID = WHITE_QUEENSIDE_KNIGHT;
+          else if(captured == "WHITE_QUEENSIDE_BISHOP")
+            capID = WHITE_QUEENSIDE_BISHOP;
+          else if(captured == "WHITE_QUEEN")
+            capID = WHITE_QUEEN;
+          else if(captured == "WHITE_KINGSIDE_ROOK")
+            capID = WHITE_KINGSIDE_ROOK;
+          else if(captured == "WHITE_KINGSIDE_KNIGHT")
+            capID = WHITE_KINGSIDE_KNIGHT;
+          else if(captured == "WHITE_KINGSIDE_BISHOP")
+            capID = WHITE_KINGSIDE_BISHOP;
+          else if(captured == "WHITE_KING")
+            capID = WHITE_KING;
+          else if(captured == "WHITE_A_PAWN")
+            capID = WHITE_A_PAWN;
+          else if(captured == "WHITE_B_PAWN")
+            capID = WHITE_B_PAWN;
+          else if(captured == "WHITE_C_PAWN")
+            capID = WHITE_C_PAWN;
+          else if(captured == "WHITE_D_PAWN")
+            capID = WHITE_D_PAWN;
+          else if(captured == "WHITE_E_PAWN")
+            capID = WHITE_E_PAWN;
+          else if(captured == "WHITE_F_PAWN")
+            capID = WHITE_F_PAWN;
+          else if(captured == "WHITE_G_PAWN")
+            capID = WHITE_G_PAWN;
+          else if(captured == "WHITE_H_PAWN")
+            capID = WHITE_H_PAWN;
+          else if(captured == "BLACK_QUEENSIDE_ROOK")
+            capID = BLACK_QUEENSIDE_ROOK;
+          else if(captured == "BLACK_QUEENSIDE_KNIGHT")
+            capID = BLACK_QUEENSIDE_KNIGHT;
+          else if(captured == "BLACK_QUEENSIDE_BISHOP")
+            capID = BLACK_QUEENSIDE_BISHOP;
+          else if(captured == "BLACK_QUEEN")
+            capID = BLACK_QUEEN;
+          else if(captured == "BLACK_KINGSIDE_ROOK")
+            capID = BLACK_KINGSIDE_ROOK;
+          else if(captured == "BLACK_KINGSIDE_KNIGHT")
+            capID = BLACK_KINGSIDE_KNIGHT;
+          else if(captured == "BLACK_KINGSIDE_BISHOP")
+            capID = BLACK_KINGSIDE_BISHOP;
+          else if(captured == "BLACK_KING")
+            capID = BLACK_KING;
+          else if(captured == "BLACK_A_PAWN")
+            capID = BLACK_A_PAWN;
+          else if(captured == "BLACK_B_PAWN")
+            capID = BLACK_B_PAWN;
+          else if(captured == "BLACK_C_PAWN")
+            capID = BLACK_C_PAWN;
+          else if(captured == "BLACK_D_PAWN")
+            capID = BLACK_D_PAWN;
+          else if(captured == "BLACK_E_PAWN")
+            capID = BLACK_E_PAWN;
+          else if(captured == "BLACK_F_PAWN")
+            capID = BLACK_F_PAWN;
+          else if(captured == "BLACK_G_PAWN")
+            capID = BLACK_G_PAWN;
+          else if(captured == "BLACK_H_PAWN")
+            capID = BLACK_H_PAWN;
+          
+          pieces[i].captures[numCaptures] = capID;
+          
+          numCaptures++;
+        }
+        pieces[i].numCaptures = numCaptures;
+      }
+    
+      i++;
+    }
+  }
+#endif
 
 std::vector<Move> Board::getValidMoves(PieceIdentifier id) const
 {

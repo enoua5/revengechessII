@@ -19,6 +19,7 @@
     <script src = "src/util.js"></script>
     <script src = "src/board.js"></script>
     <script src = "src/infopane.js"></script>
+    <script src = "src/ai.js"></script>
     <script>
       function l(what){return document.getElementById(what)}
       
@@ -38,6 +39,8 @@
           dispboard(Game.game.board);
         }
       };
+      
+      var engine;
     
       function onload()
       {
@@ -107,9 +110,16 @@
           if(!("aspectRatio" in document.body.style))
             l("board").style.height = l("board").clientWidth + "px";
         },50);
+        
+      
+        setInterval(showTimes, 50);
+        
+        
+        engine = new Worker("engine.worker.js");
+        engine.onmessage = acceptAIMove;
       }
       
-      setInterval(showTimes, 50)
+      
     </script>
     
     <script src="revengechess.js"></script>

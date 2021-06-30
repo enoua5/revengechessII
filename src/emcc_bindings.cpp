@@ -72,6 +72,8 @@ EMSCRIPTEN_BINDINGS(mod)
 
   class_<Board>("Board")
     .constructor<>()
+    .constructor<std::string>()
+    .function("serialize", &Board::serialize)
     .property("turn", &Board::turn)
     .property("pawnEnPassantFile", &Board::pawnEnPassantFile)
     .property("halfMoveClock", &Board::halfMoveClock)
