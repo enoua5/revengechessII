@@ -294,6 +294,7 @@ body
   top: 5vh;
   overflow-y: scroll;
   position: relative;
+  display: none;
 }
 
 .sidebar-example
