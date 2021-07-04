@@ -107,7 +107,7 @@ function dispValidDestinations()
 
 function clearPrevMove()
 {
-  let HTML_list = document.getElementsByClassName("prev_move");
+  let HTML_list = document.querySelectorAll(".square.prev_move");
   // document.get[whatever]() returns an HTMLCollection
   // HTMLCollections have weird behaviour when itterating and modifying
   // Namely, they are removed from the collection if their selector no longer matches
