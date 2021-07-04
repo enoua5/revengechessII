@@ -111,3 +111,14 @@ function setThemeColor(inputEl)
   let rule = inputEl.dataset.appliesto;
   setableStyles().setProperty("--"+rule, inputEl.value);
 }
+
+function versionToString(v)
+{
+  return v.name + ", version " + String.fromCharCode(v.stage) + v.major + '.' + v.minor + '.' + v.patch;
+}
+
+function fillVersionNumbers()
+{
+  l("core-version").innerText = versionToString(Module.core_v());
+  l("engine-version").innerText = versionToString(Module.engine_v());
+}

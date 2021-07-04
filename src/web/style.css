@@ -321,3 +321,8 @@ body
 {
   margin: 25%;
 }
+
+#about-page p
+{
+  font-size: 0.8em;
+}
