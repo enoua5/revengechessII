@@ -149,6 +149,10 @@
   
     <!-- Pop-up holder -->
     <div id="pane">
+      <div id="about-page" class="window">
+        <h2>About</h2>
+        <button onclick="hideWindows();">close</button>
+      </div>
       <div id="color-settings" class="window">
         <h2>Color Settings</h2>
         <!-- Uses previousElementSibling, so be careful about adding new elements -->
@@ -258,7 +262,7 @@
             </ul>
           </div>
           <div class="dropdown header-button">
-            <p>About..</p>
+            <p onclick ="showWindow('about-page')">About..</p>
           </div>
         </div>
         <div id="board"></div>
