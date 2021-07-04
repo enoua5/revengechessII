@@ -71,7 +71,11 @@ body
   height: 50%;
   position: relative;
 }
-.possible_move:not(:empty)::after, .respawn_point:not(:empty):not(.selected)::after
+.square.possible_move:empty::after, .square.respawn_point::after
+{
+  position: absolute;
+}
+.possible_move:not(:empty)::after, .respawn_point:not(:empty)::after
 {
   content:"";
   width: 100%;
@@ -133,7 +137,7 @@ body
 {
   background: var(--respawn-point-color);
 }
-.respawn_point:not(:empty):not(.selected)::after
+.respawn_point:not(:empty)::after
 {
   background: radial-gradient(transparent 50%, var(--respawn-point-color) 50%);
 }
