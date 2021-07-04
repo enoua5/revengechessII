@@ -5,14 +5,14 @@
     <style id = "setable_styles">
       :root
       {
-        --side-bar-color: #556;
-        --side-bar-text: #ffe;
-        --black-square-color: #09a;
-        --white-square-color: #acf;
-        --selected-color: #808;
-        --possible-move-color: #aaaa;
-        --respawn-point-color: #f44a;
-        --prev-move-color: #cc4;
+        --side-bar-color: #555566;
+        --side-bar-text: #ffffee;
+        --black-square-color: #0099aa;
+        --white-square-color: #aaccff;
+        --selected-color: #880088;
+        --possible-move-color: #aaaaaa;
+        --respawn-point-color: #ff4444;
+        --prev-move-color: #cccc44;
       }
     </style>
     <link href="style.css" rel="stylesheet"/>
@@ -24,7 +24,7 @@
       function l(what){return document.getElementById(what)}
       
       var Settings = {
-        whiteOnTop: false // TODO not how this will work in the end
+        orientation: "w"
       }
       
       var Game = {
@@ -32,11 +32,14 @@
         engine: null
       }
       
+      var pageLoaded = false;
+      
       var Module = {
         onRuntimeInitialized: function() {
           Game.game = new Module.Game();
           Game.engine = new Module.Engine();
-          dispboard(Game.game.board);
+          if(pageLoaded)
+            dispboard(Game.game.board);
         }
       };
       
@@ -64,10 +67,16 @@
             s.onmouseenter=(e)=>{squareHovered(e,s)}
             s.onmouseleave=(e)=>{squareUnhovered(e,s)}
             //tr.appendChild(td);
-          l("board").appendChild(s);
+            l("board").appendChild(s);
           }
         }
         
+          
+        pageLoaded = true;
+        if(Game.game)
+          dispboard(Game.game.board);
+        
+        //////////////////////////////////////////////////
         var prevFrameWindowSize = {
           width: null,
           height: null,
@@ -111,23 +120,147 @@
             l("board").style.height = l("board").clientWidth + "px";
         },50);
         
+        ///////////////////////////////////////////////////////
       
         setInterval(showTimes, 50);
         
+        ///////////////////////////////////////////////////////
+        
+        let colorSelectors = document.getElementsByClassName("colorSelect");
+        for(c of colorSelectors)
+          setDefaultColor(c);
+        
+        ///////////////////////////////////////////////////////
         
         engine = new Worker("engine.worker.js");
         engine.onmessage = acceptAIMove;
       }
       
-      
+      function setOrientation(el)
+      {
+        selectRadio('orientation-radio', el, 'orientation');
+        dispboard(Game.game.board);
+      }
     </script>
     
     <script src="revengechess.js"></script>
   </head>
   <body onload="onload()">
+  
+    <!-- Pop-up holder -->
+    <div id="pane">
+      <div id="color-settings" class="window">
+        <h2>Color Settings</h2>
+        <!-- Uses previousElementSibling, so be careful about adding new elements -->
+        <label>Black Square Color</label>
+        <input class="colorSelect" data-appliesTo="black-square-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>White Square Color</label>
+        <input class="colorSelect" data-appliesTo="white-square-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Selected Square Color</label>
+        <input class="colorSelect" data-appliesTo="selected-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Possible Move Color</label>
+        <input class="colorSelect" data-appliesTo="possible-move-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Respawn Point Color</label>
+        <input class="colorSelect" data-appliesTo="respawn-point-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Previous Move Color</label>
+        <input class="colorSelect" data-appliesTo="prev-move-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Side Bar Color</label>
+        <input class="colorSelect" data-appliesTo="side-bar-color" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        
+        <label>Side Bar Text</label>
+        <input class="colorSelect" data-appliesTo="side-bar-text" type="color" onchange="setThemeColor(this)"></input>
+        <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+        <br/>
+        <div class="sidebar-example">
+          <p>Example. Make sure this is readable.</p>
+        </div>
+        <div>
+          <div class="example-square black_square"></div>
+          <div class="example-square white_square"></div>
+          <div class="example-square black_square"></div>
+          <div class="example-square white_square"></div>
+          <br/>
+          <div class="example-square white_square">
+            <image src="img/pieces/bp.svg"></image>
+          </div>
+          <div class="example-square black_square">
+            <image src="img/pieces/bp.svg"></image>
+          </div>
+          <div class="example-square white_square">
+            <image src="img/pieces/wp.svg"></image>
+          </div>
+          <div class="example-square black_square">
+            <image src="img/pieces/wp.svg"></image>
+          </div>
+          <br/>
+          <div class="example-square black_square possible_move"></div>
+          <div class="example-square white_square respawn_point"></div>
+          <div class="example-square black_square prev_move"></div>
+          <div class="example-square white_square selected"></div>
+          <br/>
+          <div class="example-square white_square prev_move possible_move"></div>
+          <div class="example-square black_square prev_move respawn_point"></div>
+          <div class="example-square white_square selected possible_move"></div>
+          <div class="example-square black_square selected respawn_point"></div>
+        </div>
+        
+        <br/>
+        <button disabled>Save color scheme (coming soon)</button>
+        <button onclick="hideWindows();">close</button>
+      </div>
+    </div>
+    
+    <!-- Game container -->
     <div id="container" style="text-align: center; display: inline-block">
       <div id = "gamearea">
-        <div id="option-bar" style="background-color:green"></div>
+        <div id="option-bar">
+          <div class="dropdown header-button">
+            <p>Game</p>
+            <ul>
+              <li>New game..</li>
+              <li class = 'button-disable'>Comming soon..</li>
+            </ul>
+          </div>
+          <div class="dropdown header-button">
+            <p>Appearance</p>
+            <ul>
+              <li onclick="showWindow('color-settings')">Colors..</li>
+              <li>
+                <div class="dropdown inner-menu-button">
+                  <p>Board orientation &gt;</p>
+                  <ul>
+                    <li data-value="w" class="orientation-radio radio-selected" onclick="setOrientation(this)">White at bottom</li>
+                    <li data-value="b" class="orientation-radio" onclick="setOrientation(this)">Black at bottom</li>
+                    <li data-value="t" class="orientation-radio" onclick="setOrientation(this)">Current turn at bottom</li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="dropdown header-button">
+            <p>About..</p>
+          </div>
+        </div>
         <div id="board"></div>
         <div id="game-info">
           <div id="clocks">

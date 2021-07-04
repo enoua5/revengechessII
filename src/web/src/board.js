@@ -33,7 +33,7 @@ function whiteCurrentlyOnTop()
 }
 function dispboard(board)
 {
-  let whiteOnTop = Settings.whiteOnTop; // TODO not how this is gonna work...
+  let whiteOnTop = shouldWhiteBeOnTop();
   
   for(let i = 0; i < 64; i++)
   {

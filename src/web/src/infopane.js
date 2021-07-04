@@ -130,6 +130,9 @@ function showTimes()
 //  l("white_clock").innerText = Game.game.clock.getWhiteTime() / 1000;
 //  l("black_clock").innerText = Game.game.clock.getBlackTime() / 1000;
   
+  if(!Game.game)
+    return;
+  
   setTimeOn(l("white_clock"), Game.game.clock.getWhiteTime() / 1000);
   if(Game.game.clock.isWhiteRunning())
     l("white_clock").classList.add("active_clock");

@@ -49,3 +49,65 @@ function getDefaultProperty(tag, prop)
     return err
   }
 }
+
+function selectRadio(className, selected, settingName)
+{
+  let els = document.getElementsByClassName(className);
+  for(let e of els)
+  {
+    e.classList.remove("radio-selected");
+  }
+  selected.classList.add("radio-selected");
+  Settings[settingName] = selected.dataset.value;
+}
+
+function shouldWhiteBeOnTop()
+{
+  if(Settings.orientation == "b")
+    return true;
+  if(Settings.orientation == "w")
+    return false;
+    
+  if(Game.game.board.turn == Module.PlayerColor.WHITE)
+    return false;
+  return true;
+}
+
+function showWindow(id)
+{
+  l("pane").style.display = "block";
+  l(id).style.display = "inline-block";
+}
+function hideWindows()
+{
+  let els = document.getElementsByClassName("window");
+  for(let el of els)
+  {
+    el.style.display = ""; // style.css -> hidden
+  }
+  l("pane").style.display = ""; // style.css -> hidden
+}
+
+function setableStyles()
+{
+  return l("setable_styles").sheet.cssRules[0].style;
+}
+
+function resetColor(inputEl)
+{
+  let rule = inputEl.dataset.appliesto;
+  setableStyles().setProperty("--"+rule, inputEl.dataset.resetcolor);
+  setDefaultColor(inputEl);
+}
+function setDefaultColor(inputEl)
+{
+  let rule = inputEl.dataset.appliesto;
+  let color = setableStyles().getPropertyValue("--"+rule).replace(/\s/, '');
+  inputEl.value = color;
+  inputEl.dataset.resetcolor = color;
+}
+function setThemeColor(inputEl)
+{
+  let rule = inputEl.dataset.appliesto;
+  setableStyles().setProperty("--"+rule, inputEl.value);
+}

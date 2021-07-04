@@ -1,15 +1,22 @@
+/*
+ * Mega list of all css rules.
+ * Organization is tenuous at best.
+ * Sorry. 
+ */
+
 body
 {
   margin: /*10px*/0;
   text-align: center;
   background: black;
   user-select: none;
+  font-weight: 900;
 }
 #gamearea
 {
   width: 100%;
   display: inline-grid;
-  grid-template-rows: [header] 30px [mainarea] auto;
+  grid-template-rows: [header] 1.5em [mainarea] auto;
   grid-template-columns: [board] auto [info] 25%; 
 }
 #option-bar
@@ -62,7 +69,7 @@ body
   border-radius: 100%;
   width: 50%;
   height: 50%;
-  position: absolute;
+  position: relative;
 }
 .possible_move:not(:empty)::after, .respawn_point:not(:empty):not(.selected)::after
 {
@@ -110,7 +117,7 @@ body
 {
   background-color: var(--selected-color);
 }
-.square.prev_move
+.prev_move
 {
   background: var(--prev-move-color);
 }
@@ -191,3 +198,121 @@ body
   font-size: 0.5em;
 }
 
+#option-bar
+{
+  background: var(--side-bar-color);
+}
+.header-button
+{
+  float: left;
+  background: dimgrey;
+  color: white;
+  margin: 0.1em;
+  padding: 0.1em 0.25em 0.1em 0.25em;
+  display: inline-block;
+  overflow-x: visible;
+}
+
+.header-button > :first-child
+{
+  font-size: 0.75em;
+}
+.dropdown > :first-child
+{
+  margin: initial;
+}
+.dropdown > :not(:first-child)
+{
+  font-size: 0.8em;
+  text-align: left;
+}
+.dropdown:not(:hover) > ul
+{
+  display: none;
+}
+.dropdown > ul
+{
+  list-style-type: none;
+  padding: initial;
+  margin: initial;
+  position: absolute;
+  margin-top: 0.1em;
+  z-index: 2;
+}
+.inner-menu-button > ul
+{
+  left: 100%;
+  top: 1.5em;
+}
+
+.dropdown > ul > li, .inner-menu-button
+{
+  border: 1px solid black;
+  border-top: 0;
+  background: dimgrey;
+}
+.inner-menu-button > ul > li
+{
+  width: 300%;
+}
+.dropdown > ul > li:hover:not(.button-disable)
+{
+  background: black;
+}
+.button-disable
+{
+  color: grey;
+}
+
+.radio-selected::before
+{
+  content: "*"
+}
+
+#pane
+{
+  z-index: 5;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #0008;
+  display: none;
+}
+.window
+{
+  background: darkgrey;
+  color: white;
+  padding: 1em;
+  border: 3px solid white;
+  height: 80vh;
+  top: 5vh;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.sidebar-example
+{
+  background: var(--side-bar-color);
+  color: var(--side-bar-text);
+}
+
+.example-square
+{
+  width: 2em;
+  height: 2em;
+  display: inline-block;
+  /* ??? wtf ??? */
+  margin: -0.2em;
+}
+.example-square > img
+{
+  width: 80%;
+  height: 80%;
+  margin-top: 10%;
+}
+.example-square::after
+{
+  margin: 25%;
+}
