@@ -1,8 +1,32 @@
 function acceptAIMove(e)
 {
-  // TODO implement deltas
+  if(!e.data || e.data.ranks == undefined || e.data.ranks.length == 0)
+    throw "Moves list empty";
+  if(e.data.turn != (Game.game.board.turn == Module.PlayerColor.WHITE))
+    throw "Move was somehow made before AI finished thinking."
+  
+  let moveList = e.data.ranks;
+  let sets = Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
+  let scoreDelta = randomIntInclusive(sets.minDelta, sets.maxDelta);
+  let topScore = moveList[0].score.score;
+  let targetScore = topScore - scoreDelta;
+  
+  let closestMove = moveList[0];
+  let nth = 1;
+  for(let i of moveList)
+  {
+    if(i.score.score > targetScore)
+    {
+      nth++;
+      closestMove = i;
+    }
+    else
+      break;
+  }
+  console.log(nth);
+  
   // TODO actually play the move
-  console.log(e.data)
+  console.log(closestMove);
 }
 function engineError(e)
 {
@@ -33,7 +57,7 @@ function getTimeForMove(player)
   }
   else if(sets.limitMode == SearchLimits.AUTOMATIC)
   {
-    time = 15000; // TODO write actual time management algorithm
+    time = 5000; // TODO write actual time management algorithm
   }
   else if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
     return sets.maxTime;
@@ -86,7 +110,7 @@ function defaultEngineSettings()
     // AI tries to play a move that is between minDelta and maxDelta centipawns
     // worse than the best scoring move.
     minDelta: 0,
-    maxDelta: 100,
+    maxDelta: 10,
     
     
   };

@@ -22,7 +22,8 @@ onmessage = function(e) {
     throw "Engine not yet initialized";
     
   // TODO solve => vector<MoveScores> rank(board, maxTime, maxDepth)
-  let ranks = engine.rankMoves(new Module.Board(e.data.board), e.data.time/1000, e.data.depth);
+  let board = new Module.Board(e.data.board)
+  let ranks = engine.rankMoves(board, e.data.time/1000, e.data.depth);
   
   let ranksArr = [];
   for(let i = 0; i < ranks.size(); i++)
@@ -36,7 +37,7 @@ onmessage = function(e) {
   ranksArr.sort((a,b) => (a.score.score < b.score.score ? 1 : -1));
   
   
-  postMessage(ranksArr);
+  postMessage({ranks: ranksArr, turn: board.turn == Module.PlayerColor.WHITE });
 }
 
 importScripts("revengechess.js")

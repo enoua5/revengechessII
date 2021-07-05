@@ -122,3 +122,10 @@ function fillVersionNumbers()
   l("core-version").innerText = versionToString(Module.core_v());
   l("engine-version").innerText = versionToString(Module.engine_v());
 }
+
+function randomIntInclusive(min, max)
+{
+  min = Math.ceil(min);
+  max = Math.floor(max) + 1;
+  return Math.floor(Math.random() * (max - min) + min);
+}
