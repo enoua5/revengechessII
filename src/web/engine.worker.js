@@ -6,12 +6,37 @@ var Module = {
   }
 };
 
+function objectifySearchResult(sr)
+{
+  return {
+    score: sr.score,
+    depth: sr.depth,
+    result: sr.result.value
+    // bm
+    // pv
+  };
+}
+
 onmessage = function(e) {
   if(!engine)
-    // TODO replace errorcodes with an enum or something
-    postMessage({success: false, message: "Engine not yet initialized", errorCode: 1});
+    throw "Engine not yet initialized";
+    
+  // TODO solve => vector<MoveScores> rank(board, maxTime, maxDepth)
+  let ranks = engine.rankMoves(new Module.Board(e.data.board), e.data.time/1000, e.data.depth);
   
-  postMessage(engine.solve(new Module.Board(e.data.board), e.data.time).bm.toString());
+  let ranksArr = [];
+  for(let i = 0; i < ranks.size(); i++)
+  {
+    ranksArr.push({
+      score: objectifySearchResult(ranks.get(i).score),
+      move: ranks.get(i).move.toString().replace(/^.*\:/, "")
+    });
+  }
+  
+  ranksArr.sort((a,b) => (a.score.score < b.score.score ? 1 : -1));
+  
+  
+  postMessage(ranksArr);
 }
 
 importScripts("revengechess.js")

@@ -29,11 +29,20 @@ struct SearchResult
   
 };
 
+struct MoveScore
+{
+  MoveScore() {}
+  MoveScore(Move m, SearchResult sr) : move(m), score(sr) {}
+  Move move;
+  SearchResult score;
+};
+
 class Engine
 {
   public:
-    SearchResult solve(const Board&, const Time);
+    SearchResult solve(const Board&, const Time, const int);
     SearchResult solve(const Board&, const float seconds = 15.0f);
+    std::vector<MoveScore> rankMoves(const Board&, const float maxSeconds, const int maxDepth);
     
     static Version version;
     

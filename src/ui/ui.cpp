@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-Version UI::version = Version("Revenge Chess Viewer", 'c', 1, 1, 0);
+Version UI::version = Version("Revenge Chess Viewer", 'c', 1, 1, 1);
 
 void UI::printBoard(const Board& b)
 {
@@ -71,6 +71,10 @@ void UI::startUI(Game& game)
         std::cout << (*(--i)).toString() << " ";
       
       game.commitMove(ms.pv.back());
+    }
+    else if(input == "rank")
+    {
+      std::vector<MoveScore> ms = engine.rankMoves(game.board, 15, 100);
     }
     else if(input == "pass")
     {

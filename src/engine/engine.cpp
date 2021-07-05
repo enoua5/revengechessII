@@ -15,7 +15,7 @@
   int branches_pruned = 0;
 #endif
 
-Version Engine::version = Version("Vengence", 'b', 1, 0, 2);
+Version Engine::version = Version("Vengence", 'b', 1, 1, 0);
 
 int Engine::pawn_squares[64] = {
 	0,  0,  0,  0,  0,  0,  0,  0,
@@ -156,7 +156,7 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
   return best;
 }
 
-SearchResult Engine::solve(const Board& board, const Time endtime)
+SearchResult Engine::solve(const Board& board, const Time endtime, const int maxDepth = 100)
 {
   abort = false;
   this->endtime = endtime;
@@ -173,12 +173,13 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
       
         std::cout << "Ply " << depth << ": ";
     #endif
-      
+    
       SearchResult sr = alpha_beta(board, depth++, Engine::neg_inf, Engine::pos_inf);
       
       #ifdef DEBUG
         std::cout << "Searched " << nodes_searched << ", ";
         std::cout << "Pruned " << branches_pruned << ". ";
+        std::cout << (sr.result == ABORT ? "ABORTED " : "") << " ";
       #endif
     
       if(sr.result != ABORT)
@@ -193,6 +194,8 @@ SearchResult Engine::solve(const Board& board, const Time endtime)
         std::cout << std::endl;
       #endif
       if(res.result != ONGOING)
+        break;
+      if(depth-1 >= maxDepth)
         break;
     #ifdef DEBUG
     }
@@ -211,6 +214,44 @@ SearchResult Engine::solve(const Board& board, const float seconds)
 {
   return solve(board, clock_res::now() + std::chrono::milliseconds((int)(seconds*1000)));
 }
+std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeconds, const int maxDepth)
+{
+  std::vector<Move> moves = board.getValidMoves();
+  std::vector<Board> nextBoards;
+  
+  for(std::vector<Move>::iterator i = moves.begin(); i != moves.end(); i++)
+  {
+    nextBoards.push_back(board.makeMove(*i, true));
+  }
+  
+  std::vector<MoveScore> ms_list(nextBoards.size());
+  
+  Time endTime = clock_res::now() + std::chrono::milliseconds((int)(maxSeconds*1000));
+  
+  for(int depth = 1; depth <= maxDepth; depth++)
+  {
+    int i = 0;
+    for(std::vector<Board>::iterator b = nextBoards.begin(); b != nextBoards.end(); b++)
+    {
+      Move move = moves[i];
+      #ifdef DEBUG
+        std::cout << move.toString() << std::endl;
+      #endif
+      SearchResult sr = solve(*b, endTime, depth);
+      
+      if(abort)
+        return ms_list;
+        
+      ms_list[i] = MoveScore(move, sr);
+      i++;
+    }
+  
+    if(clock_res::now() > endtime)
+      break;
+  }
+  return ms_list;
+}
+
 
 int Engine::static_eval(const Board& board) const
 {

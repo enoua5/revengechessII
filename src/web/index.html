@@ -24,7 +24,11 @@
       function l(what){return document.getElementById(what)}
       
       var Settings = {
-        orientation: "w"
+        orientation: "w",
+        ai: {
+          white: defaultEngineSettings(),
+          black: defaultEngineSettings()
+        },
       }
       
       var Game = {
@@ -140,6 +144,7 @@
         
         engine = new Worker("engine.worker.js");
         engine.onmessage = acceptAIMove;
+        engine.onerror = engineError;
       }
       
       function setOrientation(el)

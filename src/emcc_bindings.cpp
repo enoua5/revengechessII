@@ -188,6 +188,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .function("getWhiteTime", &Clock::getWhiteTime)
     .function("isWhiteRunning", &Clock::isWhiteRunning)
     .function("isBlackRunning", &Clock::isBlackRunning)
+    .function("getDelayLeft", &Clock::getDelayLeft)
     .function("getResultFromFlag", &Clock::getResultFromFlag)
   ;
   
@@ -205,13 +206,20 @@ EMSCRIPTEN_BINDINGS(mod)
     .field("bm", &SearchResult::bm)
   ;
   
+  value_object<MoveScore>("MoveScore")
+    .field("move", &MoveScore::move)
+    .field("score", &MoveScore::score)
+  ;
+  
   class_<Engine>("Engine")
     .constructor<>()
     .function("solve", select_overload<SearchResult(const Board&, const float)>(&Engine::solve))
+    .function("rankMoves", &Engine::rankMoves)
     .function("static_eval", &Engine::static_eval)
     .property("abort", &Engine::abort)
   ;
   
   register_vector<Move>("vector<Move>");
   register_vector<Board>("vector<Board>");
+  register_vector<MoveScore>("vector<MoveScore>");
 }

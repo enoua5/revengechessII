@@ -151,3 +151,21 @@ GameResult Clock::getResultFromFlag()
     return WHITE_VICTORY;
   return ONGOING;
 }
+
+unsigned int Clock::getDelayLeft()
+{
+  if(isBlackRunning())
+    return black_timer.getDelayLeft();
+  return white_timer.getDelayLeft();
+}
+
+unsigned int Timer::getDelayLeft()
+{
+  if(incType == DELAY)
+  {
+    update();
+    if(increment > timeSpentThisTurn)
+      return increment - timeSpentThisTurn;
+  }
+  return 0;
+}
