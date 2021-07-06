@@ -129,3 +129,12 @@ function randomIntInclusive(min, max)
   max = Math.floor(max) + 1;
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+function gameIsOver()
+{
+  if(Game.game.board.getGameResult(true) != Module.GameResult.ONGOING)
+    return true;
+  if(Game.game.clock.getResultFromFlag() != Module.GameResult.ONGOING)
+    return true;
+  return false;
+}

@@ -3,6 +3,28 @@ function getCurrentPlayerSets()
   return Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
 }
 
+function getPieceTypeFromValue(value)
+{
+  let t = Module.PieceType;
+  switch(value)
+  {
+    case t.PAWN.value:
+      return t.PAWN;
+    case t.ROOK.value:
+      return t.ROOK;
+    case t.KNIGHT.value:
+      return t.KNIGHT;
+    case t.BISHOP.value:
+      return t.BISHOP;
+    case t.QUEEN.value:
+      return t.QUEEN;
+    case t.KING.value:
+      return t.KING;
+    default:
+      return t.NO;
+  }
+}
+
 function acceptAIMove(e)
 {
   let sets = getCurrentPlayerSets();
@@ -33,8 +55,20 @@ function acceptAIMove(e)
   }
   console.log("Best move:", moveList[0], "\nPlayed move:", closestMove, "\nTarget delta", scoreDelta, "\nActual delta", moveList[0].score.score-closestMove.score.score, "\nThis is the #"+nth+" top scoring move");
   
-  // TODO actually play the move
-  console.log(closestMove);
+  let fromSquare = new Module.Square(closestMove.move.from);
+  let toSquare =  new Module.Square(closestMove.move.to);
+  let moveToMake = new Module.Move(
+    fromSquare,
+    toSquare,
+    getPieceTypeFromValue(closestMove.move.promotion)
+  );
+  
+  Game.game.commitMove(moveToMake);
+  selectedSquares.prev_move = {
+    from: fromSquare,
+    to: toSquare
+  };
+  dispboard(Game.game.board);
 }
 function engineError(e)
 {
@@ -65,7 +99,7 @@ function getTimeForMove(player)
   }
   else if(sets.limitMode == SearchLimits.AUTOMATIC)
   {
-    time = 5000; // TODO write actual time management algorithm
+    time = 15000; // TODO write actual time management algorithm
   }
   else if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
     return sets.maxTime;
@@ -84,6 +118,9 @@ function getTimeForMove(player)
 
 function makeAIMove()
 {
+  if(gameIsOver())
+    return;
+  
   let sets = getCurrentPlayerSets();
   if(!sets.usingAI)
     return engineError({message: "AI tried playing a move when it's not its turn."});

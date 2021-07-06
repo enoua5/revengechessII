@@ -66,6 +66,11 @@ function dispboard(board)
   dispPrevMove();
   clearPieceInfo();
   squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
+  
+  // start the AI if it needs to be started
+  if(getCurrentPlayerSets().usingAI)
+    makeAIMove();
+    
 }
 
 function dispValidDestinations()
@@ -371,6 +376,8 @@ function squareClicked(e, which)
   // do not allow the player to move on the AI's turn
   // TODO when adding online vs, add an `|| .isAway` condition
   if(getCurrentPlayerSets().usingAI)
+    return;
+  if(gameIsOver())
     return;
   
   let s = stringToSquare(which.id);

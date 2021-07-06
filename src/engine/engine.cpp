@@ -217,6 +217,9 @@ SearchResult Engine::solve(const Board& board, const float seconds)
 std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeconds, const int maxDepth)
 {
   std::vector<Move> moves = board.getValidMoves();
+  if(moves.size() == 0)
+    return std::vector<MoveScore>();
+  
   std::vector<Board> nextBoards;
   
   for(std::vector<Move>::iterator i = moves.begin(); i != moves.end(); i++)
@@ -237,8 +240,13 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
       #ifdef DEBUG
         std::cout << move.toString() << std::endl;
       #endif
-      SearchResult sr = solve(*b, endTime, depth);
-      sr.score *= -1;
+      GameResult gr = b->getGameResult();
+      SearchResult sr(Engine::static_eval(*b), gr, 0); 
+      if(gr == ONGOING)
+      {
+        sr = solve(*b, endTime, depth);
+        sr.score *= -1;
+      }
       
       if(abort)
         return ms_list;
