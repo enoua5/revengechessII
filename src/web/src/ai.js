@@ -93,7 +93,9 @@ function acceptAIMove(e)
 function engineError(e)
 {
   AI_status.running = false;
-  // TODO show error on info pane
+  l("ai-error").style.display = "";
+  l("ai-error-msg").innerText = e.message;
+  
   console.error(e.message);
 }
 

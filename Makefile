@@ -15,7 +15,7 @@ native: $(EXE)
 	
 web: $(JSEXE) webui
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/error.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js
 
 test: $(EXE)
 	$(EXE)
@@ -49,6 +49,10 @@ $(WDIR)img/pieces/*: img/pieces/*
 $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
+	
+$(WDIR)error.png: img/error.png
+	mkdir -p $(WDIR)img
+	cp img/error.png $(WDIR)img
 	
 $(WDIR)src/board.js: src/web/src/board.js
 	mkdir -p $(WDIR)src
