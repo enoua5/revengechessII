@@ -1,18 +1,26 @@
+function getCurrentPlayerSets()
+{
+  return Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
+}
+
 function acceptAIMove(e)
 {
+  let sets = getCurrentPlayerSets();
+  
   if(!e.data || e.data.ranks == undefined || e.data.ranks.length == 0)
-    throw "Moves list empty";
+    return engineError({message: "Moves list empty"});
   if(e.data.turn != (Game.game.board.turn == Module.PlayerColor.WHITE))
-    throw "Move was somehow made before AI finished thinking."
+    return engineError({message: "Move was somehow made before AI finished thinking."});
+  if(!sets.usingAI)
+    return engineError({message: "AI tried playing a move when it's not its turn."});
   
   let moveList = e.data.ranks;
-  let sets = Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
   let scoreDelta = randomIntInclusive(sets.minDelta, sets.maxDelta);
   let topScore = moveList[0].score.score;
   let targetScore = topScore - scoreDelta;
   
   let closestMove = moveList[0];
-  let nth = 1;
+  let nth = 0;
   for(let i of moveList)
   {
     if(i.score.score > targetScore)
@@ -23,7 +31,7 @@ function acceptAIMove(e)
     else
       break;
   }
-  console.log(nth);
+  console.log("Best move:", moveList[0], "\nPlayed move:", closestMove, "\nTarget delta", scoreDelta, "\nActual delta", moveList[0].score.score-closestMove.score.score, "\nThis is the #"+nth+" top scoring move");
   
   // TODO actually play the move
   console.log(closestMove);
@@ -31,7 +39,7 @@ function acceptAIMove(e)
 function engineError(e)
 {
   // TODO show error on info pane
-  console.error(e);
+  console.error(e.message);
 }
 
 
@@ -48,7 +56,7 @@ function timeUntilFlag(color)
 
 function getTimeForMove(player)
 {
-  let sets = Settings.ai[ (player == Module.PlayerColor.WHITE) ? "white" : "black" ];
+  let sets = getCurrentPlayerSets();
   
   let time = 0;
   if(sets.limitMode == SearchLimits.CONSTANT_TIME)
@@ -76,9 +84,11 @@ function getTimeForMove(player)
 
 function makeAIMove()
 {
+  let sets = getCurrentPlayerSets();
+  if(!sets.usingAI)
+    return engineError({message: "AI tried playing a move when it's not its turn."});
+    
   let time = getTimeForMove(Game.game.board.turn);
-  
-  let sets = Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
   
   let depth = 100;
   if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
