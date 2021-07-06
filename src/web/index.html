@@ -145,6 +145,33 @@
         engine = new Worker("engine.worker.js");
         engine.onmessage = acceptAIMove;
         engine.onerror = engineError;
+        
+        ///////////////////////////////////////////////////////
+        
+        setInterval(()=>{
+          // if the AI is not running but is supposed to be, start it
+          let sets = getCurrentPlayerSets();
+          if(sets.usingAI && !AI_status.running)
+          {
+            console.warn("Restarting stopped AI...");
+            makeAIMove();
+          }
+          
+          // update the load bar
+          if(!AI_status.running)
+            l("ai-load-bar").style.display = "none";
+          else
+          {
+            if(l("ai-load-bar").style.display == "none")
+              l("ai-load-bar").style.display = "block";
+              
+            let p = Game.game.clock.getTimeSpentThisTurn() / AI_status.thinking_time;
+            let perc = Math.max(Math.min(Math.round(p*100), 100), 0);
+              
+            
+            l("load-slider").style.width = perc+"%";
+          }
+        }, 500)
       }
       
       function setOrientation(el)
@@ -315,6 +342,8 @@
             
             </ul>
           </div>
+          
+          <div id="ai-load-bar"><div id="load-slider"></div></div>
         </div>
       </div>
     </div>

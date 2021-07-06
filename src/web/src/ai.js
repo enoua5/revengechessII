@@ -1,3 +1,8 @@
+var AI_status = {
+  running: false,
+  thinking_time: undefined
+};
+
 function getCurrentPlayerSets()
 {
   return Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
@@ -75,14 +80,19 @@ function acceptAIMove(e)
   {
     return engineError(e);
   }
+  
+  AI_status.running = false;
+  
   selectedSquares.prev_move = {
     from: fromSquare,
     to: toSquare
   };
+  
   dispboard(Game.game.board);
 }
 function engineError(e)
 {
+  AI_status.running = false;
   // TODO show error on info pane
   console.error(e.message);
 }
@@ -173,6 +183,8 @@ function makeAIMove()
   if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
     depth = sets.limitPlys;
     
+  AI_status.running = true;
+  AI_status.thinking_time = time;
   engine.postMessage({board: Game.game.board.serialize(), time: time, depth: depth});
   
 }

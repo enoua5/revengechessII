@@ -42,6 +42,7 @@ body
   padding-right: 0.5em;
   grid-column-start: info;
   grid-row-start: mainarea;
+  position: relative;
 }
 .square
 {
@@ -325,4 +326,28 @@ body
 #about-page p
 {
   font-size: 0.8em;
+}
+
+#ai-load-bar
+{
+  border: 1px solid white;
+  height: 1em;
+  /* margin = (100 - width) / 2 */
+  margin: 10%;
+  width: 80%;
+  padding: 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#load-slider
+{
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background: green;
 }

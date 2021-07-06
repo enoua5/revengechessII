@@ -196,3 +196,17 @@ unsigned int Clock::getBlackIncrementAmount()
 {
   return black_timer.getIncrementAmount();
 }
+
+
+unsigned int Timer::getTimeSpentThisTurn()
+{
+  update();
+  return timeSpentThisTurn;
+}
+
+unsigned int Clock::getTimeSpentThisTurn()
+{
+  if(white_timer.isRunning())
+    return white_timer.getTimeSpentThisTurn();
+  return black_timer.getTimeSpentThisTurn();
+}
