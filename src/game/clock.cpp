@@ -169,3 +169,30 @@ unsigned int Timer::getDelayLeft()
   }
   return 0;
 }
+
+
+IncrementMethod Timer::getIncType()
+{
+  return incType;
+}
+unsigned int Timer::getIncrementAmount()
+{
+  return increment;
+}
+
+IncrementMethod Clock::getWhiteIncType()
+{
+  return white_timer.getIncType();
+}
+unsigned int Clock::getWhiteIncrementAmount()
+{
+  return white_timer.getIncrementAmount();
+}
+IncrementMethod Clock::getBlackIncType()
+{
+  return black_timer.getIncType();
+}
+unsigned int Clock::getBlackIncrementAmount()
+{
+  return black_timer.getIncrementAmount();
+}

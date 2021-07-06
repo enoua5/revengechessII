@@ -38,7 +38,22 @@ onmessage = function(e) {
     });
   }
   
-  ranksArr.sort((a,b) => (a.score.score < b.score.score ? 1 : -1));
+  ranksArr.sort((a,b) => {
+    if(a.score.depth == 0 && b.score.depth != 0)
+    {
+      return 1;
+    }
+    if(b.score.depth == 0 && a.score.depth != 0)
+    {
+      return -1;
+    }
+    if(a.score.score >= 500000 && b.score.score >= 500000)
+      return a.score.depth > b.score.depth ? 1 : -1;
+    if(a.score.score <= -500000 && b.score.score <= -500000)
+      return a.score.depth < b.score.depth ? 1 : -1;
+    
+    return a.score.score < b.score.score ? 1 : -1
+  });
   
   
   postMessage({ranks: ranksArr, turn: board.turn == Module.PlayerColor.WHITE });

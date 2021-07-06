@@ -37,6 +37,7 @@ function acceptAIMove(e)
     return engineError({message: "AI tried playing a move when it's not its turn."});
   
   let moveList = e.data.ranks;
+  console.log(moveList)
   let scoreDelta = randomIntInclusive(sets.minDelta, sets.maxDelta);
   let topScore = moveList[0].score.score;
   let targetScore = topScore - scoreDelta;
@@ -47,6 +48,9 @@ function acceptAIMove(e)
   {
     if(i.score.score > targetScore)
     {
+      if(i.score.score == closestMove.score.score)
+        if(Math.random() < 0.5)
+          continue;
       nth++;
       closestMove = i;
     }
@@ -63,7 +67,14 @@ function acceptAIMove(e)
     getPieceTypeFromValue(closestMove.move.promotion)
   );
   
-  Game.game.commitMove(moveToMake);
+  try
+  {
+    Game.game.commitMove(moveToMake);
+  }
+  catch(e)
+  {
+    return engineError(e);
+  }
   selectedSquares.prev_move = {
     from: fromSquare,
     to: toSquare
@@ -88,9 +99,30 @@ function timeUntilFlag(color)
   return timeOnClock + Game.game.clock.getDelayLeft();
 }
 
+function getPlayerTimeLeft(player)
+{
+  if(player == Module.PlayerColor.BLACK)
+    return Game.game.clock.getBlackTime();
+  return Game.game.clock.getWhiteTime();
+}
+function getPlayerIncType(player)
+{
+  if(player == Module.PlayerColor.BLACK)
+    return Game.game.clock.getBlackIncType();
+  return Game.game.clock.getWhiteIncType();
+}
+function getPlayerIncAmount(player)
+{
+  if(player == Module.PlayerColor.BLACK)
+    return Game.game.clock.getBlackIncrementAmount();
+  return Game.game.clock.getWhiteIncrementAmount();
+}
+
+
 function getTimeForMove(player)
 {
-  let sets = getCurrentPlayerSets();
+  // not using the getCurrentPlayerSets() function so we stick with the argument
+  let sets = Settings.ai[ (player == Module.PlayerColor.WHITE) ? "white" : "black" ];;
   
   let time = 0;
   if(sets.limitMode == SearchLimits.CONSTANT_TIME)
@@ -99,7 +131,16 @@ function getTimeForMove(player)
   }
   else if(sets.limitMode == SearchLimits.AUTOMATIC)
   {
-    time = 15000; // TODO write actual time management algorithm
+    let halfMovesPlayed = Game.game.prevBoards.size() - 1; // -1 because it counts the current board as well
+    let estimatedMovesLeft = Math.ceil(Math.max(80 - halfMovesPlayed, 10) / 2);
+    
+    let timeLeft = getPlayerTimeLeft(player);
+    
+    time = Math.round(timeLeft / estimatedMovesLeft);
+    
+    let incrementMethod = getPlayerIncType(player);
+    if(incrementMethod == Module.IncrementMethod.DELAY || timeLeft - (time + 1000) > getPlayerIncAmount(player))
+      time += getPlayerIncAmount(player);
   }
   else if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
     return sets.maxTime;
@@ -112,6 +153,7 @@ function getTimeForMove(player)
   if(timeUntilBuffer < time)
     time = timeUntilBuffer;
     
+  //console.log(`Spending ${time/1000} seconds thinking...`);
   return Math.max(time, 0);
     
 }

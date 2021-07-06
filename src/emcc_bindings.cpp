@@ -189,6 +189,10 @@ EMSCRIPTEN_BINDINGS(mod)
     .function("isWhiteRunning", &Clock::isWhiteRunning)
     .function("isBlackRunning", &Clock::isBlackRunning)
     .function("getDelayLeft", &Clock::getDelayLeft)
+    .function("getBlackIncType", &Clock::getBlackIncType)
+    .function("getWhiteIncType", &Clock::getWhiteIncType)
+    .function("getBlackIncrementAmount", &Clock::getBlackIncrementAmount)
+    .function("getWhiteIncrementAmount", &Clock::getWhiteIncrementAmount)
     .function("getResultFromFlag", &Clock::getResultFromFlag)
   ;
   

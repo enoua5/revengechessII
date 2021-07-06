@@ -23,6 +23,9 @@ class Timer
     //void set_running(bool);
     inline bool isRunning();
     unsigned int getDelayLeft();
+    
+    inline IncrementMethod getIncType();
+    inline unsigned int getIncrementAmount();
   protected:
     IncrementMethod incType;
     unsigned int increment;
@@ -47,6 +50,10 @@ class Clock
     unsigned int getBlackTime();
     bool isWhiteRunning();
     bool isBlackRunning();
+    IncrementMethod getWhiteIncType();
+    unsigned int getWhiteIncrementAmount();
+    IncrementMethod getBlackIncType();
+    unsigned int getBlackIncrementAmount();
     unsigned int getDelayLeft();
     GameResult getResultFromFlag();
   protected:
