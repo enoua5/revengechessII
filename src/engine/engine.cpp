@@ -238,6 +238,7 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
         std::cout << move.toString() << std::endl;
       #endif
       SearchResult sr = solve(*b, endTime, depth);
+      sr.score *= -1;
       
       if(abort)
         return ms_list;
