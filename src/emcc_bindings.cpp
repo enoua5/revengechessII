@@ -176,6 +176,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .property("clock", &Game::clock)
     .function("takeBack", &Game::takeBack)
     .function("commitMove", &Game::commitMove)
+    .function("startClock", &Game::startClock)
   ;
   
   class_<Clock>("Clock")

@@ -30,4 +30,5 @@ class Game
     
     void takeBack();
     void commitMove(Move);
+    void startClock();
 };

@@ -7,12 +7,20 @@ Version Game::version = Version("Revenge Chess Core", 'b', 2, 1, 0);
 
 Game::Game()
 {
-  clock.toggle(); // start the clock for white
+  startClock();
+  //clock.toggle(); // start the clock for white
   #ifndef __EMSCRIPTEN__
     prevBoards.push(board);
   #else
     prevBoards.push_back(board);
   #endif
+}
+
+void Game::startClock()
+{
+  if(clock.isWhiteRunning() || clock.isBlackRunning())
+    return;
+  clock.toggle();
 }
 
 void Game::takeBack()
