@@ -234,6 +234,7 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
   
   Time endTime = clock_res::now() + std::chrono::milliseconds((int)(maxSeconds*1000));
   
+  bool foundWinningMove = false;
   for(int depth = 1; depth <= maxDepth; depth++)
   {
     int i = 0;
@@ -244,25 +245,34 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
         std::cout << move.toString() << std::endl;
       #endif
       GameResult gr = b->getGameResult();
-      SearchResult sr(Engine::static_eval(*b), gr, 0); 
+      //SearchResult sr(Engine::static_eval(*b), gr, 0); 
       if(gr == ONGOING)
       {
-        SearchResult depthSearch = solve(*b, endTime, depth);
-        if(depthSearch.result != ABORT)
+        //SearchResult depthSearch = solve(*b, endTime, depth);
+        SearchResult sr = solve(*b, endTime, depth);
+        if(sr.result != ABORT)
         {
-          sr = depthSearch;
           sr.score *= -1;
+          ms_list[i] = MoveScore(move, sr);
+          
+          if(sr.score == Engine::pos_inf)
+            foundWinningMove = true;
         }
+      }
+      else if(gr == WHITE_VICTORY || gr == BLACK_VICTORY)
+      {
+        SearchResult sr(-Engine::static_eval(*b), gr, 1);
+        ms_list[i] = MoveScore(move, sr);
+        foundWinningMove = true;
       }
       
       //if(abort)
       //  return ms_list;
       
-      ms_list[i] = MoveScore(move, sr);
       i++;
     }
   
-    if(clock_res::now() > endtime)
+    if(clock_res::now() > endtime || foundWinningMove)
       break;
   }
   
