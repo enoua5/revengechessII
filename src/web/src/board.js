@@ -368,6 +368,11 @@ function squareClicked(e, which)
   if(e.type == "drop")
     e.preventDefault()
   
+  // do not allow the player to move on the AI's turn
+  // TODO when adding online vs, add an `|| .isAway` condition
+  if(getCurrentPlayerSets().usingAI)
+    return;
+  
   let s = stringToSquare(which.id);
   
   
