@@ -84,6 +84,8 @@ int Engine::king_squares[64] = {
 
 SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int beta)
 {
+  if(clock_res::now() > endtime)
+    abort = true;
   #ifdef DEBUG
     nodes_searched ++;
   #endif
@@ -92,14 +94,14 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
   GameResult gr = board.getGameResult(false);
   if(depth == 0 || gr != ONGOING)
   {
-    if(clock_res::now() > endtime)
-      abort = true;
+    //if(clock_res::now() > endtime)
+    //  abort = true;
     return SearchResult(static_eval(board), gr, 0);
   }
   if(moves.empty())
   {
-    if(clock_res::now() > endtime)
-      abort = true;
+    //if(clock_res::now() > endtime)
+    //  abort = true;
       
     return SearchResult(-100, STALEMATE, 0);
   }
@@ -207,7 +209,8 @@ SearchResult Engine::solve(const Board& board, const Time endtime, const int max
     #endif
   }
   
-  res.bm = res.pv.back();
+  if(res.pv.size() > 0)
+    res.bm = res.pv.back();
   return res;
 }
 SearchResult Engine::solve(const Board& board, const float seconds)
@@ -244,13 +247,17 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
       SearchResult sr(Engine::static_eval(*b), gr, 0); 
       if(gr == ONGOING)
       {
-        sr = solve(*b, endTime, depth);
-        sr.score *= -1;
+        SearchResult depthSearch = solve(*b, endTime, depth);
+        if(depthSearch.result != ABORT)
+        {
+          sr = depthSearch;
+          sr.score *= -1;
+        }
       }
       
-      if(abort)
-        return ms_list;
-        
+      //if(abort)
+      //  return ms_list;
+      
       ms_list[i] = MoveScore(move, sr);
       i++;
     }
@@ -258,6 +265,7 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
     if(clock_res::now() > endtime)
       break;
   }
+  
   return ms_list;
 }
 
