@@ -133,14 +133,16 @@ function showTimes()
   if(!Game.game)
     return;
   
-  setTimeOn(l("white_clock"), Game.game.clock.getWhiteTime() / 1000);
-  if(Game.game.clock.isWhiteRunning())
+  let whiteTime = Game.game.clock.getWhiteTime() / 1000;
+  setTimeOn(l("white_clock"), whiteTime);
+  if(Game.game.clock.isWhiteRunning() && whiteTime != 0)
     l("white_clock").classList.add("active_clock");
   else
     l("white_clock").classList.remove("active_clock");
   
-  setTimeOn(l("black_clock"), Game.game.clock.getBlackTime() / 1000);
-  if(Game.game.clock.isBlackRunning())
+  let blackTime = Game.game.clock.getBlackTime() / 1000;
+  setTimeOn(l("black_clock"), blackTime);
+  if(Game.game.clock.isBlackRunning() && blackTime != 0)
     l("black_clock").classList.add("active_clock");
   else
     l("black_clock").classList.remove("active_clock");
