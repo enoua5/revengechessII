@@ -125,6 +125,21 @@ function setTimeOn(clockElement, time)
   clockElement.appendChild(millBox);
 }
 
+function addDelayLeft(clockElement)
+{
+  let delayLeft = Game.game.clock.getDelayLeft();
+  if(delayLeft > 0 && delayLeft < 60000)
+  {
+    let dec = Math.floor(delayLeft/100) % 10;
+    let dec_str = ""+dec;
+    
+    let delIndicator = document.createElement("span");
+    delIndicator.classList.add("delay-left-indicator");
+    delIndicator.innerText = "+" + Math.floor(delayLeft/1000) + "." + dec_str;
+    clockElement.appendChild(delIndicator);
+  }
+}
+
 function showTimes()
 {
 //  l("white_clock").innerText = Game.game.clock.getWhiteTime() / 1000;
@@ -136,14 +151,26 @@ function showTimes()
   let whiteTime = Game.game.clock.getWhiteTime() / 1000;
   setTimeOn(l("white_clock"), whiteTime);
   if(Game.game.clock.isWhiteRunning() && whiteTime != 0)
+  {
     l("white_clock").classList.add("active_clock");
+    if(Game.game.clock.getWhiteIncType() == Module.IncrementMethod.DELAY)
+    {
+      addDelayLeft(l("white_clock"));
+    }
+  }
   else
     l("white_clock").classList.remove("active_clock");
   
   let blackTime = Game.game.clock.getBlackTime() / 1000;
   setTimeOn(l("black_clock"), blackTime);
   if(Game.game.clock.isBlackRunning() && blackTime != 0)
+  {
     l("black_clock").classList.add("active_clock");
+    if(Game.game.clock.getBlackIncType() == Module.IncrementMethod.DELAY)
+    {
+      addDelayLeft(l("black_clock"));
+    }
+  }
   else
     l("black_clock").classList.remove("active_clock");
 }
