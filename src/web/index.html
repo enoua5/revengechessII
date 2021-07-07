@@ -165,7 +165,8 @@
             if(l("ai-load-bar").style.display == "none")
               l("ai-load-bar").style.display = "block";
               
-            let p = Game.game.clock.getTimeSpentThisTurn() / AI_status.thinking_time;
+            let timeSpentThinking = Game.game.clock.getTimeSpentThisTurn() - AI_status.time_spent_before_thining
+            let p = timeSpentThinking / AI_status.thinking_time;
             let perc = Math.max(Math.min(Math.round(p*100), 100), 0);
               
             

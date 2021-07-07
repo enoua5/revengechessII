@@ -1,6 +1,7 @@
 var AI_status = {
   running: false,
-  thinking_time: undefined
+  thinking_time: undefined,
+  time_spent_before_thining: undefined
 };
 
 function getCurrentPlayerSets()
@@ -187,6 +188,7 @@ function makeAIMove()
     
   AI_status.running = true;
   AI_status.thinking_time = time;
+  AI_status.time_spent_before_thining = Game.game.clock.getTimeSpentThisTurn();
   engine.postMessage({board: Game.game.board.serialize(), time: time, depth: depth});
   
 }
