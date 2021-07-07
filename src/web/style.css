@@ -362,3 +362,25 @@ body
   width: 1em;
   height: 1em;
 }
+
+.tooltip
+{
+  display: none;
+  background: #111;
+  border: 1px solid white;
+  border-radius: 10%;
+  position: absolute;
+  left: -50%;
+  bottom: 0.1em;
+  font-size: 0.7em;
+}
+
+.tooltip-holder
+{
+  position: relative;
+}
+
+.tooltip-holder:hover .tooltip
+{
+  display: block;
+}
