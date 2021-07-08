@@ -27,12 +27,55 @@ function squareToBoard(s)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+function showResultScreen()
+{
+  let winnerText = "ERROR";
+  
+  let winner = Game.game.clock.getResultFromFlag();
+  let byTime = false;
+  if(winner != Module.GameResult.ONGOING)
+  {
+    l("winner-info").innerText = "By time";
+    byTime = true;
+  }
+  else
+    winner = Game.game.board.getGameResult(true);
+  
+  switch(winner)
+  {
+    case Module.GameResult.WHITE_VICTORY:
+      winnerText = "White wins!";
+      break;
+    case Module.GameResult.BLACK_VICTORY:
+      winnerText = "Black wins!";
+      break;
+    case Module.GameResult.STALEMATE:
+      winnerText = "It's a draw.";
+      break;
+  }
+  l("winner").innerText = winnerText;
+  
+  if(!byTime && winner != Module.GameResult.STALEMATE)
+    l("winner-info").innerText = "By checkmate";
+  else if(!byTime)
+    l("winner-info").innerText = "";
+    
+  showWindow("result-screen");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 function whiteCurrentlyOnTop()
 {
   return l("board").firstChild.id=="square_h1";
 }
 function dispboard(board)
 {
+  if(Game.game.board.getGameResult(true) != Module.GameResult.ONGOING)
+  {
+    showResultScreen();
+  }
+
   let whiteOnTop = shouldWhiteBeOnTop();
   
   for(let i = 0; i < 64; i++)
@@ -159,7 +202,8 @@ var selectedSquares = {
   from: null,
   to: null,
   hover: null,
-  prev_move: null
+  prev_move: null,
+  awaiting_promo: false
 }
 
 function destroyPromotionSelectBoxes()
@@ -175,6 +219,7 @@ function destroyPromotionSelectBoxes()
 
 function cancelPromotion()
 {
+  selectedSquares.awaiting_promo = false;
   selectedSquares.from = null;
   selectedSquares.to = null;
   destroyPromotionSelectBoxes();
@@ -183,6 +228,7 @@ function cancelPromotion()
 
 function createPromotionSelectBox(flip, side)
 {
+  selectedSquares.awaiting_promo = true;
   if(flip == undefined)
     flip = false;
   if(side == undefined)
@@ -360,9 +406,10 @@ function squareUnhovered(e, which)
 
 function droppedOutside()
 {
-  if(selectedSquares.from == null)
+  if(selectedSquares.from == null || selectedSquares.awaiting_promo)
     return;
-  squareToBoard(selectedSquares.from).firstChild.style.opacity = "1"; squareToBoard(selectedSquares.from).classList.remove("selected");
+  squareToBoard(selectedSquares.from).firstChild.style.opacity = "1";
+  squareToBoard(selectedSquares.from).classList.remove("selected");
   selectedSquares.from = null;
   selectedSquares.to = null;
   dispValidDestinations();
@@ -488,4 +535,11 @@ function squareClicked(e, which)
     // clear indicators
     dispValidDestinations();
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+function newGame()
+{
+  alreadyShowedResultScreen = false;
 }
