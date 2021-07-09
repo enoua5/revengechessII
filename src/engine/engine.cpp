@@ -15,7 +15,7 @@
   int branches_pruned = 0;
 #endif
 
-Version Engine::version = Version("Vengence", 'b', 1, 1, 0);
+Version Engine::version = Version("Vengence", 'b', 1, 1, 2);
 
 int Engine::pawn_squares[64] = {
 	0,  0,  0,  0,  0,  0,  0,  0,
