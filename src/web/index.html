@@ -29,7 +29,9 @@
           white: defaultEngineSettings(),
           black: defaultEngineSettings()
         },
-      }
+      };
+      
+      var prelimSettings = {};
       
       var Game = {
         game: null,
@@ -44,13 +46,18 @@
           Game.engine = new Module.Engine();
           if(pageLoaded)
           {
-            dispboard(Game.game.board);
-            fillVersionNumbers();
+            bothPageAndModuleLoaded()
           }
         }
       };
       
       var engine;
+    
+      function bothPageAndModuleLoaded()
+      {
+        dispboard(Game.game.board);
+        fillVersionNumbers();
+      }
     
       function onload()
       {
@@ -82,8 +89,7 @@
         pageLoaded = true;
         if(Game.game)
         {
-          dispboard(Game.game.board);
-          fillVersionNumbers();
+          bothPageAndModuleLoaded();
         }
         
         //////////////////////////////////////////////////
@@ -180,6 +186,7 @@
         selectRadio('orientation-radio', el, 'orientation');
         dispboard(Game.game.board);
       }
+      
     </script>
     
     <script src="revengechess.js"></script>
@@ -188,6 +195,160 @@
   
     <!-- Pop-up holder -->
     <div id="pane">
+      <div id="result-screen" class="window">
+        <h2 id="winner"></h2>
+        <h3 id="winner-info"></h3>
+        <button onclick="hideWindows();">show board</button>
+        <button onclick="hideWindows(); showWindow('new-game');">new game</button>
+      </div>
+      <div id="new-game" class="window">
+        <h2>New game</h2>
+        <details>
+          <summary>White settings</summary>
+          <details>
+            <summary>Time settings</summary>
+            
+            <input id="time-for-white" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="white" data-appliesTo="useTime" data-enablesection="white-time-settings"></input>
+            <label for="time-for-white">Use time for player</label>
+            <br/>
+            <div id="white-time-settings">
+              <span>Main time:</span>
+              
+              <input onchange="updatePrelimSets(this)" data-color="white" data-appliesto="mainTimeMin" type="number" min="0" value="5"></input>
+              <span>:</span>
+              <input onchange="updatePrelimSets(this)" data-color="white" data-appliesto="mainTimeSec" type="number" min="0" max="59" value="0"></input>
+              <br/>
+              
+              <span>Increment amount:</span>
+              
+              <input onchange="updatePrelimSets(this)" data-color="white" data-appliesto="incrementAmount" type="number" min="0" max="60" value="15"></input>
+              
+              <span>seconds</span>
+              <br/>
+              
+              <span>IncrementMethod:</span>
+              <select onchange="updatePrelimSets(this)" data-color="white" data-appliesto="incrementMethod">
+                <option value="bronstein">Bronstein Increment</option>
+                <option value="increment">Simple Increment</option>
+                <option value="delay">Delay</option>
+              </select>
+            </div>
+            
+          </details>
+          <details>
+            <summary>AI settings</summary>
+            <input id="white-is-ai" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="usingAI" data-enablesection="white-ai-settings" type="checkbox"></input>
+            <label for="white-is-ai">Player is AI</label>
+            <div id="white-ai-settings" class="setting-disable">
+              <span>AI limit method:</span>
+              <select onchange="updatePrelimSets(this)" data-color="white" data-appliesto="limitMode">
+                <option value="auto">Automatic</option>
+                <option value="time">Constant time</option>
+                <option value="depth">Constant depth</option>
+              </select>
+              <br/>
+              <span>Max thinking time: </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="maxTime" min="0" value="60"></input>
+              <span>seconds</span>
+              <br/>
+              <span>Default thinking time (if constant): </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="limitSeconds" min="0" value="15"></input>
+              <span>seconds</span>
+              <br/>
+              <span>Plys to search (if constant): </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="limitPlys" min="0" value="6"></input>
+              <br/>
+              <span>Leave a buffer of</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="flagBuffer" min="0" value="500"></input>
+              <span>milliseconds on the clock</span>
+              <br/>
+              <span>Try to play moves that are</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="minDelta" min="0" value="0"></input>
+              <span>-</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="white" data-appliesto="maxDelta" min="0" value="10"></input>
+              <span>centipawns worse than the best move</span>
+            </div>
+            
+          </details>
+        </details>
+        
+        <hr/>
+        
+        <details>
+          <summary>Black settings</summary>
+          <details>
+            <summary>Time settings</summary>
+            
+            <input id="black-same-time" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="black" data-appliesTo="useSameTime" data-disablesection="black-time-settings-all"></input>
+            <label for="black-same-time">Use same time settings as White</label>
+            
+            <div id="black-time-settings-all" class="setting-disable">
+              <input id="time-for-black" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="black" data-appliesTo="useTime" data-enablesection="black-time-settings"></input>
+              <label for="time-for-black">Use time for player</label>
+              <br/>
+              <div id="black-time-settings">
+                <span>Main time:</span>
+                
+                <input onchange="updatePrelimSets(this)" data-color="black" data-appliesto="mainTimeMin" type="number" min="0" value="5"></input>
+                <span>:</span>
+                <input onchange="updatePrelimSets(this)" data-color="black" data-appliesto="mainTimeSec" type="number" min="0" max="59" value="0"></input>
+                <br/>
+                
+                <span>Increment amount:</span>
+                
+                <input onchange="updatePrelimSets(this)" data-color="black" data-appliesto="incrementAmount" type="number" min="0" max="60" value="15"></input>
+                
+                <span>seconds</span>
+                <br/>
+                
+                <span>IncrementMethod:</span>
+                <select onchange="updatePrelimSets(this)" data-color="black" data-appliesto="incrementMethod">
+                  <option value="bronstein">Bronstein Increment</option>
+                  <option value="increment">Simple Increment</option>
+                  <option value="delay">Delay</option>
+                </select>
+              </div>
+            </div>
+          </details>
+          <details>
+            <summary>AI settings</summary>
+            <input id="black-is-ai" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="usingAI" data-enablesection="black-ai-settings" type="checkbox"></input>
+            <label for="black-is-ai">Player is AI</label>
+            <div id="black-ai-settings" class="setting-disable">
+              <span>AI limit method:</span>
+              <select onchange="updatePrelimSets(this)" data-color="black" data-appliesto="limitMode">
+                <option value="auto">Automatic</option>
+                <option value="time">Constant time</option>
+                <option value="depth">Constant depth</option>
+              </select>
+              <br/>
+              <span>Max thinking time: </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="maxTime" min="0" value="60"></input>
+              <span>seconds</span>
+              <br/>
+              <span>Default thinking time (if constant): </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="limitSeconds" min="0" value="15"></input>
+              <span>seconds</span>
+              <br/>
+              <span>Plys to search (if constant): </span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="limitPlys" min="0" value="6"></input>
+              <br/>
+              <span>Leave a buffer of</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="flagBuffer" min="0" value="500"></input>
+              <span>milliseconds on the clock</span>
+              <br/>
+              <span>Try to play moves that are</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="minDelta" min="0" value="0"></input>
+              <span>-</span>
+              <input type="number" onchange="updatePrelimSets(this)" data-color="black" data-appliesto="maxDelta" min="0" value="10"></input>
+              <span>centipawns worse than the best move</span>
+            </div>
+          </details>
+        </details>
+        
+        <button onclick="hideWindows();">close</button>
+        <button onclick = "newGame(); hideWindows()">create new game</button>
+      </div>
       <div id="about-page" class="window">
         <h2>About</h2>
         <hr/>
@@ -304,8 +465,9 @@
           <div class="dropdown header-button">
             <p>Game</p>
             <ul>
-              <li>New game..</li>
-              <li class = 'button-disable'>Comming soon..</li>
+              <li onclick="showWindow('new-game')">New game..</li>
+              <li class = 'button-disable'>Connect to server..</li>
+              <li class = 'button-disable'>Tutorial scenarios</li>
             </ul>
           </div>
           <div class="dropdown header-button">

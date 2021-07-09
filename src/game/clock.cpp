@@ -42,6 +42,8 @@ unsigned int Timer::update() // returns timeLeft
           timeLeft = timeLeftAtStartOfTurn - timeSpentThisTurn + increment;
       }
     }
+    else if(incType == NO_CLOCK)
+      timeLeft = timeLeftAtStartOfTurn;
     else
     {
       if(timeLeftAtStartOfTurn < timeSpentThisTurn)

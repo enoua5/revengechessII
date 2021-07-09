@@ -92,7 +92,7 @@ body
   height: 80%;
   background: white;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
 }
 .promotion_selector>div
 {
@@ -100,7 +100,7 @@ body
   width: 300%;
   height: 200%;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   
   left: -100%; /* JS switches this to 0% for promotion at the left-most column, and -200% for right-most */
   top: 100%; /* JS switches this to -200% for promotion at the bottom of the screen */
@@ -242,7 +242,7 @@ body
   margin: initial;
   position: absolute;
   margin-top: 0.1em;
-  z-index: 2;
+  z-index: 3;
 }
 .inner-menu-button > ul
 {
@@ -388,4 +388,30 @@ body
 .delay-left-indicator
 {
   font-size: 0.75em;
+}
+
+.window :is(h1,h2,h3,h4,h5,h6)
+{
+  text-decoration: underline;
+}
+
+#new-game details
+{
+  margin: 1em;
+  text-align: left;
+}
+
+#new-game input[type=number]
+{
+  width: 3em;
+}
+
+#new-game
+{
+  width: 40em;
+}
+
+.setting-disable
+{
+  display: none;
 }

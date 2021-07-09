@@ -140,16 +140,34 @@ function addDelayLeft(clockElement)
   }
 }
 
+var alreadyShowedResultScreen = false;
 function showTimes()
 {
+  if(Game.game.clock.getResultFromFlag() != Module.GameResult.ONGOING && !alreadyShowedResultScreen)
+  {
+    alreadyShowedResultScreen = true;
+    showResultScreen();
+  }
 //  l("white_clock").innerText = Game.game.clock.getWhiteTime() / 1000;
 //  l("black_clock").innerText = Game.game.clock.getBlackTime() / 1000;
   
   if(!Game.game)
     return;
-  
-  let whiteTime = Game.game.clock.getWhiteTime() / 1000;
-  setTimeOn(l("white_clock"), whiteTime);
+    
+  let whiteTime = 0.001;
+  if(Game.game.clock.getWhiteIncType() != Module.IncrementMethod.NO_CLOCK)
+  {
+    whiteTime = Game.game.clock.getWhiteTime() / 1000;
+    setTimeOn(l("white_clock"), whiteTime);
+  }
+  else
+  {
+    let mainBox = document.createElement("span");
+    mainBox.classList.add("timer-main-text");
+    mainBox.innerHTML = "&#8734;" // infinity symbol
+    l("white_clock").innerHTML = "";
+    l("white_clock").appendChild(mainBox);
+  }
   if(Game.game.clock.isWhiteRunning() && whiteTime != 0)
   {
     l("white_clock").classList.add("active_clock");
@@ -161,8 +179,20 @@ function showTimes()
   else
     l("white_clock").classList.remove("active_clock");
   
-  let blackTime = Game.game.clock.getBlackTime() / 1000;
-  setTimeOn(l("black_clock"), blackTime);
+  let blackTime = 0.001;
+  if(Game.game.clock.getBlackIncType() != Module.IncrementMethod.NO_CLOCK)
+  {
+    blackTime = Game.game.clock.getBlackTime() / 1000;
+    setTimeOn(l("black_clock"), blackTime);
+  }
+  else
+  {
+    let mainBox = document.createElement("span");
+    mainBox.classList.add("timer-main-text");
+    mainBox.innerHTML = "&#8734;" // infinity symbol
+    l("black_clock").innerHTML = "";
+    l("black_clock").appendChild(mainBox);
+  }
   if(Game.game.clock.isBlackRunning() && blackTime != 0)
   {
     l("black_clock").classList.add("active_clock");

@@ -138,3 +138,33 @@ function gameIsOver()
     return true;
   return false;
 }
+
+function updatePrelimSets(element)
+{
+  if(element.dataset.enablesection)
+  {
+    if(element.checked)
+      l(element.dataset.enablesection).classList.remove("setting-disable");
+    else
+      l(element.dataset.enablesection).classList.add("setting-disable");
+  }
+  if(element.dataset.disablesection)
+  {
+    if(!element.checked)
+      l(element.dataset.disablesection).classList.remove("setting-disable");
+    else
+      l(element.dataset.disablesection).classList.add("setting-disable");
+  }
+  
+  if(!prelimSettings[element.dataset.color])
+    prelimSettings[element.dataset.color]={};
+  
+  let sets = prelimSettings[element.dataset.color];
+  
+  if(element.type != "checkbox")
+    sets[element.dataset.appliesto] = element.value;
+  else
+    sets[element.dataset.appliesto] = element.checked;
+    
+  
+}

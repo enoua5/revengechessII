@@ -539,7 +539,128 @@ function squareClicked(e, which)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+function copyAISettings(src, dest)
+{
+  let def = defaultEngineSettings();
+
+    dest.usingAI = (src.usingAI == undefined) ? def.usingAI : src.usingAI;
+    
+    dest.limitMode = (src.limitMode == undefined) ? def.limitMode : src.limitMode;
+    if(dest.limitMode == "time")
+      dest.limitMode = SearchLimits.CONSTANT_TIME;
+    else if(dest.limitMode == "depth")
+      dest.limitMode = SearchLimits.CONSTANT_DEPTH;
+    else if(dest.limitMode == "auto")
+      dest.limitMode = SearchLimits.AUTOMATIC;
+      
+    dest.maxTime = (src.maxTime == undefined) ? def.maxTime : parseInt(src.maxTime)*1000;
+    
+    dest.limitSeconds = (src.limitSeconds == undefined) ? def.limitSeconds : parseInt(src.limitSeconds)*1000;
+    
+    dest.limitPlys = (src.limitPlys == undefined) ? def.limitPlys : parseInt(src.limitPlys);
+    
+    dest.flagBuffer = (src.flagBuffer == undefined) ? def.flagBuffer : parseInt(src.flagBuffer);
+    
+    dest.minDelta = (src.minDelta == undefined) ? def.minDelta : parseInt(src.minDelta);
+    
+    dest.maxDelta = (src.minDelta == undefined) ? def.maxDelta : parseInt(src.maxDelta);
+}
+
 function newGame()
 {
   alreadyShowedResultScreen = false;
+  
+  if(!prelimSettings.white)
+    prelimSettings.white = {};
+  if(!prelimSettings.black)
+    prelimSettings.black = {};
+  copyAISettings(prelimSettings.white, Settings.ai.white);
+  copyAISettings(prelimSettings.black, Settings.ai.black);
+  
+  Game.game = new Module.Game();
+  
+  // TODO less hardcoded values please
+  let wIncAmt = prelimSettings.white.incrementAmount;
+  if(wIncAmt == undefined)
+    wIncAmt = 15;
+  wIncAmt = parseInt(wIncAmt)*1000;
+  
+  let wTimeMin = prelimSettings.white.mainTimeMin;
+  if(wTimeMin == undefined)
+    wTimeMin = 5;
+  wTimeMin = parseInt(wTimeMin);
+  
+  let wTimeSec = prelimSettings.white.mainTimeSec;
+  if(wTimeSec == undefined)
+    wTimeSec = 0;
+  wTimeSec = parseInt(wTimeSec);
+  
+  let wMainTime = (wTimeMin*60 + wTimeSec)*1000;
+  
+  let wIncType = prelimSettings.white.incrementMethod;
+  if(wIncType == undefined)
+    wIncType = "bronstein";
+    
+  if(wIncType == "bronstein")
+    wIncType = Module.IncrementMethod.BRONSTEIN;
+  else if(wIncType == "increment")
+    wIncType = Module.IncrementMethod.INCREMENT;
+  else if(wIncType == "delay")
+    wIncType = Module.IncrementMethod.DELAY;
+    
+  if(prelimSettings.white.useTime == undefined)
+    prelimSettings.white.useTime = true;
+  if(!prelimSettings.white.useTime)
+    wIncType = Module.IncrementMethod.NO_CLOCK;
+  
+  if(prelimSettings.black.useSameTime == undefined)
+    prelimSettings.black.useSameTime = true;
+  if(prelimSettings.black.useSameTime)
+  {
+    let clock = new Module.Clock(wMainTime, wIncAmt, wIncType);
+    Game.game.clock = clock;
+  }
+  else
+  {
+    let bIncAmt = prelimSettings.black.incrementAmount;
+    if(bIncAmt == undefined)
+      bIncAmt = 15;
+    bIncAmt = parseInt(bIncAmt)*1000;
+    
+    let bTimeMin = prelimSettings.black.mainTimeMin;
+    if(bTimeMin == undefined)
+      bTimeMin = 5;
+    bTimeMin = parseInt(bTimeMin);
+    
+    let bTimeSec = prelimSettings.black.mainTimeSec;
+    if(bTimeSec == undefined)
+      bTimeSec = 0;
+    bTimeSec = parseInt(bTimeSec);
+    
+    let bMainTime = (bTimeMin*60 + bTimeSec)*1000;
+    
+    let bIncType = prelimSettings.black.incrementMethod;
+    if(bIncType == undefined)
+      bIncType = "bronstein";
+      
+    if(bIncType == "bronstein")
+      bIncType = Module.IncrementMethod.BRONSTEIN;
+    else if(bIncType == "increment")
+      bIncType = Module.IncrementMethod.INCREMENT;
+    else if(bIncType == "delay")
+      bIncType = Module.IncrementMethod.DELAY;
+    
+    if(prelimSettings.black.useTime == undefined)
+      prelimSettings.black.useTime = true;
+    if(!prelimSettings.black.useTime)
+      bIncType = Module.IncrementMethod.NO_CLOCK;
+      
+    let clock = new Module.Clock(wMainTime, wIncAmt, wIncType,
+                                 bMainTime, bIncAmt, bIncType);
+    Game.game.clock = clock;
+  }
+  
+  Game.game.startClock();
+  selectedSquares.prev_move = {};
+  dispboard(Game.game.board);
 }

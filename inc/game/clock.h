@@ -10,14 +10,15 @@ enum IncrementMethod
 {
   INCREMENT,
   DELAY,
-  BRONSTEIN
+  BRONSTEIN,
+  NO_CLOCK
 };
 
 class Timer
 {
   public:
     // all times in milliseconds
-    Timer(unsigned int startingTime = 5*60*1000, unsigned int increment = 15000, IncrementMethod inct = BRONSTEIN);
+    Timer(unsigned int startingTime = 5*60*1000, unsigned int increment = 15000, IncrementMethod inct = NO_CLOCK);
     unsigned int update(); // returns timeLeft
     unsigned int toggle(); // returns timeLeft
     //void set_running(bool);

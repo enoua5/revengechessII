@@ -202,6 +202,7 @@ EMSCRIPTEN_BINDINGS(mod)
     .value("INCREMENT", INCREMENT)
     .value("DELAY", DELAY)
     .value("BRONSTEIN", BRONSTEIN)
+    .value("NO_CLOCK", NO_CLOCK)
   ;
   
   value_object<SearchResult>("SearchResult")
