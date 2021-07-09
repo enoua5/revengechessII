@@ -178,7 +178,11 @@
             
             l("load-slider").style.width = perc+"%";
           }
-        }, 500)
+        }, 500);
+        
+        ////////////////////////////////////////////////////////////////////////
+        
+        showWindow('home-screen');
       }
       
       function setOrientation(el)
@@ -195,6 +199,15 @@
   
     <!-- Pop-up holder -->
     <div id="pane">
+      <div id="home-screen" class="window">
+        <h2>Revenge Chess</h2>
+        <h5>I'm not a UI designer, sorry. &#x1F605;</h5>
+        <button onclick="hideWindows(); showWindow('new-game')">Play</button>
+        <br/>
+        <button disabled>Play online</button>
+        <br/>
+        <button disabled>Play tutorials</button>
+      </div>
       <div id="result-screen" class="window">
         <h2 id="winner"></h2>
         <h3 id="winner-info"></h3>
