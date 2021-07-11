@@ -67,8 +67,11 @@ function shouldWhiteBeOnTop()
     return true;
   if(Settings.orientation == "w")
     return false;
-    
-  if(Game.game.board.turn == Module.PlayerColor.WHITE)
+  
+  let board = Game.game.board;
+  let turn = board.turn;
+  board.delete();
+  if(turn == Module.PlayerColor.WHITE)
     return false;
   return true;
 }
@@ -132,9 +135,15 @@ function randomIntInclusive(min, max)
 
 function gameIsOver()
 {
-  if(Game.game.board.getGameResult(true) != Module.GameResult.ONGOING)
+  let board = Game.game.board;
+  let gr = board.getGameResult(true);
+  board.delete();
+  if(gr != Module.GameResult.ONGOING)
     return true;
-  if(Game.game.clock.getResultFromFlag() != Module.GameResult.ONGOING)
+  let clock = Game.game.clock;
+  gr = clock.getResultFromFlag();
+  clock.delete();
+  if(gr != Module.GameResult.ONGOING)
     return true;
   return false;
 }

@@ -29,9 +29,12 @@ function squareToBoard(s)
 
 function showResultScreen()
 {
+  let clock = Game.game.clock;
+  let board = Game.game.board;
+
   let winnerText = "ERROR";
   
-  let winner = Game.game.clock.getResultFromFlag();
+  let winner = clock.getResultFromFlag();
   let byTime = false;
   if(winner != Module.GameResult.ONGOING)
   {
@@ -39,7 +42,7 @@ function showResultScreen()
     byTime = true;
   }
   else
-    winner = Game.game.board.getGameResult(true);
+    winner = board.getGameResult(true);
   
   switch(winner)
   {
@@ -61,6 +64,9 @@ function showResultScreen()
     l("winner-info").innerText = "";
     
   showWindow("result-screen");
+  
+  board.delete();
+  clock.delete();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +77,7 @@ function whiteCurrentlyOnTop()
 }
 function dispboard(board)
 {
-  if(Game.game.board.getGameResult(true) != Module.GameResult.ONGOING)
+  if(board.getGameResult(true) != Module.GameResult.ONGOING)
   {
     showResultScreen();
   }
@@ -121,7 +127,9 @@ function dispValidDestinations()
   let moves = [];
   if(selectedSquares.from != null)
   {
-    let moves_vector = Game.game.board.getValidMoves();
+    let board = Game.game.board;
+    let moves_vector = board.getValidMoves();
+    board.delete();
     for(let i = 0; i < moves_vector.size(); i++)
     {
       let move = moves_vector.get(i);
@@ -131,6 +139,7 @@ function dispValidDestinations()
         moves.push(move);
       }
     }
+    moves_vector.delete();
   }
   
   for(let i of l("board").children)
@@ -243,8 +252,9 @@ function createPromotionSelectBox(flip, side)
   select_box.appendChild(cancel_button);
   cancel_button.onclick = cancelPromotion; // do not call, we're linking the actual funciton pointer
   
-  
-  let turn = Game.game.board.turn;
+  let board = Game.game.board;
+  let turn = board.turn;
+  board.delete();
   let king = createPieceImage(turn, Module.PieceType.KING);
   king.onclick = ()=>selectPromotion('k');
   selections.appendChild(king);
@@ -344,7 +354,9 @@ function selectPromotion(p)
   let move = new Module.Move(selectedSquares.from, selectedSquares.to, promo);
   selectedSquares.prev_move = move;
   Game.game.commitMove(move);
-  dispboard(Game.game.board);
+  let board = Game.game.board;
+  dispboard(board);
+  board.delete();
   cancelPromotion(); // perhaps a bad name. Just clears the selection box
 }
 
@@ -368,13 +380,15 @@ function squareHovered(e, which)
   }
   selectedSquares.hover = which;
   let s = stringToSquare(which.id);
-  let pid = Game.game.board.getPlayField(s.toIndex());
+  let board = Game.game.board;
+  let pid = board.getPlayField(s.toIndex());
   if(pid == Module.PieceIdentifier.EMPTY)
   {
     dispRespawnSquares([]);
+    board.delete();
     return;
   }
-  let p = Game.game.board.getBoardPiece(pid.value);
+  let p = board.getBoardPiece(pid.value);
   
   
   
@@ -385,13 +399,14 @@ function squareHovered(e, which)
   let respawnSquares = [];
   for(let cap of captures)
   {
-    let piece = Game.game.board.getBoardPiece(cap.value);
+    let piece = board.getBoardPiece(cap.value);
     let home = piece.home;
     respawnSquares.push("square_"+numCoordToString(home.file, home.rank));
   }
   
   showPieceInfo(pid, captures);
   dispRespawnSquares(respawnSquares);
+  board.delete();
 }
 
 function squareUnhovered(e, which)
@@ -429,20 +444,25 @@ function squareClicked(e, which)
   
   let s = stringToSquare(which.id);
   
-  
-  let moves = Game.game.board.getValidMoves();
+  let board = Game.game.board;
+  let moves = board.getValidMoves();
   // if we're selecting the from square
   if(selectedSquares.from == null)
   {
     let validFromSquare = false;
     for(let i = 0; i < moves.size(); i++)
     {
-      let posFrom = moves.get(i).from;
+      let m = moves.get(i);
+      let posFrom = m.from;
+      m.delete();
+      
       if(s.eq(posFrom))
       {
         validFromSquare = true;
+        posFrom.delete();
         break;
       }
+      posFrom.delete();
     }
     
     if(validFromSquare)
@@ -483,22 +503,29 @@ function squareClicked(e, which)
     for(let i =0; i < moves.size(); i++)
     {
       let posMove = moves.get(i);
+      let posFrom = posMove.from;
+      let posTo = posMove.to;
+      posMove.delete();
       // if the move is from the previously selected from square
-      if(posMove.from.eq(selectedSquares.from))
+      if(posFrom.eq(selectedSquares.from))
       {
-        if(posMove.to.eq(s))
+        if(posTo.eq(s))
         {
           validToSquare = true;
+          posFrom.delete();
+          posTo.delete();
           break;
         }
       }
+      posFrom.delete();
+      posTo.delete();
     }
     
     if(validToSquare)
     {
       // if the moving peice is a pawn ...
-      let pieceID = Game.game.board.getPlayField(selectedSquares.from.toIndex()).value;
-      let trueType = Game.game.board.getBoardPiece(pieceID).type
+      let pieceID = board.getPlayField(selectedSquares.from.toIndex()).value;
+      let trueType = board.getBoardPiece(pieceID).type
       
       if(trueType == Module.PieceType.PAWN)
       {
@@ -520,6 +547,8 @@ function squareClicked(e, which)
           
           let select_box = createPromotionSelectBox(on_bottom, side);
           which.appendChild(select_box);
+          board.delete();
+          moves.delete();
           return;
         }
       }
@@ -527,7 +556,10 @@ function squareClicked(e, which)
       let move = new Module.Move(selectedSquares.from, s);
       selectedSquares.prev_move = move;
       Game.game.commitMove(move);
-      dispboard(Game.game.board);
+      move.delete();
+      board.delete();
+      board = Game.game.board;
+      dispboard(board);
     }
     
     selectedSquares.from = null;
@@ -535,6 +567,8 @@ function squareClicked(e, which)
     // clear indicators
     dispValidDestinations();
   }
+  board.delete();
+  moves.delete();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -577,6 +611,8 @@ function newGame()
   copyAISettings(prelimSettings.white, Settings.ai.white);
   copyAISettings(prelimSettings.black, Settings.ai.black);
   
+  if(Game.game)
+    Game.game.delete();
   Game.game = new Module.Game();
   
   // TODO less hardcoded values please
@@ -662,5 +698,8 @@ function newGame()
   
   Game.game.startClock();
   selectedSquares.prev_move = {};
+  
+  let board = Game.game.board;
   dispboard(Game.game.board);
+  board.delete();
 }

@@ -6,7 +6,7 @@ JSEXE = $(WDIR)revengechess.js
 NCC = g++
 WCC = em++
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
-WOPTIONS = -O3 -s WASM=1 --bind --no-entry
+WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
 all: $(EXE) $(JSEXE)
@@ -50,7 +50,7 @@ $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
 	
-$(WDIR)error.png: img/error.png
+$(WDIR)img/error.png: img/error.png
 	mkdir -p $(WDIR)img
 	cp img/error.png $(WDIR)img
 	

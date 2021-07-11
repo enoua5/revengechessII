@@ -127,7 +127,9 @@ function setTimeOn(clockElement, time)
 
 function addDelayLeft(clockElement)
 {
-  let delayLeft = Game.game.clock.getDelayLeft();
+  let clock = Game.game.clock;
+  let delayLeft = clock.getDelayLeft();
+  clock.delete();
   if(delayLeft > 0 && delayLeft < 60000)
   {
     let dec = Math.floor(delayLeft/100) % 10;
@@ -143,21 +145,22 @@ function addDelayLeft(clockElement)
 var alreadyShowedResultScreen = false;
 function showTimes()
 {
-  if(Game.game.clock.getResultFromFlag() != Module.GameResult.ONGOING && !alreadyShowedResultScreen)
+  if(!Game.game)
+    return;
+    
+  let clock = Game.game.clock;
+  if(clock.getResultFromFlag() != Module.GameResult.ONGOING && !alreadyShowedResultScreen)
   {
     alreadyShowedResultScreen = true;
     showResultScreen();
   }
 //  l("white_clock").innerText = Game.game.clock.getWhiteTime() / 1000;
 //  l("black_clock").innerText = Game.game.clock.getBlackTime() / 1000;
-  
-  if(!Game.game)
-    return;
     
   let whiteTime = 0.001;
-  if(Game.game.clock.getWhiteIncType() != Module.IncrementMethod.NO_CLOCK)
+  if(clock.getWhiteIncType() != Module.IncrementMethod.NO_CLOCK)
   {
-    whiteTime = Game.game.clock.getWhiteTime() / 1000;
+    whiteTime = clock.getWhiteTime() / 1000;
     setTimeOn(l("white_clock"), whiteTime);
   }
   else
@@ -168,10 +171,10 @@ function showTimes()
     l("white_clock").innerHTML = "";
     l("white_clock").appendChild(mainBox);
   }
-  if(Game.game.clock.isWhiteRunning() && whiteTime != 0)
+  if(clock.isWhiteRunning() && whiteTime != 0)
   {
     l("white_clock").classList.add("active_clock");
-    if(Game.game.clock.getWhiteIncType() == Module.IncrementMethod.DELAY)
+    if(clock.getWhiteIncType() == Module.IncrementMethod.DELAY)
     {
       addDelayLeft(l("white_clock"));
     }
@@ -180,9 +183,9 @@ function showTimes()
     l("white_clock").classList.remove("active_clock");
   
   let blackTime = 0.001;
-  if(Game.game.clock.getBlackIncType() != Module.IncrementMethod.NO_CLOCK)
+  if(clock.getBlackIncType() != Module.IncrementMethod.NO_CLOCK)
   {
-    blackTime = Game.game.clock.getBlackTime() / 1000;
+    blackTime = clock.getBlackTime() / 1000;
     setTimeOn(l("black_clock"), blackTime);
   }
   else
@@ -193,14 +196,16 @@ function showTimes()
     l("black_clock").innerHTML = "";
     l("black_clock").appendChild(mainBox);
   }
-  if(Game.game.clock.isBlackRunning() && blackTime != 0)
+  if(clock.isBlackRunning() && blackTime != 0)
   {
     l("black_clock").classList.add("active_clock");
-    if(Game.game.clock.getBlackIncType() == Module.IncrementMethod.DELAY)
+    if(clock.getBlackIncType() == Module.IncrementMethod.DELAY)
     {
       addDelayLeft(l("black_clock"));
     }
   }
   else
     l("black_clock").classList.remove("active_clock");
+    
+  clock.delete();
 }

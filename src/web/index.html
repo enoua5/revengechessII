@@ -55,8 +55,11 @@
     
       function bothPageAndModuleLoaded()
       {
-        dispboard(Game.game.board);
+        let board = Game.game.board;
+        dispboard(board);
         fillVersionNumbers();
+        
+        board.delete();
       }
     
       function onload()
@@ -170,8 +173,10 @@
           {
             if(l("ai-load-bar").style.display == "none")
               l("ai-load-bar").style.display = "block";
-              
-            let timeSpentThinking = Game.game.clock.getTimeSpentThisTurn() - AI_status.time_spent_before_thining
+            
+            let clock = Game.game.clock;
+            let timeSpentThinking = clock.getTimeSpentThisTurn() - AI_status.time_spent_before_thining;
+            clock.delete();
             let p = timeSpentThinking / AI_status.thinking_time;
             let perc = Math.max(Math.min(Math.round(p*100), 100), 0);
               
@@ -188,7 +193,9 @@
       function setOrientation(el)
       {
         selectRadio('orientation-radio', el, 'orientation');
-        dispboard(Game.game.board);
+        let board = Game.game.board;
+        dispboard(board);
+        board.delete();
       }
       
     </script>

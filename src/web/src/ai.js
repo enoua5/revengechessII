@@ -6,7 +6,10 @@ var AI_status = {
 
 function getCurrentPlayerSets()
 {
-  return Settings.ai[ (Game.game.board.turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
+  let board = Game.game.board;
+  let turn = board.turn;
+  board.delete();
+  return Settings.ai[ (turn == Module.PlayerColor.WHITE) ? "white" : "black" ];
 }
 
 function getPieceTypeFromValue(value)
@@ -33,11 +36,14 @@ function getPieceTypeFromValue(value)
 
 function acceptAIMove(e)
 {
+  let board = Game.game.board;
+  
+  
   let sets = getCurrentPlayerSets();
   
   if(!e.data || e.data.ranks == undefined || e.data.ranks.length == 0)
     return engineError({message: "Moves list empty"});
-  if(e.data.turn != (Game.game.board.turn == Module.PlayerColor.WHITE))
+  if(e.data.turn != (board.turn == Module.PlayerColor.WHITE))
     return engineError({message: "Move was somehow made before AI finished thinking."});
   if(!sets.usingAI)
     return engineError({message: "AI tried playing a move when it's not its turn."});
@@ -89,7 +95,10 @@ function acceptAIMove(e)
     to: toSquare
   };
   
-  dispboard(Game.game.board);
+  board.delete();
+  board = Game.game.board;
+  dispboard(board);
+  board.delete();
 }
 function engineError(e)
 {
@@ -103,37 +112,54 @@ function engineError(e)
 
 function timeUntilFlag(color)
 {
+  let clock = Game.game.clock;
   let timeOnClock = 0;
   if(color == Module.PlayerColor.WHITE)
-    timeOnClock = Game.game.clock.getWhiteTime();
+    timeOnClock = clock.getWhiteTime();
   else
-    timeOnClock = Game.game.clock.getBlackTime();
+    timeOnClock = clock.getBlackTime();
+    
+  let delayLeft = clock.getDelayLeft();
+  clock.delete();
   
-  return timeOnClock + Game.game.clock.getDelayLeft();
+  return timeOnClock + delayLeft;
 }
 
 function getPlayerTimeLeft(player)
 {
+  let clock = Game.game.clock;
+  let bt = clock.getBlackTime();
+  let wt = clock.getWhiteTime();
+  clock.delete();
   if(player == Module.PlayerColor.BLACK)
-    return Game.game.clock.getBlackTime();
-  return Game.game.clock.getWhiteTime();
+    return bt;
+  return wt;
 }
 function getPlayerIncType(player)
 {
+  let clock = Game.game.clock;
+  let bit = clock.getBlackIncType();
+  let wit = clock.getWhiteIncType();
+  clock.delete();
   if(player == Module.PlayerColor.BLACK)
-    return Game.game.clock.getBlackIncType();
-  return Game.game.clock.getWhiteIncType();
+    return bit;
+  return wit;
 }
 function getPlayerIncAmount(player)
 {
+  let clock = Game.game.clock;
+  let bia = clock.getBlackIncrementAmount();
+  let wia = clock.getWhiteIncrementAmount();
+  clock.delete();
   if(player == Module.PlayerColor.BLACK)
-    return Game.game.clock.getBlackIncrementAmount();
-  return Game.game.clock.getWhiteIncrementAmount();
+    return bia;
+  return wia;
 }
 
 
 function getTimeForMove(player)
 {
+
   // not using the getCurrentPlayerSets() function so we stick with the argument
   let sets = Settings.ai[ (player == Module.PlayerColor.WHITE) ? "white" : "black" ];;
   
@@ -144,7 +170,9 @@ function getTimeForMove(player)
   }
   else if(sets.limitMode == SearchLimits.AUTOMATIC)
   {
-    let halfMovesPlayed = Game.game.prevBoards.size() - 1; // -1 because it counts the current board as well
+    let prevBoards = Game.game.prevBoards;
+    let halfMovesPlayed = prevBoards.size() - 1; // -1 because it counts the current board as well
+    prevBoards.delete();
     let estimatedMovesLeft = Math.ceil(Math.max(80 - halfMovesPlayed, 10) / 2);
     
     let timeLeft = getPlayerTimeLeft(player);
@@ -180,7 +208,10 @@ function makeAIMove()
   if(!sets.usingAI)
     return engineError({message: "AI tried playing a move when it's not its turn."});
     
-  let time = getTimeForMove(Game.game.board.turn);
+  let board = Game.game.board;
+  let clock = Game.game.clock;
+    
+  let time = getTimeForMove(board.turn);
   
   let depth = 100;
   if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
@@ -188,9 +219,11 @@ function makeAIMove()
     
   AI_status.running = true;
   AI_status.thinking_time = time;
-  AI_status.time_spent_before_thining = Game.game.clock.getTimeSpentThisTurn();
-  engine.postMessage({board: Game.game.board.serialize(), time: time, depth: depth});
+  AI_status.time_spent_before_thining = clock.getTimeSpentThisTurn();
+  engine.postMessage({board: board.serialize(), time: time, depth: depth});
   
+  board.delete();
+  clock.delete();
 }
 
 var SearchLimits = {
