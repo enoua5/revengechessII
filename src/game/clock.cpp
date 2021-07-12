@@ -36,7 +36,7 @@ unsigned int Timer::update() // returns timeLeft
     {
       if(timeSpentThisTurn > increment)
       {
-        if(timeLeftAtStartOfTurn < timeSpentThisTurn + increment)
+        if(timeLeftAtStartOfTurn + increment < timeSpentThisTurn)
           timeLeft = 0;
         else
           timeLeft = timeLeftAtStartOfTurn - timeSpentThisTurn + increment;
