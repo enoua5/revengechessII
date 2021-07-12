@@ -194,7 +194,7 @@ function getTimeForMove(player)
   if(timeUntilBuffer < time)
     time = timeUntilBuffer;
     
-  //console.log(`Spending ${time/1000} seconds thinking...`);
+  console.log(`Spending ${time/1000} seconds thinking...`);
   return Math.max(time, 0);
     
 }

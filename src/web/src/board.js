@@ -352,7 +352,11 @@ function selectPromotion(p)
   
   
   let move = new Module.Move(selectedSquares.from, selectedSquares.to, promo);
-  selectedSquares.prev_move = move;
+  selectedSquares.prev_move = {
+    from: selectedSquares.from,
+    to: selectedSquares.to,
+    promotion: selectedSquares.promotion
+  };
   Game.game.commitMove(move);
   let board = Game.game.board;
   dispboard(board);

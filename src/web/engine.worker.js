@@ -57,6 +57,7 @@ onmessage = function(e) {
   
   
   postMessage({ranks: ranksArr, turn: board.turn == Module.PlayerColor.WHITE });
+  board.delete();
 }
 
 importScripts("revengechess.js")
