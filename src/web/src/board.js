@@ -558,7 +558,11 @@ function squareClicked(e, which)
       }
       
       let move = new Module.Move(selectedSquares.from, s);
-      selectedSquares.prev_move = move;
+      selectedSquares.prev_move = {
+        from: move.from,
+        to: move.to,
+        promotion: move.promotion
+      };
       Game.game.commitMove(move);
       move.delete();
       board.delete();
