@@ -183,10 +183,11 @@ function clearPrevMove()
 
 function dispPrevMove()
 {
+  clearPrevMove();
+  
   if(selectedSquares.prev_move == null || Object.keys(selectedSquares.prev_move).length == 0)
     return;
     
-  clearPrevMove();
   
   // not really needed, but don't trust that the squares you're getting are valid
   try
