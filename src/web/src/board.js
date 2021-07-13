@@ -183,7 +183,7 @@ function clearPrevMove()
 
 function dispPrevMove()
 {
-  if(selectedSquares.prev_move == null)
+  if(selectedSquares.prev_move == null || Object.keys(selectedSquares.prev_move).length == 0)
     return;
     
   clearPrevMove();
