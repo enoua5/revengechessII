@@ -5,11 +5,12 @@ EXE = $(NDIR)revengechess
 JSEXE = $(WDIR)revengechess.js
 NCC = g++
 WCC = em++
+INCLUDE = -I inc/ -I third_party/nlohmann_json/include/
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
-all: $(EXE) $(JSEXE)
+all: $(EXE) web
 
 native: $(EXE)
 	
@@ -28,11 +29,11 @@ clean:
 	
 $(EXE): src/native_main.cpp src/version.cpp src/engine/* src/game/* src/ui/* inc/*
 	mkdir -p $(NDIR)
-	$(NCC) $(NOPTIONS) -o $(EXE) -I inc/ src/native_main.cpp src/game/*.cpp src/ui/*.cpp src/engine/*.cpp src/version.cpp
+	$(NCC) $(NOPTIONS) -o $(EXE) $(INCLUDE) src/native_main.cpp src/game/*.cpp src/ui/*.cpp src/engine/*.cpp src/version.cpp
 	
 $(JSEXE): src/emcc_bindings.cpp src/version.cpp src/engine/* src/game/* inc/*
 	mkdir -p $(WDIR)
-	$(WCC) $(WOPTIONS) -o $(JSEXE) -I inc/ src/game/*.cpp src/engine/*.cpp src/emcc_bindings.cpp src/version.cpp
+	$(WCC) $(WOPTIONS) -o $(JSEXE) $(INCLUDE) src/game/*.cpp src/engine/*.cpp src/emcc_bindings.cpp src/version.cpp
 	
 $(WDIR)index.html: src/web/index.html
 	mkdir -p $(WDIR)
