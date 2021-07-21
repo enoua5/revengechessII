@@ -5,7 +5,7 @@ EXE = $(NDIR)revengechess
 JSEXE = $(WDIR)revengechess.js
 NCC = g++
 WCC = em++
-INCLUDE = -I inc/ -I third_party/nlohmann_json/include/
+INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
