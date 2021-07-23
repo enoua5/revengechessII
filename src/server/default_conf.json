@@ -1,0 +1,5 @@
+{
+  // run this program with this set to false to view the agreement terms 
+  // set to true after reading the terms to run the program normally
+  "agreementaccept": false
+}
