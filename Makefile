@@ -33,7 +33,7 @@ test_server: server
 	(cd $(SRVDIR); ./$(SERVER_NAME))
 	
 memcheck_server: server
-	(cd $(SRVDIR); $(MEMCHECK) $(SERVER_NAME))
+	(cd $(SRVDIR); $(MEMCHECK) ./$(SERVER_NAME))
 	
 server: server_exe server_conf
 
