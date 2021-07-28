@@ -5,6 +5,7 @@
 using nlohmann::json;
 
 #include "server/info.h"
+#include "server/server.h"
 
 
 int main()
@@ -47,6 +48,28 @@ int main()
     std::cerr << e.what();
     return 1;
   }
+  
+  Server serve;
+  
+  thread t(bind(&Server::process_messages, &serve));
+  
+  uint16_t port = 9000;
+  try
+  {
+    port = settings.at("port");
+  }
+  catch(std::exception& e)
+  {
+    std::cerr << "*Failed to read port number from settings*" << std::endl;
+    std::cerr << e.what() <<
+    std::endl << std::endl; 
+    // no return
+  }
+  
+  std::cout << "Starting server on port " << port << "..." << std::endl;
+  serve.run(port);
+  
+  t.join();
   
   return 0;
 }

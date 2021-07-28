@@ -6,5 +6,6 @@
 {
   // run the program with this set to false to view the agreement terms 
   // set to true after reading the terms to run the program normally
-  "agreement_accept": false
+  "agreement_accept": false,
+  "port": 80
 }

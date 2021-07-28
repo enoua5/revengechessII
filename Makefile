@@ -10,6 +10,7 @@ NCC = g++
 WCC = em++
 INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
+SOPTIONS = -Wall -Wextra -pedantic -g -pthread
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
@@ -41,7 +42,7 @@ server_exe: $(SERVER_EXE)
 
 $(SERVER_EXE): src/server_main.cpp src/version.cpp src/engine/* src/game/* src/server/* inc/*
 	mkdir -p $(SRVDIR)
-	$(NCC) $(NOPTIONS) -o $(SERVER_EXE) $(INCLUDE) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/engine/*.cpp src/version.cpp
+	$(NCC) $(SOPTIONS) -o $(SERVER_EXE) $(INCLUDE) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/engine/*.cpp src/version.cpp
 
 server_conf: $(SRVDIR)conf.json
 
