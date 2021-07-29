@@ -1,4 +1,13 @@
+#include <string_view>
+
 #include "server/server.h"
+const auto& ws_text = websocketpp::frame::opcode::text;
+
+#include "nlohmann/json.hpp"
+using nlohmann::json;
+
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 0);
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 0);
 
 connection_info::connection_info()
 {
@@ -6,8 +15,55 @@ connection_info::connection_info()
   logged_in = false;
 }
 
-Server::Server()
+bool Server::verify_compatible_version(json version, connection_hdl conn)
 {
+  try
+  {
+    std::string_view v_name = std::string_view((std::string)version.at("name"));
+    if(!v_name.ends_with(Server::minimum_client_version.name))
+      return false;
+      
+    unsigned int v_major = version.at("major");
+    if(v_major < Server::minimum_client_version.major)
+      return false;
+    if(v_major > Server::minimum_client_version.major)
+      return true;
+      
+    unsigned int v_minor = version.at("minor");
+    if(v_minor < Server::minimum_client_version.minor)
+      return false;
+    if(v_minor > Server::minimum_client_version.minor)
+      return true;
+      
+    unsigned int v_patch = version.at("patch");
+    if(v_patch < Server::minimum_client_version.patch)
+      return false;
+    return true;
+  }
+  catch(std::exception& e)
+  {
+    sendError(conn, "Error parsing version number");
+  }
+  return false;
+}
+
+void Server::sendError(connection_hdl conn, std::string message, bool close)
+{
+  json res = {
+    {"res", "error"},
+    {"error", message}
+  };
+  
+  endpoint.send(conn, res.dump(), ws_text);
+
+  if(close)
+    endpoint.close(conn, websocketpp::close::status::invalid_payload, message);
+}
+
+Server::Server(json settings)
+{
+  this->settings = settings;
+
   endpoint.init_asio();
   
   endpoint.set_open_handler(bind(&Server::on_open, this, ::_1));
@@ -70,7 +126,53 @@ void Server::process_messages()
     else if(a.type == MESSAGE)
     {
       lock_guard<mutex> guard(connection_lock);
+      try
+      {
+        json message = json::parse(a.msg->get_payload());
+        std::string req = message.at("req");
+        respond(a.hdl, req, message);
+      }
+      catch(std::exception& e)
+      {
+        sendError(a.hdl, "Failed to parse request");
+      }
     }
+  }
+}
+
+void Server::respond(connection_hdl conn, std::string req, json full)
+{
+  try
+  {
+    if(req == "version")
+    {
+      if(!verify_compatible_version(full.at("client_version"), conn))
+      {
+        sendError(conn, "Incompatible version", true);
+        return;
+      }
+      
+      json response = {
+        {"res", "version"},
+        {"version",
+          {
+            {"name", version.name},
+            {"major", version.major},
+            {"minor", version.minor},
+            {"patch", version.patch}
+          }
+        }
+      };
+      
+      endpoint.send(conn, response.dump(), ws_text);
+    }
+    
+    else
+      sendError(conn, "Unrecognized request");
+  }
+  catch(std::exception& e)
+  {
+    sendError(conn, e.what());
   }
 }
 

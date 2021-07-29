@@ -10,7 +10,7 @@ NCC = g++
 WCC = em++
 INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
-SOPTIONS = -Wall -Wextra -pedantic -g -pthread
+SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++2a
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
@@ -22,7 +22,7 @@ web: js_exe webui
 
 js_exe: $(JSEXE)
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/error.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/error.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js
 
 test: $(EXE)
 	$(EXE)
@@ -101,4 +101,6 @@ $(WDIR)src/ai.js: src/web/src/ai.js
 	mkdir -p $(WDIR)src
 	cp src/web/src/ai.js $(WDIR)src/
 	
-	
+$(WDIR)src/client.js: src/web/src/client.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/client.js $(WDIR)src/

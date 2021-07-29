@@ -117,11 +117,12 @@ function setThemeColor(inputEl)
 
 function versionToString(v)
 {
-  return v.name + ", version " + String.fromCharCode(v.stage) + v.major + '.' + v.minor + '.' + v.patch;
+  return v.name + ", version " + (v.stage?String.fromCharCode(v.stage):'') + v.major + '.' + v.minor + '.' + v.patch;
 }
 
 function fillVersionNumbers()
 {
+  l("client-version").innerText = versionToString(client_version);
   l("core-version").innerText = versionToString(Module.core_v());
   l("engine-version").innerText = versionToString(Module.engine_v());
 }

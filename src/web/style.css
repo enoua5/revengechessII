@@ -258,7 +258,7 @@ body
 }
 .inner-menu-button > ul > li
 {
-  width: 300%;
+  /*width: 300%;*/
 }
 .dropdown > ul > li:hover:not(.button-disable)
 {
@@ -414,4 +414,18 @@ body
 .setting-disable
 {
   display: none;
+}
+
+#connection-info
+{
+  font-size: 0.8em;
+}
+
+#connection-info.error
+{
+  color: red;
+}
+#connection-info.success
+{
+  color: green;
 }

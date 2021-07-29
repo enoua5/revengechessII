@@ -49,7 +49,7 @@ int main()
     return 1;
   }
   
-  Server serve;
+  Server serve(settings);
   
   thread t(bind(&Server::process_messages, &serve));
   

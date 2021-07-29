@@ -1,6 +1,11 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#include "nlohmann/json.hpp"
+using nlohmann::json;
+
+#include "version.h"
+
 #define ASIO_STANDALONE
 
 #include <websocketpp/config/asio_no_tls.hpp>
@@ -54,12 +59,19 @@ struct connection_info
 class Server
 {
   public:
-    Server();
+    Server(json settings);
     void run(uint16_t port);
     void on_open(connection_hdl);
     void on_close(connection_hdl);
     void on_message(connection_hdl, server::message_ptr);
     void process_messages();
+    
+    bool verify_compatible_version(json version, connection_hdl);
+    void sendError(connection_hdl, std::string, bool close = false);
+    void respond(connection_hdl, std::string req, json full);
+    
+    static Version version;
+    static Version minimum_client_version;
   private:
     typedef std::map<
         connection_hdl,
@@ -73,6 +85,8 @@ class Server
     mutex action_lock;
     mutex connection_lock;
     condition_variable action_cond;
+    
+    json settings;
 };
 
 #endif
