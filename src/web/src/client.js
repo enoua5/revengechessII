@@ -34,9 +34,9 @@ function onServerOpen(e)
   if(server == undefined || server.readyState != WebSocket.OPEN)
     return; // just in case it instantly closed
     
-  l("connection-info").classList.remove("error");
-  l("connection-info").classList.add("success");
-  l("connection-info").innerText = "Connection successful";
+//  l("connection-info").classList.remove("error");
+//  l("connection-info").classList.add("success");
+//  l("connection-info").innerText = "Connection successful";
   
   l("connect-button").innerText = "Disconnect";
   l("connect-button").onclick = disconnectFromServer;
@@ -78,6 +78,7 @@ function verify_compatible_version(v)
 
 function onServerMessage(e)
 {
+  console.log(e)
   try
   {
     let response = JSON.parse(e.data);
@@ -85,6 +86,14 @@ function onServerMessage(e)
     
     if(res == "error")
       onServerError(response.error)
+    else if(res == "conn_success")
+    {
+      l("connection-info").classList.remove("error");
+      l("connection-info").classList.add("success");
+      l("connection-info").innerText = "Successfully logged in as " + response.name;
+      l("username").value = response.name;
+      l("name-box").style.display = "";
+    }
     else if(res == "version")
     {
       let serve_compat = verify_compatible_version(response.version);
@@ -93,6 +102,12 @@ function onServerMessage(e)
         onServerError("Incompatible version");
         server.close();
       }
+    }
+    else if(res == "user_set")
+    {
+      l("connection-info").classList.remove("error");
+      l("connection-info").classList.add("success");
+      l("connection-info").innerText = "Successfully set username to " + response.name;
     }
     
   }
@@ -128,4 +143,16 @@ function onServerClose(e)
   //server = undefined;
   l("connect-button").innerText = "Connect";
   l("connect-button").onclick = connectToServer;
+  l("name-box").style.display = "none";
+}
+
+function set_username()
+{
+  let name = l("username").value;
+  if(!name)
+    return;
+  server.send(JSON.stringify({
+    req:"user_set",
+    name
+  }));
 }

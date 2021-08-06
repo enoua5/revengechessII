@@ -52,7 +52,6 @@ struct action
 struct connection_info
 {
   connection_info();
-  bool logged_in;
   std::string user_name;
 };
 

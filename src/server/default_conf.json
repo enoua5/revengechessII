@@ -7,5 +7,8 @@
   // run the program with this set to false to view the agreement terms 
   // set to true after reading the terms to run the program normally
   "agreement_accept": false,
+  // local port on which to open the server
   "port": 9000
+  // if set to true, users will be required to sign in before playing.
+  // if set to false, user data will not be saved.
 }

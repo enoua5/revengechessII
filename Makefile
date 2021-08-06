@@ -40,7 +40,7 @@ server: server_exe server_conf
 
 server_exe: $(SERVER_EXE)
 
-$(SERVER_EXE): src/server_main.cpp src/version.cpp src/engine/* src/game/* src/server/* inc/*
+$(SERVER_EXE): src/server_main.cpp src/version.cpp src/engine/* src/game/* src/server/*.cpp inc/*
 	mkdir -p $(SRVDIR)
 	$(NCC) $(SOPTIONS) -o $(SERVER_EXE) $(INCLUDE) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/engine/*.cpp src/version.cpp
 

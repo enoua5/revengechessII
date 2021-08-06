@@ -1,4 +1,6 @@
 #include <string_view>
+#include <fstream>
+#include <filesystem>
 
 #include "server/server.h"
 const auto& ws_text = websocketpp::frame::opcode::text;
@@ -6,13 +8,12 @@ const auto& ws_text = websocketpp::frame::opcode::text;
 #include "nlohmann/json.hpp"
 using nlohmann::json;
 
-Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 0);
-Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 0);
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 1);
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 1);
 
 connection_info::connection_info()
 {
-  user_name = "";
-  logged_in = false;
+  user_name = "guest";
 }
 
 bool Server::verify_compatible_version(json version, connection_hdl conn)
@@ -117,6 +118,19 @@ void Server::process_messages()
     {
       lock_guard<mutex> guard(connection_lock);
       connections.insert(std::pair<connection_hdl, connection_info>(a.hdl, connection_info()));
+      
+      try
+      {
+        json resp = {
+          {"res", "conn_success"},
+          {"name", connections.at(a.hdl).user_name}
+        };
+        endpoint.send(a.hdl, resp.dump(), ws_text);
+      }
+      catch(std::exception& e)
+      {
+        std::cerr << "Failed to get user id in SUBSCRIBE" << std::endl;
+      }
     }
     else if(a.type == UNSUBSCRIBE)
     {
@@ -166,13 +180,24 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       
       endpoint.send(conn, response.dump(), ws_text);
     }
+    else if(req == "user_set")
+    {
+      // TODO? make an option requiring unique user names.
+      connections.at(conn).user_name = full.at("name");
+      json response = {
+        {"res", "user_set"},
+        {"name", full.at("name")}
+      };
+      endpoint.send(conn, response.dump(), ws_text);
+    }
     
     else
       sendError(conn, "Unrecognized request");
   }
   catch(std::exception& e)
   {
-    sendError(conn, e.what());
+    std::cerr << e.what() << std::endl;
+    sendError(conn, "Error generating response");
   }
 }
 

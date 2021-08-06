@@ -39,7 +39,7 @@
         name: "Revenge Chess UI, standard compliant",
         major: 2,
         minor: 2,
-        patch: 0
+        patch: 1
       };
       
       var Game = {
@@ -237,6 +237,12 @@
         <button id="connect-button" onclick="connectToServer()">Connect</button>
         <br/>
         <p id="connection-info"></p>
+        <br/>
+        <div id="name-box" style="display:none">
+          <label>Username</label>
+          <input id="username"></input>
+          <button onclick="set_username()">Set</button>
+        </div>
         <br/><br/>
         <button onclick="hideWindows();">close</button>
       </div>
