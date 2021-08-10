@@ -5,6 +5,8 @@
 using nlohmann::json;
 
 #include "version.h"
+#include "game/game.h"
+#include "game/clock.h"
 
 #define ASIO_STANDALONE
 
@@ -49,10 +51,53 @@ struct action
   server::message_ptr msg;
 };
 
+class Server;
+
+struct ServerGame
+{
+  ServerGame(Server* _server, connection_hdl, bool priv, PlayerColor join_as,
+    unsigned int startingTime,
+    unsigned int increment,
+    IncrementMethod inct);
+  bool join(connection_hdl);
+  
+  bool priv;
+  
+  bool started;
+  
+  connection_hdl black;
+  bool black_in;
+  bool black_req_rematch;
+  connection_hdl white;
+  bool white_in;
+  bool white_req_rematch;
+  
+  Game game;
+  
+  unsigned int startingTime;
+  unsigned int increment;
+  IncrementMethod inct;
+  
+  bool rematch(connection_hdl);
+  
+  protected:
+    void start();
+    Server* server;
+};
+
 struct connection_info
 {
   connection_info();
   std::string user_name;
+  std::string current_game;
+  
+  uint32_t get_id();
+  
+  bool operator==(const connection_info& other);
+  
+  private:
+  uint32_t id;
+  static uint32_t next_id;
 };
 
 class Server
@@ -71,12 +116,18 @@ class Server
     
     static Version version;
     static Version minimum_client_version;
+    
+    bool conEq(connection_hdl, connection_hdl);
   private:
     typedef std::map<
         connection_hdl,
         connection_info,
         std::owner_less<connection_hdl>
       > conn_list;
+    typedef std::map<
+        std::string,
+        ServerGame
+      > GameMap;
     server endpoint;
     conn_list connections;
     std::queue<action> actions;
@@ -84,6 +135,9 @@ class Server
     mutex action_lock;
     mutex connection_lock;
     condition_variable action_cond;
+    
+    GameMap games;
+    void endGame(std::string id);
     
     json settings;
 };

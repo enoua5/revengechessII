@@ -109,6 +109,7 @@ function onServerMessage(e)
       l("connection-info").classList.add("success");
       l("connection-info").innerText = "Successfully set username to " + response.name;
     }
+    // TODO add game_created, game_closed, game_start
     
   }
   catch(error)
@@ -127,6 +128,9 @@ function onServerError(e)
   l("connection-info").innerText = text;
   l("connection-info").classList.remove("success");
   l("connection-info").classList.add("error");
+  
+  if(l("connection-info").style.display == "")
+    alert(text);
 }
 
 function onServerClose(e)

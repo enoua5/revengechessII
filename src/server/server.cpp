@@ -3,17 +3,36 @@
 #include <filesystem>
 
 #include "server/server.h"
+#include "server/gameid.h"
+
 const auto& ws_text = websocketpp::frame::opcode::text;
 
 #include "nlohmann/json.hpp"
 using nlohmann::json;
 
-Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 1);
-Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 1);
+// When making forks of this project, version names should end in
+// "standard compliant" if they are compatible with the vanilla client
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 2);
+// change the version name here if the server should reject the vanilla client
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 2);
 
 connection_info::connection_info()
 {
+  id = ++ connection_info::next_id;
   user_name = "guest";
+  current_game = "";
+}
+
+uint32_t connection_info::next_id = 0;
+
+uint32_t connection_info::get_id()
+{
+  return id;
+}
+
+bool connection_info::operator==(const connection_info& other)
+{
+  return other.id == this->id;
 }
 
 bool Server::verify_compatible_version(json version, connection_hdl conn)
@@ -116,6 +135,12 @@ void Server::process_messages()
     
     if(a.type == SUBSCRIBE)
     {
+      // TODO perhaps we could allow game IDs to be included in a
+      // resource path, allowing users to join with URL.
+      // From stackoverflow:
+      // server::connection_ptr con = s.get_con_from_hdl(hdl);
+      // std::string path = con->get_resource();
+    
       lock_guard<mutex> guard(connection_lock);
       connections.insert(std::pair<connection_hdl, connection_info>(a.hdl, connection_info()));
       
@@ -135,6 +160,12 @@ void Server::process_messages()
     else if(a.type == UNSUBSCRIBE)
     {
       lock_guard<mutex> guard(connection_lock);
+      try
+      {
+        endGame(connections.at(a.hdl).current_game);
+      }
+      catch(std::exception& e){}
+      
       connections.erase(a.hdl);
     }
     else if(a.type == MESSAGE)
@@ -154,10 +185,130 @@ void Server::process_messages()
   }
 }
 
+ServerGame::ServerGame(Server* _server, connection_hdl hdl, bool _priv, PlayerColor join_as,
+    unsigned int _startingTime,
+    unsigned int _increment,
+    IncrementMethod _inct)
+    : priv(_priv), started(false), 
+    black_req_rematch(false), white_req_rematch(false),
+    startingTime(_startingTime), increment(_increment), inct(_inct),
+    server(_server)
+{
+  if(join_as == WHITE)
+  {
+    white = hdl;
+    white_in = true;
+  }
+  else
+  {
+    black = hdl;
+    black_in = true;
+  }
+}
+
+bool ServerGame::join(connection_hdl hdl)
+{
+  // TODO make sure players can't join their own game
+  bool joined = false;
+  if(!white_in)
+  {
+    white = hdl;
+    white_in = true;
+    joined = true;
+  }
+  
+  else if(!black_in)
+  {
+    black = hdl;
+    black_in = true;
+    joined = true;
+  }
+  
+  if(joined)
+    start();
+  return joined;
+}
+
+void ServerGame::start()
+{
+  game.board = Board();
+  game.clock = Clock(startingTime, increment, inct);
+  started = true;
+  white_req_rematch = false;
+  black_req_rematch = false;
+}
+
+bool ServerGame::rematch(connection_hdl conn)
+{
+  if(!started)
+  {
+    return false;
+  }
+  
+  if(server->conEq(conn, white))
+  {
+    white_req_rematch = true;
+  }
+  else if(server->conEq(conn, black))
+  {
+    black_req_rematch = true;
+  }
+  else
+  {
+    return false;
+  }
+  
+  if(white_req_rematch && black_req_rematch)
+  {
+    connection_hdl swap = white;
+    white = black;
+    black = swap;
+    start();
+    return true;
+  }
+  
+  return false; 
+}
+
+void Server::endGame(std::string id)
+{
+  if(id == "")
+    return;
+  
+  json response = {
+    {"res", "game_closed"},
+    {"id", id}
+  };
+  
+  try
+  {
+    connection_hdl black = games.at(id).black;
+    endpoint.send(black, response.dump(), ws_text);
+    connections.at(black).current_game = "";
+  }
+  catch(std::exception& e){}
+  try
+  {
+    connection_hdl white = games.at(id).white;
+    endpoint.send(white, response.dump(), ws_text);
+    connections.at(white).current_game = "";
+  }
+  catch(std::exception& e){}
+  
+  // no need to check if it actually exists, .erase() doesn't care.
+  games.erase(id);
+}
+
+bool Server::conEq(connection_hdl a, connection_hdl b)
+{
+  return connections.at(a) == connections.at(b);
+}
+
 void Server::respond(connection_hdl conn, std::string req, json full)
 {
   try
   {
+    ////////////////////////////////////////////////////////////////////////////
     if(req == "version")
     {
       if(!verify_compatible_version(full.at("client_version"), conn))
@@ -180,6 +331,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       
       endpoint.send(conn, response.dump(), ws_text);
     }
+    ////////////////////////////////////////////////////////////////////////////
     else if(req == "user_set")
     {
       // TODO? make an option requiring unique user names.
@@ -190,7 +342,147 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       };
       endpoint.send(conn, response.dump(), ws_text);
     }
-    
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "create_game")
+    {
+      //connection_hdl, bool priv, PlayerColor join_as,
+      //unsigned int startingTime,
+      //unsigned int increment,
+      //IncrementMethod inct
+      
+      // parse the json arguments first, so if there's an error, we can deal with it quick
+      bool priv = full.at("private");
+      bool as_white = full.at("as_white");
+      PlayerColor join_as = as_white ? WHITE : BLACK;
+      unsigned int startingTime = full.at("starting_time");
+      unsigned int increment = full.at("increment");
+      std::string inct_s = full.at("inct");
+      IncrementMethod inct = NO_CLOCK;
+      if(inct_s == "INCREMENT")
+        inct = INCREMENT;
+      else if(inct_s == "DELAY")
+        inct = DELAY;
+      else if(inct_s == "BRONSTEIN")
+        inct = BRONSTEIN;
+        
+      // generate a game ID
+      uint32_t uid = connections.at(conn).get_id();
+      std::string id = gameIdGenerator::generate_id(uid);
+      
+      // create the game
+      games.insert(std::pair<std::string, ServerGame>(id, ServerGame(
+        this, conn, priv, join_as, startingTime, increment, inct
+      )));
+      
+      // set the player's current game
+      endGame(connections.at(conn).current_game);
+      connections.at(conn).current_game = id;
+      
+      // tell the user
+      json response = {
+        {"res", "game_created"},
+        {"id", id}
+      };
+      endpoint.send(conn, response.dump(), ws_text);
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "close_game")
+    {
+      endGame(connections.at(conn).current_game);
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "join_game")
+    {
+      std::string id = full.at("id");
+      
+      bool success = games.at(id).join(conn);
+      
+      if(success)
+      {
+        endGame(connections.at(conn).current_game);
+        connections.at(conn).current_game = id;
+        
+        // alert both players
+        connection_hdl black = games.at(id).black;
+        connection_hdl white = games.at(id).white;
+        
+        json response = {
+          {"res", "game_start"},
+          {"id", id}
+        };
+        
+        response["play_as_white"] = true;
+        endpoint.send(white, response.dump(), ws_text);
+        
+        response["play_as_white"] = false;
+        endpoint.send(black, response.dump(), ws_text);
+      }
+      else
+      {
+        sendError(conn, "Game already started.");
+      }
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "list_games")
+    {
+      json response = json::array();
+      
+      GameMap::iterator it;
+      
+      for(it = games.begin(); it != games.end(); it++)
+      {
+        if(!it->second.priv && !it->second.started)
+        {
+          response.push_back(it->first);
+        }
+      }
+      
+      endpoint.send(conn, response.dump(), ws_text);
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "request_rematch")
+    {
+      std::string id = connections.at(conn).current_game;
+      bool newGameStarted = games.at(id).rematch(conn);
+      if(newGameStarted)
+      {
+        // alert both players
+        connection_hdl black = games.at(id).black;
+        connection_hdl white = games.at(id).white;
+        
+        json response = {
+          {"res", "game_start"},
+          {"id", id}
+        };
+        
+        response["play_as_white"] = true;
+        endpoint.send(white, response.dump(), ws_text);
+        
+        response["play_as_white"] = false;
+        endpoint.send(black, response.dump(), ws_text);
+      
+      }
+      else
+      {
+        json response = {
+          {"res", "ack"}
+        };
+        
+        endpoint.send(conn, response.dump(), ws_text);
+      }
+      
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "info")
+    {
+      connection_info ci = connections.at(conn);
+      json response = {
+        {"name", ci.user_name},
+        {"game", ci.current_game}
+      };
+      endpoint.send(conn, response.dump(), ws_text);
+    }
+    ////////////////////////////////////////////////////////////////////////////
     else
       sendError(conn, "Unrecognized request");
   }
