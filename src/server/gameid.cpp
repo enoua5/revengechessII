@@ -1,7 +1,20 @@
 #include "server/gameid.h"
+#include <chrono>
+
+namespace gameIdGenerator
+{
+  std::default_random_engine generator;
+  std::uniform_int_distribution<int> roll(0, 31);
+  bool seeded = false;
+}
 
 std::string gameIdGenerator::generate_id(uint32_t user_id)
 {
+  if(!gameIdGenerator::seeded)
+  {
+    gameIdGenerator::seeded = true;
+    gameIdGenerator::generator.seed(std::chrono::system_clock::now().time_since_epoch().count());
+  }
   // these are the characters that can make up an id
   char codes[32+1] = "MGSJT91Z5RH2LPC30KF6VQ8W4BNYXD7-";
   

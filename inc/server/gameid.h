@@ -6,8 +6,9 @@
 
 namespace gameIdGenerator
 {
-  static std::default_random_engine generator;
-  static std::uniform_int_distribution<int> roll(0, 31);
+  extern std::default_random_engine generator;
+  extern std::uniform_int_distribution<int> roll;
+  extern bool seeded;
   std::string generate_id(uint32_t user_id);
 }
 
