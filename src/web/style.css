@@ -209,7 +209,6 @@ body
 }
 .header-button
 {
-  float: left;
   background: dimgrey;
   color: white;
   margin: 0.1em;
@@ -255,10 +254,6 @@ body
   border: 1px solid black;
   border-top: 0;
   background: dimgrey;
-}
-.inner-menu-button > ul > li
-{
-  /*width: 300%;*/
 }
 .dropdown > ul > li:hover:not(.button-disable)
 {
