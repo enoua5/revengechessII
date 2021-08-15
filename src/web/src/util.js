@@ -178,3 +178,18 @@ function updatePrelimSets(element)
     
   
 }
+
+function setupEnterToSubmit()
+{
+  let els = document.getElementsByClassName("enter-to-submit");
+  for(let el of els)
+  {
+    el.addEventListener("keyup", function(e){
+      e.preventDefault();
+      if(e.keyCode == 13)
+      {
+        document.getElementById(this.dataset.submitid).click();
+      }
+    });
+  }
+}

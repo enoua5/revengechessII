@@ -196,6 +196,8 @@
         
         ////////////////////////////////////////////////////////////////////////
         
+        setupEnterToSubmit();
+
         showWindow('home-screen');
       }
       
@@ -238,15 +240,15 @@
       <div id="manage-connection" class="window">
         <h2>Manage connections</h2>
         <label>Server IP</label>
-        <input id="server-ip"></input>
+        <input id="server-ip" class="enter-to-submit" data-submitid="connect-button"></input>
         <button id="connect-button" onclick="connectToServer()">Connect</button>
         <br/>
         <p id="connection-info"></p>
         <br/>
         <div id="name-box" style="display:none">
           <label>Username</label>
-          <input id="username"></input>
-          <button onclick="set_username()">Set</button>
+          <input id="username" class="enter-to-submit" data-submitid="set-username-button"></input>
+          <button id="set-username-button" onclick="set_username()">Set</button>
         </div>
         <br/><br/>
         <button onclick="hideWindows();">close</button>
@@ -255,7 +257,16 @@
       <!----------------------- Game explorer screen ---------------------->
       <div id="game-explorer" class="window">
         <h2>Join Game</h2>
-        
+        <button id="new-online-game">+ Create new game</button>
+        <br/>
+        <br/>
+        <input class="enter-to-submit" data-submitid="join-by-id"/><button id="join-by-id">Join by ID</button>
+
+        <h3 style="margin-bottom: 0">Public Games</h3>
+        <div id="game-list">
+          <p>...</p>
+        </div>
+        <button onclick="hideWindows();">close</button>
       </div>
       
       <!------------------------- New game screen ------------------------->
@@ -520,7 +531,7 @@
       </div>
     </div>
     
-    <!-- Game container -->
+    <!--------------------------- Game container -------------------------->
     <div id="container" style="text-align: center; display: inline-block">
       <div id = "gamearea">
         <div id="option-bar">

@@ -429,3 +429,12 @@ body
 {
   color: green;
 }
+#new-online-game
+{
+  float: right;
+}
+
+#game-list
+{
+  border: 1px solid white;
+}
