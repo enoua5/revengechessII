@@ -213,8 +213,9 @@
   </head>
   <body onload="onload()">
   
-    <!-- Pop-up holder -->
+    <!--------------------------- Pop-up holder --------------------------->
     <div id="pane">
+      <!--------------------------- Home screen --------------------------->
       <div id="home-screen" class="window">
         <h2>Revenge Chess</h2>
         <h5>I'm not a UI designer, sorry. &#x1F605;</h5>
@@ -224,12 +225,16 @@
         <br/>
         <button disabled>Play tutorials</button>
       </div>
+      
+      <!-------------------------- Result screen -------------------------->
       <div id="result-screen" class="window">
         <h2 id="winner"></h2>
         <h3 id="winner-info"></h3>
         <button onclick="hideWindows();">show board</button>
         <button onclick="hideWindows(); showWindow('new-game');">new game</button>
       </div>
+      
+      <!------------------------ Connection screen ------------------------>
       <div id="manage-connection" class="window">
         <h2>Manage connections</h2>
         <label>Server IP</label>
@@ -246,6 +251,8 @@
         <br/><br/>
         <button onclick="hideWindows();">close</button>
       </div>
+      
+      <!------------------------- New game screen ------------------------->
       <div id="new-game" class="window">
         <h2>New game</h2>
         <details>
@@ -394,6 +401,8 @@
         <button onclick="hideWindows();">close</button>
         <button onclick = "newGame(); hideWindows()">create new game</button>
       </div>
+      
+      <!-------------------------- About  screen -------------------------->
       <div id="about-page" class="window">
         <h2>About</h2>
         <hr/>
@@ -422,6 +431,8 @@
         
         <button onclick="hideWindows();">close</button>
       </div>
+      
+      <!---------------------- Color settings screen ---------------------->
       <div id="color-settings" class="window">
         <h2>Color Settings</h2>
         <!-- Uses previousElementSibling, so be careful about adding new elements -->
