@@ -245,10 +245,14 @@
         <br/>
         <p id="connection-info"></p>
         <br/>
+        <!-- name is outdated. simply appears and disappears with the server -->
         <div id="name-box" style="display:none">
           <label>Username</label>
           <input id="username" class="enter-to-submit" data-submitid="set-username-button"></input>
           <button id="set-username-button" onclick="set_username()">Set</button>
+          <br/>
+          <br/>
+          <button onclick="hideWindows();showWindow('game-explorer')">Find a game</button>
         </div>
         <br/><br/>
         <button onclick="hideWindows();">close</button>
@@ -263,10 +267,15 @@
         <input class="enter-to-submit" data-submitid="join-by-id"/><button id="join-by-id">Join by ID</button>
 
         <h3 style="margin-bottom: 0">Public Games</h3>
-        <button>Refresh</button>
+        <button onclick="updateGameList()">Refresh</button>
         <div id="game-list">
           <p>...</p>
         </div>
+        <br/>
+        <br/>
+        <button onclick="hideWindows(); showWindow('manage-connection')">Back to connection management</button>
+        <br/>
+        <br/>
         <button onclick="hideWindows();">close</button>
       </div>
       
@@ -545,6 +554,7 @@
                   <p>Server &gt;</p>
                   <ul>
                     <li onclick="showWindow('manage-connection')" style="width:150%">Manage connection..</li>
+                    <li id="menu-open-ge" class = 'button-disable' onclick="if(connection_verified) showWindow('game-explorer')" style="width:150%">Join/create game</li>
                   </ul>
                 </div>
               </li>

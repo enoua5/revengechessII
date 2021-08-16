@@ -1,4 +1,5 @@
 var server = undefined;
+var connection_verified = false;
 
 function connectToServer()
 {
@@ -93,6 +94,11 @@ function onServerMessage(e)
       l("connection-info").innerText = "Successfully logged in as " + response.name;
       l("username").value = response.name;
       l("name-box").style.display = "";
+
+      updateGameList();
+
+      connection_verified = true;
+      l("menu-open-ge").classList.remove("button-disable");
     }
     else if(res == "version")
     {
@@ -108,6 +114,110 @@ function onServerMessage(e)
       l("connection-info").classList.remove("error");
       l("connection-info").classList.add("success");
       l("connection-info").innerText = "Successfully set username to " + response.name;
+    }
+    else if(res == "game_list")
+    {
+      let games = response.list;
+      console.log(games)
+      // sort the games from first-created to most recently created
+      games.sort((a,b) => (a.creation_time > b.creation_time) ? 1:-1);
+      
+      gameList = l("game-list");
+      gameList.innerHTML = "";
+
+      for(let g of games)
+      {
+        try
+        {
+          let div = document.createElement("div");
+          div.classList.add("game-list-entry");
+
+          let playersBox = document.createElement("div");
+
+          let whitePlayerBox = document.createElement("div");
+          let blackPlayerBox = document.createElement("div");
+          
+          whitePlayerBox.classList.add("game-list-player-box");
+          blackPlayerBox.classList.add("game-list-player-box");
+
+          let whitePawn = document.createElement("img");
+          whitePawn.src = "img/pieces/wp.svg";
+          let blackPawn = document.createElement("img");
+          blackPawn.src = "img/pieces/bp.svg";
+
+          whitePlayerBox.appendChild(whitePawn);
+          blackPlayerBox.appendChild(blackPawn);
+
+          let whiteName = document.createElement("p");
+          let blackName = document.createElement("p");
+
+          if(g.join_as_white)
+          {
+            whiteName.innerText = "You?";
+            blackName.innerText = g.host_name;
+          }
+          else
+          {
+            whiteName.innerText = g.host_name;
+            blackName.innerText = "You?";
+          }
+          
+          whitePlayerBox.appendChild(whiteName);
+          blackPlayerBox.appendChild(blackName);
+
+          playersBox.appendChild(whitePlayerBox);
+          playersBox.appendChild(blackPlayerBox);
+
+          div.appendChild(playersBox);
+
+          let clockBox = document.createElement("div");
+          clockBox.classList.add("game-list-clock-box");
+          let clock = document.createElement("img");
+          clock.src = "img/clock.png";
+          clock.style.height = "1em";
+          clockBox.appendChild(clock);
+
+          let startingTime = g.starting_time;
+
+          let seconds = Math.floor(startingTime/1000);
+          let minutes = Math.floor(seconds / 60);
+          seconds %= 60;
+          let hours = Math.floor(minutes / 60);
+          minutes %= 60;
+          
+          let timeText = (minutes+"").padStart(2, "0") + ":" + (seconds+"").padStart(2, "0");
+          if(hours != 0)
+            timeText = hours + ":" + timeText;
+
+          let increment = g.increment;
+
+          seconds = Math.floor(increment/1000);
+          minutes = Math.floor(seconds / 60);
+          seconds %= 60;
+          hours = Math.floor(minutes / 60);
+          minutes %= 60;
+          
+          let incTimeText = (seconds+"").padStart(2, "0");
+          if(minutes != 0 || hours != 0)
+            incTimeText = (minutes+"").padStart(2, "0") + ":" + incTimeText;
+          if(hours != 0)
+            incTimeText = hours + ":" + incTimeText;
+
+          let timeBox = document.createElement("p");
+          timeBox.innerText = " " + timeText + " | " + incTimeText + " " + g.inct.toLowerCase();
+
+          clockBox.appendChild(timeBox);
+
+          div.appendChild(clockBox);
+
+          gameList.appendChild(div);
+        }
+        catch(e)
+        {
+          // don't let a bad response get you down! just ignore it and continue
+          console.error(e);
+        }
+      }
     }
     // TODO add game_created, game_closed, game_start
     
@@ -129,7 +239,7 @@ function onServerError(e)
   l("connection-info").classList.remove("success");
   l("connection-info").classList.add("error");
   
-  if(l("connection-info").style.display == "")
+  if(l("manage-connection").style.display == "")
     alert(text);
 }
 
@@ -148,6 +258,16 @@ function onServerClose(e)
   l("connect-button").innerText = "Connect";
   l("connect-button").onclick = connectToServer;
   l("name-box").style.display = "none";
+
+  if(l("manage-connection").style.display == "")
+  {
+    alert("Connection to server terminated");
+    hideWindows();
+    showWindow('manage-connection');
+  }
+
+  connection_verified = false;
+  l("menu-open-ge").classList.add("button-disable");
 }
 
 function set_username()
@@ -159,4 +279,23 @@ function set_username()
     req:"user_set",
     name
   }));
+}
+
+function updateGameList()
+{
+  try
+  {
+    server.send(JSON.stringify({
+      req: "list_games"
+    }));
+  }
+  catch(e)
+  {
+    l('game-list').innerHTML = "";
+    let p = document.createElement("p");
+    p.innerText = "Could not connect to server...";
+    l('game-list').appendChild(p);
+  }
+
+  // response will be handled in onServerMessage
 }

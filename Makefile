@@ -22,7 +22,7 @@ web: js_exe webui
 
 js_exe: $(JSEXE)
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/error.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js
 
 test: $(EXE)
 	$(EXE)
@@ -77,9 +77,9 @@ $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
 	
-$(WDIR)img/error.png: img/error.png
+$(WDIR)img/*.png: img/*.png
 	mkdir -p $(WDIR)img
-	cp img/error.png $(WDIR)img
+	cp img/*.png $(WDIR)img
 	
 $(WDIR)src/board.js: src/web/src/board.js
 	mkdir -p $(WDIR)src
