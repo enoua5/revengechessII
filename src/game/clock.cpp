@@ -1,5 +1,26 @@
 #include "game/clock.h"
 
+std::string inctToString(IncrementMethod m)
+{
+  if(m == INCREMENT)
+    return "INCREMENT";
+  if(m == DELAY)
+    return "DELAY";
+  if(m == BRONSTEIN)
+    return "BRONSTEIN";
+  return "NO_CLOCK";
+}
+IncrementMethod stringToInct(std::string m)
+{
+  if(m == "INCREMENT")
+    return INCREMENT;
+  if(m == "DELAY")
+    return DELAY;
+  if(m == "BRONSTEIN")
+    return BRONSTEIN;
+  return NO_CLOCK;
+}
+
 TimerTime get_current_time()
 {
   return std::chrono::time_point_cast<timer_res>(std::chrono::system_clock::now());

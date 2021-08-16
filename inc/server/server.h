@@ -80,9 +80,13 @@ struct ServerGame
   
   bool rematch(connection_hdl);
   
+  unsigned int get_creation_time();
+
   protected:
     void start();
     Server* server;
+
+    unsigned int creation_time;
 };
 
 struct connection_info

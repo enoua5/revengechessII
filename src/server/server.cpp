@@ -204,6 +204,8 @@ ServerGame::ServerGame(Server* _server, connection_hdl hdl, bool _priv, PlayerCo
     black = hdl;
     black_in = true;
   }
+
+  creation_time = time_to_mill(get_current_time());
 }
 
 bool ServerGame::join(connection_hdl hdl)
@@ -269,6 +271,8 @@ bool ServerGame::rematch(connection_hdl conn)
   
   return false; 
 }
+
+unsigned int ServerGame::get_creation_time(){return creation_time;}
 
 void Server::endGame(std::string id)
 {
@@ -357,13 +361,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       unsigned int startingTime = full.at("starting_time");
       unsigned int increment = full.at("increment");
       std::string inct_s = full.at("inct");
-      IncrementMethod inct = NO_CLOCK;
-      if(inct_s == "INCREMENT")
-        inct = INCREMENT;
-      else if(inct_s == "DELAY")
-        inct = DELAY;
-      else if(inct_s == "BRONSTEIN")
-        inct = BRONSTEIN;
+      IncrementMethod inct = stringToInct(inct_s);
         
       // generate a game ID
       uint32_t uid = connections.at(conn).get_id();
@@ -425,7 +423,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
     ////////////////////////////////////////////////////////////////////////////
     else if(req == "list_games")
     {
-      json response = json::array();
+      json list = json::array();
       
       GameMap::iterator it;
       
@@ -433,10 +431,41 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       {
         if(!it->second.priv && !it->second.started)
         {
-          response.push_back(it->first);
+          try
+          {
+            json list_entry;
+            list_entry["id"] = it->first;
+            bool white_in = it->second.white_in;
+            list_entry["join_as_white"] = !white_in;
+
+            connection_hdl other_player;
+            if(white_in)
+              other_player = it->second.white;
+            else
+              other_player = it->second.black;
+            
+            list_entry["host_name"] = connections.at(other_player).user_name;
+
+            list_entry["starting_time"] = it->second.startingTime;
+            list_entry["increment"] = it->second.increment;
+            list_entry["inct"] = inctToString(it->second.inct);
+
+            list_entry["creation_time"] = it->second.get_creation_time();
+
+            list.push_back(list_entry);
+          }
+          catch(std::exception& e)
+          {
+            // just ignore it
+          }
         }
       }
       
+      json response = {
+        {"res", "game_list"},
+        {"list", list}
+      };
+
       endpoint.send(conn, response.dump(), ws_text);
     }
     ////////////////////////////////////////////////////////////////////////////
