@@ -198,10 +198,12 @@ ServerGame::ServerGame(Server* _server, connection_hdl hdl, bool _priv, PlayerCo
   {
     white = hdl;
     white_in = true;
+    black_in = false;
   }
   else
   {
     black = hdl;
+    white_in = false;
     black_in = true;
   }
 
@@ -456,6 +458,8 @@ void Server::respond(connection_hdl conn, std::string req, json full)
           }
           catch(std::exception& e)
           {
+            std::cerr << "error adding game to list in list_games." << std::endl;
+            std::cerr << e.what() << std::endl;
             // just ignore it
           }
         }
