@@ -438,6 +438,13 @@ body
 .game-list-entry
 {
   border: 1px solid white;
+  column-count: 2;
+  padding: 1em;
+}
+
+.game-list-clock-box
+{
+  text-align: right;
 }
 
 .game-list-clock-box img
@@ -450,6 +457,12 @@ body
 {
   display: inline;
 }
+
+.game-list-player-box
+{
+  text-align: left;
+}
+
 .game-list-player-box img
 {
   height: 1em;

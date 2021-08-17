@@ -1,5 +1,6 @@
 var server = undefined;
 var connection_verified = false;
+var in_online_game = false;
 
 function connectToServer()
 {
@@ -77,6 +78,16 @@ function verify_compatible_version(v)
   
 }
 
+
+function joinOnlineFromList(e)
+{
+  let id = e.srcElement.dataset.gamecode;
+  server.send(JSON.stringify({
+    req: "join_game",
+    id
+  }));
+}
+
 function onServerMessage(e)
 {
   console.log(e)
@@ -124,6 +135,14 @@ function onServerMessage(e)
       
       gameList = l("game-list");
       gameList.innerHTML = "";
+
+      if(games.length == 0)
+      {
+        let p = document.createElement("p");
+        p.innerText = "No games public games right now.\nCreate one to get the party started!";
+        gameList.appendChild(p);
+        return;
+      }
 
       for(let g of games)
       {
@@ -210,6 +229,12 @@ function onServerMessage(e)
 
           div.appendChild(clockBox);
 
+          let joinButton = document.createElement("button");
+          joinButton.dataset.gamecode = g.id;
+          joinButton.innerText = "Join";
+          joinButton.onclick = joinOnlineFromList;
+          div.appendChild(joinButton);
+
           gameList.appendChild(div);
         }
         catch(e)
@@ -219,13 +244,25 @@ function onServerMessage(e)
         }
       }
     }
-    // TODO add game_created, game_closed, game_start
+    else if(res == "game_start")
+    {
+      in_online_game = true;
+      hideWindows();
+      // TODO proably a lot more tbh
+    }
+    else if(res == "game_closed")
+    {
+      in_online_game = false;
+    }
+
+    // TODO add game_created, game_closed
     
   }
   catch(error)
   {
     onServerError(error);
   }
+  // don't add code after here, sections might return without reaching it
 }
 
 function onServerError(e)
@@ -267,6 +304,7 @@ function onServerClose(e)
   }
 
   connection_verified = false;
+  in_online_game = false;
   l("menu-open-ge").classList.add("button-disable");
 }
 
