@@ -140,7 +140,7 @@ void Server::process_messages()
       // From stackoverflow:
       // server::connection_ptr con = s.get_con_from_hdl(hdl);
       // std::string path = con->get_resource();
-    
+
       lock_guard<mutex> guard(connection_lock);
       connections.insert(std::pair<connection_hdl, connection_info>(a.hdl, connection_info()));
       
@@ -155,6 +155,18 @@ void Server::process_messages()
       catch(std::exception& e)
       {
         std::cerr << "Failed to get user id in SUBSCRIBE" << std::endl;
+      }
+
+      server::connection_ptr con = endpoint.get_con_from_hdl(a.hdl);
+      std::string path = con->get_resource();
+      if(path != "")
+      {
+        std::size_t last_slash = path.find_last_of('/');
+        std::string id = path.substr(last_slash+1);
+        json spoof = {
+          {"id", id}
+        };
+        respond(a.hdl, "join_game", spoof);
       }
     }
     else if(a.type == UNSUBSCRIBE)
@@ -353,7 +365,6 @@ void Server::respond(connection_hdl conn, std::string req, json full)
     ////////////////////////////////////////////////////////////////////////////
     else if(req == "user_set")
     {
-      // TODO? make an option requiring unique user names.
       connections.at(conn).user_name = full.at("name");
       json response = {
         {"res", "user_set"},
