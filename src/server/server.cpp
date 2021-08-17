@@ -159,7 +159,8 @@ void Server::process_messages()
 
       server::connection_ptr con = endpoint.get_con_from_hdl(a.hdl);
       std::string path = con->get_resource();
-      if(path != "")
+      // probably only need to check the "/" case, but I don't trust like that
+      if(path != "" && path != "/")
       {
         std::size_t last_slash = path.find_last_of('/');
         std::string id = path.substr(last_slash+1);
