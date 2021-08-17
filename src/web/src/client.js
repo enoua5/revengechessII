@@ -78,6 +78,72 @@ function verify_compatible_version(v)
   
 }
 
+function giveUpWaitingForOpponent()
+{
+  server.send(JSON.stringify({
+    req: "close_game"
+  }));
+  hideWindows();
+  showWindow("game-explorer")
+}
+
+function createOnlineGame()
+{
+  let sets = prelimSettings.online;
+  if(sets == undefined)
+    sets = {};
+
+  let as_white = sets.playAsWhite;
+  if(as_white == undefined)
+    as_white = true;
+  
+  let private = sets.priv;
+  if(private == undefined)
+    private = false;
+
+  let useTime = sets.useTime;
+  if(useTime == undefined)
+    useTime = true;
+  
+  let mainTimeMin = 5;
+  let mainTimeSec = 0;
+  let inct = "NO_CLOCK";
+  let increment = 0;
+  if(useTime)
+  {
+    let _mainTimeMin = parseInt(sets.mainTimeMin);
+    if(_mainTimeMin == undefined || isNaN(_mainTimeMin))
+      _mainTimeMin = 5;
+    mainTimeMin = _mainTimeMin;
+
+    let _mainTimeSec = parseInt(sets.mainTimeSec);
+    if(_mainTimeSec == undefined || isNaN(_mainTimeSec))
+      _mainTimeSec = 0;
+    mainTimeSec = _mainTimeSec;
+
+    let _inct = sets.incrementMethod;
+    if(_inct == undefined)
+      _inct = "INCREMENT";
+    inct = _inct;
+
+    let _increment = parseInt(sets.incrementAmount);
+    if(_increment == undefined || isNaN(_increment))
+      _increment = 15000;
+    increment = _increment;
+  }
+  let starting_time = (mainTimeMin*60 + mainTimeSec)*1000;
+
+  let msg = JSON.stringify({
+    req: "create_game",
+    private,
+    as_white,
+    starting_time,
+    increment,
+    inct
+  })
+  console.log(msg)
+  server.send(msg);
+}
 
 function joinOnlineFromList(e)
 {
@@ -262,10 +328,15 @@ function onServerMessage(e)
     else if(res == "game_closed")
     {
       in_online_game = false;
+      // TODO probably a lot more tbh
     }
-
-    // TODO add game_created, game_closed
-    
+    else if(res == "game_created")
+    {
+      let id = response.id;
+      hideWindows();
+      l("join-code").innerText = id;
+      showWindow("waiting-for-opponent");
+    }
   }
   catch(error)
   {

@@ -261,7 +261,7 @@
       <!----------------------- Game explorer screen ---------------------->
       <div id="game-explorer" class="window">
         <h2>Join Game</h2>
-        <button id="new-online-game">+ Create new game</button>
+        <button id="new-online-game" onclick="hideWindows(); showWindow('new-online-game-screen')">+ Create new game</button>
         <br/>
         <br/>
         <input id="ge-game-code" class="enter-to-submit" data-submitid="join-by-id"/><button onclick="joinOnlineFromID()" id="join-by-id">Join by ID</button>
@@ -429,6 +429,62 @@
         <button onclick = "newGame(); hideWindows()">create new game</button>
       </div>
       
+      <!---------------------- New online game screen --------------------->
+      <div id="new-online-game-screen" class="window">
+        <h2>Create online game</h2>
+        <button onclick="hideWindows(); showWindow('game-explorer')">Back</button>
+        <hr/>
+        <input id="time-for-online" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="useTime" data-enablesection="online-time-settings"></input>
+        <label for="time-for-online">Use a clock</label>
+        <br/>
+        <div id="online-time-settings">
+          <span>Main time:</span>
+          
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="mainTimeMin" type="number" min="0" value="5"></input>
+          <span>:</span>
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="mainTimeSec" type="number" min="0" max="59" value="0"></input>
+          <br/>
+          
+          <span>Increment amount:</span>
+          
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="incrementAmount" type="number" min="0" max="60" value="15"></input>
+          
+          <span>seconds</span>
+          <br/>
+          
+          <span>IncrementMethod:</span>
+          <select onchange="updatePrelimSets(this)" data-color="online" data-appliesto="incrementMethod">
+            <option value="BRONSTEIN">Bronstein Increment</option>
+            <option value="INCREMENT">Simple Increment</option>
+            <option value="DELAY">Delay</option>
+          </select>
+        </div>
+        <hr/>
+        <input id="online-play-as" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="playAsWhite"></input>
+        <label for="online-play-as">Play as white?</label>
+        <hr/>
+        <input id="online-private" type="checkbox" onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="priv"></input>
+        <label for="online-private">Private game?</label>
+        <hr/>
+        <button onclick="createOnlineGame()">Create game</button>
+      </div>
+
+      <!------------------- Waiting for opponent screen ------------------->
+      <div id="waiting-for-opponent" class="window">
+        <h2>Waiting for opponent</h2>
+        <details>
+          <summary>Join codes (open to view)</summary>
+          <p>Join code: <span id="join-code" style="user-select: all"></span></p>
+          <hr/>
+          <p><small>To join the game from the connection screen, enter the server URL,</small></p>
+          <p><small>followed by a slash, followed by the join code:</small></p>
+          <p><small>revengechess.example.com/C0D3H3R3</small>/p>
+       </details>
+       <br/>
+       <br/>
+       <button onclick="giveUpWaitingForOpponent()">Go back (closing this game)</button>
+      </div>
+
       <!-------------------------- About  screen -------------------------->
       <div id="about-page" class="window">
         <h2>About</h2>

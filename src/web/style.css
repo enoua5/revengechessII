@@ -396,7 +396,7 @@ body
   text-align: left;
 }
 
-#new-game input[type=number]
+#new-game input[type=number], #new-online-game-screen input[type=number]
 {
   width: 3em;
 }
