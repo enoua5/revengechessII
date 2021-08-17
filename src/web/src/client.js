@@ -88,6 +88,15 @@ function joinOnlineFromList(e)
   }));
 }
 
+function joinOnlineFromID()
+{
+  let id = l("ge-game-code").value.toUpperCase();
+  server.send(JSON.stringify({
+    req: "join_game",
+    id
+  }));
+}
+
 function onServerMessage(e)
 {
   console.log(e)
