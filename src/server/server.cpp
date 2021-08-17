@@ -210,12 +210,17 @@ ServerGame::ServerGame(Server* _server, connection_hdl hdl, bool _priv, PlayerCo
   creation_time = time_to_mill(get_current_time());
 }
 
+class AlreadyInGameError : std::exception{};
+
 bool ServerGame::join(connection_hdl hdl)
 {
-  // TODO make sure players can't join their own game
+
   bool joined = false;
   if(!white_in)
   {
+    if(server->conEq(hdl, black))
+      throw AlreadyInGameError();
+  
     white = hdl;
     white_in = true;
     joined = true;
@@ -223,6 +228,9 @@ bool ServerGame::join(connection_hdl hdl)
   
   else if(!black_in)
   {
+    if(server->conEq(hdl, white))
+      throw AlreadyInGameError();
+
     black = hdl;
     black_in = true;
     joined = true;
@@ -307,7 +315,12 @@ void Server::endGame(std::string id)
 
 bool Server::conEq(connection_hdl a, connection_hdl b)
 {
-  return connections.at(a) == connections.at(b);
+  try
+  {
+    return connections.at(a) == connections.at(b);
+  }
+  catch(const std::exception& e){}
+  return false;
 }
 
 void Server::respond(connection_hdl conn, std::string req, json full)
@@ -395,7 +408,23 @@ void Server::respond(connection_hdl conn, std::string req, json full)
     {
       std::string id = full.at("id");
       
-      bool success = games.at(id).join(conn);
+      bool success;
+      std::string errorReason = "Game already started";
+      try
+      {
+        if(games.count(id))
+          success = games.at(id).join(conn);
+        else
+        {
+          success = false;
+          errorReason = "Could not find game";
+        }
+      }
+      catch(const AlreadyInGameError& e)
+      {
+        success = false;
+        errorReason = "You're already in that game!";
+      }
       
       if(success)
       {
@@ -419,7 +448,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       }
       else
       {
-        sendError(conn, "Game already started.");
+        sendError(conn, errorReason);
       }
     }
     ////////////////////////////////////////////////////////////////////////////
@@ -521,6 +550,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
   }
   catch(std::exception& e)
   {
+    std::cerr << "Issuing generic error because of:" << std::endl;
     std::cerr << e.what() << std::endl;
     sendError(conn, "Error generating response");
   }
