@@ -69,6 +69,8 @@
         fillVersionNumbers();
         
         board.delete();
+        
+        connectToServer(true); // in case there's a URL search param
       }
     
       function onload()
@@ -475,7 +477,8 @@
         <details>
           <summary>Join codes (open to view)</summary>
           <p>Join code: <span id="join-code" style="user-select: all"></span></p>
-          <p></p>
+          <p>Connect-and-join server url: <span id="server-join-code" style="user-select: all"></span></p>
+          <p>Full join url: <span id="url-join-code" style="user-select: all"></span></p>
           <hr/>
        </details>
        <br/>

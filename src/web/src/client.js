@@ -5,9 +5,19 @@ var Server = {
   url_base: "" 
 };
 
-function connectToServer()
+function connectToServer(fromURLParam = false)
 {
-  let ip = l("server-ip").value;
+  let ip = "";
+  if(fromURLParam)
+  {
+    let search = location.search;
+    if(search[0] != "?")
+      return;
+    ip = search.split("?")[1];
+  }
+  else
+    ip = l("server-ip").value;
+  Server.url_base = ip.split(/[\/\?\#]/)[0];
   try
   {
     Server.server.close();
@@ -15,10 +25,20 @@ function connectToServer()
   try
   {
     Server.server = new WebSocket("ws://"+ip);
+    if(fromURLParam)
+    {
+      // zero ms timeout so that this is deferred long enough for the window
+      // that we're trying to hide to pop up
+      setTimeout(()=>{
+        hideWindows();
+        showWindow("manage-connection");
+      }, 0);
+    }
   }
   catch(e)
   {
-    onServerError(e);
+    if(!fromURLParam)
+      onServerError(e);
     return;
   }
   Server.server.addEventListener('open', onServerOpen);
@@ -338,6 +358,9 @@ function onServerMessage(e)
       let id = response.id;
       hideWindows();
       l("join-code").innerText = id;
+      let serverJoinCode = Server.url_base + "/" + id;
+      l("server-join-code").innerText = serverJoinCode;
+      l("url-join-code").innerText = location.origin + location.pathname + "?" + serverJoinCode;
       showWindow("waiting-for-opponent");
     }
   }
