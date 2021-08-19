@@ -1,39 +1,42 @@
-var server = undefined;
-var connection_verified = false;
-var in_online_game = false;
+var Server = {
+  server: undefined,
+  connection_verified: false,
+  in_online_game: false,
+  url_base: "" 
+};
 
 function connectToServer()
 {
   let ip = l("server-ip").value;
   try
   {
-    server.close();
+    Server.server.close();
   } catch(e){}
   try
   {
-    server = new WebSocket("ws://"+ip);
+    Server.server = new WebSocket("ws://"+ip);
   }
   catch(e)
   {
     onServerError(e);
     return;
   }
-  server.addEventListener('open', onServerOpen);
-  server.addEventListener('message', onServerMessage);
-  server.addEventListener('error', onServerError);
-  server.addEventListener('close', onServerClose);
+  Server.server.addEventListener('open', onServerOpen);
+  Server.server.addEventListener('message', onServerMessage);
+  Server.server.addEventListener('error', onServerError);
+  Server.server.addEventListener('close', onServerClose);
 }
 
 function disconnectFromServer()
 {
-  if(server == undefined || server.readyState != WebSocket.OPEN)
+  if(Server.server == undefined || Server.server.readyState != WebSocket.OPEN)
     return;
-  server.close();
+  Server.server.close();
 }
 
 function onServerOpen(e)
 {
-  if(server == undefined || server.readyState != WebSocket.OPEN)
+  if(Server.server == undefined || Server.server.readyState != WebSocket.OPEN)
     return; // just in case it instantly closed
     
 //  l("connection-info").classList.remove("error");
@@ -43,7 +46,7 @@ function onServerOpen(e)
   l("connect-button").innerText = "Disconnect";
   l("connect-button").onclick = disconnectFromServer;
   
-  server.send(JSON.stringify({
+  Server.server.send(JSON.stringify({
     req:"version",
     client_version
   }));
@@ -80,7 +83,7 @@ function verify_compatible_version(v)
 
 function giveUpWaitingForOpponent()
 {
-  server.send(JSON.stringify({
+  Server.server.send(JSON.stringify({
     req: "close_game"
   }));
   hideWindows();
@@ -142,13 +145,13 @@ function createOnlineGame()
     inct
   })
   console.log(msg)
-  server.send(msg);
+  Server.server.send(msg);
 }
 
 function joinOnlineFromList(e)
 {
   let id = e.srcElement.dataset.gamecode;
-  server.send(JSON.stringify({
+  Server.server.send(JSON.stringify({
     req: "join_game",
     id
   }));
@@ -157,7 +160,7 @@ function joinOnlineFromList(e)
 function joinOnlineFromID()
 {
   let id = l("ge-game-code").value.toUpperCase();
-  server.send(JSON.stringify({
+  Server.server.send(JSON.stringify({
     req: "join_game",
     id
   }));
@@ -183,7 +186,7 @@ function onServerMessage(e)
 
       updateGameList();
 
-      connection_verified = true;
+      Server.connection_verified = true;
       l("menu-open-ge").classList.remove("button-disable");
     }
     else if(res == "version")
@@ -192,7 +195,7 @@ function onServerMessage(e)
       if(!serve_compat)
       {
         onServerError("Incompatible version");
-        server.close();
+        Server.server.close();
       }
     }
     else if(res == "user_set")
@@ -321,13 +324,13 @@ function onServerMessage(e)
     }
     else if(res == "game_start")
     {
-      in_online_game = true;
+      Server.in_online_game = true;
       hideWindows();
       // TODO proably a lot more tbh
     }
     else if(res == "game_closed")
     {
-      in_online_game = false;
+      Server.in_online_game = false;
       // TODO probably a lot more tbh
     }
     else if(res == "game_created")
@@ -383,8 +386,8 @@ function onServerClose(e)
     showWindow('manage-connection');
   }
 
-  connection_verified = false;
-  in_online_game = false;
+  Server.connection_verified = false;
+  Server.in_online_game = false;
   l("menu-open-ge").classList.add("button-disable");
 }
 
@@ -393,7 +396,7 @@ function set_username()
   let name = l("username").value;
   if(!name)
     return;
-  server.send(JSON.stringify({
+  Server.server.send(JSON.stringify({
     req:"user_set",
     name
   }));
@@ -403,7 +406,7 @@ function updateGameList()
 {
   try
   {
-    server.send(JSON.stringify({
+    Server.server.send(JSON.stringify({
       req: "list_games"
     }));
   }
