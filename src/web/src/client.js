@@ -2,7 +2,8 @@ var Server = {
   server: undefined,
   connection_verified: false,
   in_online_game: false,
-  url_base: "" 
+  url_base: "",
+  play_as: 'x'
 };
 
 function connectToServer(fromURLParam = false)
@@ -76,7 +77,7 @@ var minimum_server_version = {
   name: "standard compliant",
   major: 0,
   minor: 0,
-  patch: 0
+  patch: 3
 };
 
 function verify_compatible_version(v)
@@ -146,7 +147,7 @@ function createOnlineGame()
 
     let _inct = sets.incrementMethod;
     if(_inct == undefined)
-      _inct = "INCREMENT";
+      _inct = "BRONSTEIN";
     inct = _inct;
 
     let _increment = parseInt(sets.incrementAmount);
@@ -345,12 +346,18 @@ function onServerMessage(e)
     else if(res == "game_start")
     {
       Server.in_online_game = true;
+      Server.play_as = response.playAsWhite ? 'w' : 'b';
       hideWindows();
+      Server.server.send(JSON.stringify({
+        req: "get_board"
+      }));
+
       // TODO proably a lot more tbh
     }
     else if(res == "game_closed")
     {
       Server.in_online_game = false;
+      Server.play_as = 'x';
       // TODO probably a lot more tbh
     }
     else if(res == "game_created")
@@ -362,6 +369,26 @@ function onServerMessage(e)
       l("server-join-code").innerText = serverJoinCode;
       l("url-join-code").innerText = location.origin + location.pathname + "?" + serverJoinCode;
       showWindow("waiting-for-opponent");
+    }
+    else if(res == "board_state")
+    {
+      console.log(response);
+
+      Game.game.board.delete();
+      Game.game.board = new Module.Board(response.board_str);
+
+      Game.game.clock.delete();
+      Game.game.clock = new Module.Clock(
+        response.white_timer.time_left,
+        response.white_timer.increment,
+        Module.IncrementMethod[response.white_timer.inct],
+        response.black_timer.time_left,
+        response.black_timer.increment,
+        Module.IncrementMethod[response.black_timer.inct]
+      );
+
+      Game.game.startClock(Game.game.board.turn);
+      dispboard(Game.game.board);
     }
   }
   catch(error)

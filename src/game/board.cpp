@@ -9,9 +9,9 @@
 #include <iterator>
 #include <exception>
 
-#ifdef __EMSCRIPTEN__
+//#ifdef __EMSCRIPTEN__
   #include "nlohmann/json.hpp"
-#endif
+//#endif
 
 Board::Board()
 {
@@ -145,7 +145,7 @@ Board::Board(const Board* other)
     pieces[i] = other->pieces[i];
 }
 
-#ifdef __EMSCRIPTEN__
+//#ifdef __EMSCRIPTEN__
   std::string Board::serialize()
   {
     /*
@@ -441,7 +441,7 @@ Board::Board(const Board* other)
       i++;
     }
   }
-#endif
+//#endif
 
 std::vector<Move> Board::getValidMoves(PieceIdentifier id) const
 {

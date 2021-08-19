@@ -30,5 +30,5 @@ class Game
     
     void takeBack();
     void commitMove(Move);
-    void startClock();
+    void startClock(PlayerColor pc = WHITE);
 };

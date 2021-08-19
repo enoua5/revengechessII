@@ -12,9 +12,9 @@ using nlohmann::json;
 
 // When making forks of this project, version names should end in
 // "standard compliant" if they are compatible with the vanilla client
-Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 2);
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 3);
 // change the version name here if the server should reject the vanilla client
-Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 2);
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 3);
 
 connection_info::connection_info()
 {
@@ -261,6 +261,8 @@ void ServerGame::start()
   started = true;
   white_req_rematch = false;
   black_req_rematch = false;
+
+  game.startClock();
 }
 
 bool ServerGame::rematch(connection_hdl conn)
@@ -555,6 +557,63 @@ void Server::respond(connection_hdl conn, std::string req, json full)
         {"game", ci.current_game}
       };
       endpoint.send(conn, response.dump(), ws_text);
+    }
+    ////////////////////////////////////////////////////////////////////////////
+    else if(req == "get_board")
+    {
+      connection_info ci = connections.at(conn);
+      if(games.count(ci.current_game))
+      {
+        Game g = games.at(ci.current_game).game;
+        std::string board = g.board.serialize();
+
+        json white_timer = {
+          {"time_left", g.clock.getWhiteTime()},
+          {"increment", g.clock.getWhiteIncrementAmount()},
+          {"inct", inctToString(g.clock.getWhiteIncType())}
+        };
+
+        json black_timer = {
+          {"time_left", g.clock.getBlackTime()},
+          {"increment", g.clock.getBlackIncrementAmount()},
+          {"inct", inctToString(g.clock.getBlackIncType())}
+        };
+
+
+        json response = {
+          {"res", "board_state"},
+          {"board_str", board},
+          {"white_timer", white_timer},
+          {"black_timer", black_timer}
+        };
+        endpoint.send(conn, response.dump(), ws_text);
+      }
+    }
+    else if(req == "make_move")
+    {
+      connection_info ci = connections.at(conn);
+      if(games.count(ci.current_game))
+      {
+        unsigned char from = full.at("from");
+        unsigned char to = full.at("to");
+        std::string promo_str = full.at("promo");
+        PieceType promo = NO;
+        if(promo_str == "PAWN")
+          promo = PAWN;
+        else if(promo_str == "ROOK")
+          promo = ROOK;
+        else if(promo_str == "KNIGHT")
+          promo = KNIGHT;
+        else if(promo_str == "BISHOP")
+          promo = BISHOP;
+        else if(promo_str == "KING")
+          promo = KING;
+        else if(promo_str == "QUEEN")
+          promo = QUEEN;
+
+        Move move = Move(Square(from), Square(to), promo);
+        games.at(ci.current_game).game.commitMove(move);
+      }
     }
     ////////////////////////////////////////////////////////////////////////////
     else
