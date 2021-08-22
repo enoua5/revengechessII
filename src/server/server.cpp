@@ -594,6 +594,16 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       connection_info ci = connections.at(conn);
       if(games.count(ci.current_game))
       {
+        ServerGame sg = games.at(ci.current_game);
+        connection_hdl conn_turn = sg.black;
+        if(sg.game.board.turn == WHITE)
+          conn_turn = sg.white;
+        if(!conEq(conn, conn_turn))
+        {
+          sendError(conn, "Not your turn! (how did you get here?)");
+          return;
+        }
+
         unsigned char from = full.at("from");
         unsigned char to = full.at("to");
         std::string promo_str = full.at("promo");
@@ -612,7 +622,15 @@ void Server::respond(connection_hdl conn, std::string req, json full)
           promo = QUEEN;
 
         Move move = Move(Square(from), Square(to), promo);
-        games.at(ci.current_game).game.commitMove(move);
+        try
+        {
+          games.at(ci.current_game).game.commitMove(move);
+        }
+        catch(const std::exception& e)
+        {
+          sendError(conn, "Not a legal move! (how did you get here?)");
+        }
+        
       }
     }
     ////////////////////////////////////////////////////////////////////////////
