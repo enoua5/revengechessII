@@ -142,6 +142,7 @@ class Server
     
     GameMap games;
     void endGame(std::string id);
+    void sendBoardState(ServerGame, bool just_one = false, connection_hdl the_one = connection_hdl());
     
     json settings;
 };

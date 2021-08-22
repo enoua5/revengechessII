@@ -338,6 +338,41 @@ bool Server::conEq(connection_hdl a, connection_hdl b)
   return false;
 }
 
+void Server::sendBoardState(ServerGame sg, bool just_one, connection_hdl the_one)
+{
+  Game g = sg.game;
+  std::string board = g.board.serialize();
+
+  json white_timer = {
+    {"time_left", g.clock.getWhiteTime()},
+    {"increment", g.clock.getWhiteIncrementAmount()},
+    {"inct", inctToString(g.clock.getWhiteIncType())}
+  };
+
+  json black_timer = {
+    {"time_left", g.clock.getBlackTime()},
+    {"increment", g.clock.getBlackIncrementAmount()},
+    {"inct", inctToString(g.clock.getBlackIncType())}
+  };
+
+
+  json response = {
+    {"res", "board_state"},
+    {"board_str", board},
+    {"white_timer", white_timer},
+    {"black_timer", black_timer}
+  };
+
+  if(just_one)
+    endpoint.send(the_one, response.dump(), ws_text);
+  else
+  {
+    endpoint.send(sg.white, response.dump(), ws_text);
+    endpoint.send(sg.black, response.dump(), ws_text);
+  }
+  
+}
+
 void Server::respond(connection_hdl conn, std::string req, json full)
 {
   try
@@ -564,29 +599,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       connection_info ci = connections.at(conn);
       if(games.count(ci.current_game))
       {
-        Game g = games.at(ci.current_game).game;
-        std::string board = g.board.serialize();
-
-        json white_timer = {
-          {"time_left", g.clock.getWhiteTime()},
-          {"increment", g.clock.getWhiteIncrementAmount()},
-          {"inct", inctToString(g.clock.getWhiteIncType())}
-        };
-
-        json black_timer = {
-          {"time_left", g.clock.getBlackTime()},
-          {"increment", g.clock.getBlackIncrementAmount()},
-          {"inct", inctToString(g.clock.getBlackIncType())}
-        };
-
-
-        json response = {
-          {"res", "board_state"},
-          {"board_str", board},
-          {"white_timer", white_timer},
-          {"black_timer", black_timer}
-        };
-        endpoint.send(conn, response.dump(), ws_text);
+        sendBoardState(games.at(ci.current_game), true, conn);
       }
     }
     else if(req == "make_move")
@@ -631,6 +644,7 @@ void Server::respond(connection_hdl conn, std::string req, json full)
           sendError(conn, "Not a legal move! (how did you get here?)");
         }
         
+        sendBoardState(games.at(ci.current_game));
       }
     }
     ////////////////////////////////////////////////////////////////////////////
