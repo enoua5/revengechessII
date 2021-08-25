@@ -26,8 +26,7 @@ function connectToServer(fromURLParam = false)
   } catch(e){}
   try
   {
-    let protocol = (location.protocol == "https:" ? "wss" : "ws");
-    Server.server = new WebSocket(protocol + "://" + ip);
+    Server.server = new WebSocket("ws://" + ip);
     if(fromURLParam)
     {
       // zero ms timeout so that this is deferred long enough for the window
