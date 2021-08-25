@@ -156,6 +156,15 @@ void Clock::stop()
   if(black_timer.isRunning())
     black_timer.toggle();
 }
+void Clock::setToNoClock()
+{
+  white_timer.setToNoClock();
+  black_timer.setToNoClock();
+}
+void Timer::setToNoClock()
+{
+  incType = NO_CLOCK;
+}
 
 bool Clock::isWhiteRunning()
 {

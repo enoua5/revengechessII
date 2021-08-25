@@ -12,9 +12,9 @@ using nlohmann::json;
 
 // When making forks of this project, version names should end in
 // "standard compliant" if they are compatible with the vanilla client
-Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 0, 3);
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 1, 0);
 // change the version name here if the server should reject the vanilla client
-Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 2, 3);
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 3, 0);
 
 connection_info::connection_info()
 {
@@ -657,6 +657,35 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       }
     }
     ////////////////////////////////////////////////////////////////////////////
+    else if(req == "resign")
+    {
+      connection_info ci = connections.at(conn);
+      if(games.count(ci.current_game))
+      {
+        ServerGame sg = games.at(ci.current_game);
+
+        json response_opp = {
+          {"res", "opponent_resigned"}
+        };
+        json response_you = {
+          {"res", "you_resigned"}
+        };
+
+        if(conEq(conn, sg.white))
+        {
+          endpoint.send(sg.white, response_you.dump(), ws_text);
+          endpoint.send(sg.black, response_opp.dump(), ws_text);
+        }
+        else
+        {
+          endpoint.send(sg.black, response_you.dump(), ws_text);
+          endpoint.send(sg.white, response_opp.dump(), ws_text);
+        }
+
+        games.at(ci.current_game).game.clock.setToNoClock();
+        sendBoardState(games.at(ci.current_game));
+      }
+    }
     else
       sendError(conn, "Unrecognized request");
   }

@@ -38,8 +38,8 @@
       var client_version = {
         name: "Revenge Chess UI, standard compliant",
         major: 2,
-        minor: 2,
-        patch: 3
+        minor: 4,
+        patch: 0
       };
       
       var Game = {
@@ -234,8 +234,16 @@
       <div id="result-screen" class="window">
         <h2 id="winner"></h2>
         <h3 id="winner-info"></h3>
-        <button onclick="hideWindows();">show board</button>
-        <button onclick="hideWindows(); showWindow('new-game');">new game</button>
+        <div id="offline-aftergame">
+          <button onclick="hideWindows();">show board</button>
+          <button onclick="hideWindows(); showWindow('new-game');">New game</button>
+          <button onclick="giveUpWaitingForOpponent()" id="offline-go-online" disabled>New online game</button>
+        </div>
+        <div id="online-aftergame" style="display: none;">
+          <button onclick="hideWindows();">show board</button>
+          <button onclick="requestRematch();" id="rematch-button">Request rematch</button>
+          <button onclick="giveUpWaitingForOpponent()">Back to explorer</button>
+        </div>
       </div>
       
       <!------------------------ Connection screen ------------------------>
@@ -661,6 +669,7 @@
             </div>
             <div id="ai-load-bar"><div id="load-slider"></div></div>
           </div>
+          <button onclick="resign()" id="resign_button" style="display: none;">Resign</button>
         </div>
       </div>
     </div>

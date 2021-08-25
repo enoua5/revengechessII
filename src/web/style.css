@@ -341,6 +341,14 @@ body
 
 }
 
+#resign_button
+{
+  position: absolute;
+  bottom: 0.5em;
+  width: 80%;
+  left: 10%;
+}
+
 #load-slider
 {
   margin: 0;

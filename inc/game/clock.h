@@ -33,6 +33,7 @@ class Timer
     unsigned int getDelayLeft();
     unsigned int getTimeSpentThisTurn();
     
+    void setToNoClock();
     inline IncrementMethod getIncType();
     inline unsigned int getIncrementAmount();
   protected:
@@ -55,6 +56,7 @@ class Clock
     Clock(unsigned int startingTimeWhite, unsigned int incrementWhite, IncrementMethod inctWhite, unsigned int startingTimeBlack, unsigned int incrementBlack, IncrementMethod inctBlack);
     unsigned int toggle();
     void stop();
+    void setToNoClock();
     unsigned int getWhiteTime();
     unsigned int getBlackTime();
     bool isWhiteRunning();

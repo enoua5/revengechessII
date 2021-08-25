@@ -77,8 +77,8 @@ function onServerOpen(e)
 var minimum_server_version = {
   name: "standard compliant",
   major: 0,
-  minor: 0,
-  patch: 3
+  minor: 1,
+  patch: 0
 };
 
 function verify_compatible_version(v)
@@ -109,7 +109,8 @@ function giveUpWaitingForOpponent()
     req: "close_game"
   }));
   hideWindows();
-  showWindow("game-explorer")
+  showWindow("game-explorer");
+  Server.requested_close = true;
 }
 
 function createOnlineGame()
@@ -210,6 +211,8 @@ function onServerMessage(e)
 
       Server.connection_verified = true;
       l("menu-open-ge").classList.remove("button-disable");
+
+      l("offline-go-online").disabled = false;
     }
     else if(res == "version")
     {
@@ -347,6 +350,10 @@ function onServerMessage(e)
     else if(res == "game_start")
     {
       Server.in_online_game = true;
+      l("resign_button").style.display = "";
+      l("offline-aftergame").style.display = "none";
+      l("online-aftergame").style.display = "";
+      l("rematch-button").innerText = "Request rematch";
       Server.play_as = response.play_as_white ? 'w' : 'b';
       hideWindows();
       Server.server.send(JSON.stringify({
@@ -360,6 +367,10 @@ function onServerMessage(e)
     else if(res == "game_closed")
     {
       Server.in_online_game = false;
+      l("resign_button").style.display = "none";
+      l("offline-aftergame").style.display = "";
+      l("online-aftergame").style.display = "none";
+
       Server.play_as = 'x';
 
       if(!Server.requested_close)
@@ -413,6 +424,18 @@ function onServerMessage(e)
 
       dispboard(Game.game.board);
     }
+    else if(res == "opponent_resigned")
+    {
+      l("winner").innerText = "Opponent resigned";
+      l("winner-info").innerText = "";
+      showWindow("result-screen");
+    }
+    else if(res == "you_resigned")
+    {
+      l("winner").innerText = "You resigned";
+      l("winner-info").innerText = "";
+      showWindow("result-screen");
+    }
   }
   catch(error)
   {
@@ -461,7 +484,11 @@ function onServerClose(e)
 
   Server.connection_verified = false;
   Server.in_online_game = false;
+  l("resign_button").style.display = "none";
+  l("offline-aftergame").style.display = "";
+  l("online-aftergame").style.display = "none";
   l("menu-open-ge").classList.add("button-disable");
+  l("offline-go-online").disabled = false;
 }
 
 function set_username()
@@ -522,5 +549,23 @@ function sendMove(move)
     from,
     to,
     promo
+  }));
+}
+
+function resign()
+{
+  if(confirm("Really resign this game?"))
+  {
+    Server.server.send(JSON.stringify({
+      "req": "resign"
+    }));
+  }
+}
+
+function requestRematch()
+{
+  l("rematch-button").innerText = "Waiting for opponent...";
+  Server.server.send(JSON.stringify({
+    req: "request_rematch"
   }));
 }
