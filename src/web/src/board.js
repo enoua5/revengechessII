@@ -618,6 +618,8 @@ function newGame()
 {
   if(Server.in_online_game)
   {
+    if(!confirm("This will close the online game you're currently in. Continue anyway?"))
+      return;
     Server.server.send(JSON.stringify({
       req: "close_game"
     }));
