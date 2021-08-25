@@ -399,6 +399,18 @@ function onServerMessage(e)
       );
 
       Game.game.startClock(Game.game.board.turn);
+
+      if(!selectedSquares)
+        selectedSquares = {};
+      if(!selectedSquares.prev_move)
+        selectedSquares.prev_move = {};
+      if(selectedSquares.prev_move.from)
+        selectedSquares.prev_move.from.delete();
+      if(selectedSquares.prev_move.to)
+        selectedSquares.prev_move.to.delete();
+      selectedSquares.prev_move.from = new Module.Square(response.prev_from);
+      selectedSquares.prev_move.to = new Module.Square(response.prev_to);
+
       dispboard(Game.game.board);
     }
   }

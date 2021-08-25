@@ -73,6 +73,8 @@ struct ServerGame
   bool white_req_rematch;
   
   Game game;
+  unsigned char prev_from;
+  unsigned char prev_to;
   
   unsigned int startingTime;
   unsigned int increment;

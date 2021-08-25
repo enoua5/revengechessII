@@ -204,6 +204,7 @@ ServerGame::ServerGame(Server* _server, connection_hdl hdl, bool _priv, PlayerCo
     IncrementMethod _inct)
     : priv(_priv), started(false), 
     black_req_rematch(false), white_req_rematch(false),
+    prev_from(-1), prev_to(-1),
     startingTime(_startingTime), increment(_increment), inct(_inct),
     server(_server)
 {
@@ -263,6 +264,9 @@ void ServerGame::start()
   black_req_rematch = false;
 
   game.startClock();
+
+  prev_from = -1;
+  prev_to = -1;
 }
 
 bool ServerGame::rematch(connection_hdl conn)
@@ -360,7 +364,9 @@ void Server::sendBoardState(ServerGame sg, bool just_one, connection_hdl the_one
     {"res", "board_state"},
     {"board_str", board},
     {"white_timer", white_timer},
-    {"black_timer", black_timer}
+    {"black_timer", black_timer},
+    {"prev_from", sg.prev_from},
+    {"prev_to", sg.prev_to}
   };
 
   if(just_one)
@@ -638,6 +644,9 @@ void Server::respond(connection_hdl conn, std::string req, json full)
         try
         {
           games.at(ci.current_game).game.commitMove(move);
+          games.at(ci.current_game).prev_from = from;
+          games.at(ci.current_game).prev_to = to;
+
         }
         catch(const std::exception& e)
         {
