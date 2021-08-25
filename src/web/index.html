@@ -21,6 +21,7 @@
     <script src = "src/board.js"></script>
     <script src = "src/infopane.js"></script>
     <script src = "src/ai.js"></script>
+    <script src = "src/client.js"></script>
     <script>
       function l(what){return document.getElementById(what)}
       
@@ -33,6 +34,13 @@
       };
       
       var prelimSettings = {};
+      
+      var client_version = {
+        name: "Revenge Chess UI, standard compliant",
+        major: 2,
+        minor: 4,
+        patch: 0
+      };
       
       var Game = {
         game: null,
@@ -61,6 +69,8 @@
         fillVersionNumbers();
         
         board.delete();
+        
+        connectToServer(true); // in case there's a URL search param
       }
     
       function onload()
@@ -188,6 +198,8 @@
         
         ////////////////////////////////////////////////////////////////////////
         
+        setupEnterToSubmit();
+
         showWindow('home-screen');
       }
       
@@ -205,23 +217,79 @@
   </head>
   <body onload="onload()">
   
-    <!-- Pop-up holder -->
+    <!--------------------------- Pop-up holder --------------------------->
     <div id="pane">
+      <!--------------------------- Home screen --------------------------->
       <div id="home-screen" class="window">
         <h2>Revenge Chess</h2>
         <h5>I'm not a UI designer, sorry. &#x1F605;</h5>
         <button onclick="hideWindows(); showWindow('new-game')">Play</button>
         <br/>
-        <button disabled>Play online</button>
+        <button onclick="hideWindows(); showWindow('manage-connection')">Play online</button>
         <br/>
         <button disabled>Play tutorials</button>
       </div>
+      
+      <!-------------------------- Result screen -------------------------->
       <div id="result-screen" class="window">
         <h2 id="winner"></h2>
         <h3 id="winner-info"></h3>
-        <button onclick="hideWindows();">show board</button>
-        <button onclick="hideWindows(); showWindow('new-game');">new game</button>
+        <div id="offline-aftergame">
+          <button onclick="hideWindows();">show board</button>
+          <button onclick="hideWindows(); showWindow('new-game');">New game</button>
+          <button onclick="giveUpWaitingForOpponent()" id="offline-go-online" disabled>New online game</button>
+        </div>
+        <div id="online-aftergame" style="display: none;">
+          <button onclick="hideWindows();">show board</button>
+          <button onclick="requestRematch();" id="rematch-button">Request rematch</button>
+          <button onclick="giveUpWaitingForOpponent()">Back to explorer</button>
+        </div>
       </div>
+      
+      <!------------------------ Connection screen ------------------------>
+      <div id="manage-connection" class="window">
+        <h2>Manage connections</h2>
+        <label>Server IP</label>
+        <input id="server-ip" class="enter-to-submit" data-submitid="connect-button"></input>
+        <button id="connect-button" onclick="connectToServer()">Connect</button>
+        <br/>
+        <p id="connection-info"></p>
+        <br/>
+        <!-- name is outdated. simply appears and disappears with the server -->
+        <div id="name-box" style="display:none">
+          <label>Username</label>
+          <input id="username" class="enter-to-submit" data-submitid="set-username-button"></input>
+          <button id="set-username-button" onclick="set_username()">Set</button>
+          <br/>
+          <br/>
+          <button onclick="hideWindows();showWindow('game-explorer')">Find a game</button>
+        </div>
+        <br/><br/>
+        <button onclick="hideWindows();">close</button>
+      </div>
+
+      <!----------------------- Game explorer screen ---------------------->
+      <div id="game-explorer" class="window">
+        <h2>Join Game</h2>
+        <button id="new-online-game" onclick="hideWindows(); showWindow('new-online-game-screen')">+ Create new game</button>
+        <br/>
+        <br/>
+        <input id="ge-game-code" class="enter-to-submit" data-submitid="join-by-id"/><button onclick="joinOnlineFromID()" id="join-by-id">Join by ID</button>
+
+        <h3 style="margin-bottom: 0">Public Games</h3>
+        <button onclick="updateGameList()">Refresh</button>
+        <div id="game-list">
+          <p>...</p>
+        </div>
+        <br/>
+        <br/>
+        <button onclick="hideWindows(); showWindow('manage-connection')">Back to connection management</button>
+        <br/>
+        <br/>
+        <button onclick="hideWindows();">close</button>
+      </div>
+      
+      <!------------------------- New game screen ------------------------->
       <div id="new-game" class="window">
         <h2>New game</h2>
         <details>
@@ -370,12 +438,69 @@
         <button onclick="hideWindows();">close</button>
         <button onclick = "newGame(); hideWindows()">create new game</button>
       </div>
+      
+      <!---------------------- New online game screen --------------------->
+      <div id="new-online-game-screen" class="window">
+        <h2>Create online game</h2>
+        <button onclick="hideWindows(); showWindow('game-explorer')">Back</button>
+        <hr/>
+        <input id="time-for-online" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="useTime" data-enablesection="online-time-settings"></input>
+        <label for="time-for-online">Use a clock</label>
+        <br/>
+        <div id="online-time-settings">
+          <span>Main time:</span>
+          
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="mainTimeMin" type="number" min="0" value="5"></input>
+          <span>:</span>
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="mainTimeSec" type="number" min="0" max="59" value="0"></input>
+          <br/>
+          
+          <span>Increment amount:</span>
+          
+          <input onchange="updatePrelimSets(this)" data-color="online" data-appliesto="incrementAmount" type="number" min="0" max="60" value="15"></input>
+          
+          <span>seconds</span>
+          <br/>
+          
+          <span>IncrementMethod:</span>
+          <select onchange="updatePrelimSets(this)" data-color="online" data-appliesto="incrementMethod">
+            <option value="BRONSTEIN">Bronstein Increment</option>
+            <option value="INCREMENT">Simple Increment</option>
+            <option value="DELAY">Delay</option>
+          </select>
+        </div>
+        <hr/>
+        <input id="online-play-as" type="checkbox" checked onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="playAsWhite"></input>
+        <label for="online-play-as">Play as white?</label>
+        <hr/>
+        <input id="online-private" type="checkbox" onchange="updatePrelimSets(this)" data-color="online" data-appliesTo="priv"></input>
+        <label for="online-private">Private game?</label>
+        <hr/>
+        <button onclick="createOnlineGame()">Create game</button>
+      </div>
+
+      <!------------------- Waiting for opponent screen ------------------->
+      <div id="waiting-for-opponent" class="window">
+        <h2>Waiting for opponent</h2>
+        <details>
+          <summary>Join codes (open to view)</summary>
+          <p>Join code: <span id="join-code" style="user-select: all"></span></p>
+          <p>Connect-and-join server url: <span id="server-join-code" style="user-select: all"></span></p>
+          <p>Full join url: <span id="url-join-code" style="user-select: all"></span></p>
+          <hr/>
+       </details>
+       <br/>
+       <br/>
+       <button onclick="giveUpWaitingForOpponent()">Go back (closing this game)</button>
+      </div>
+
+      <!-------------------------- About  screen -------------------------->
       <div id="about-page" class="window">
         <h2>About</h2>
         <hr/>
         <h3>User Interface</h3>
         <h4>Main code</h4>
-        <p>Revenge Chess UI, version b2.1.1#6</p>
+        <p id="client-version"></p>
         <p>&copy; Jacob Allen, 2021. <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="https://github.com/enoua5/revengechessII">Github</a>.</p>
         <h4>Piece images</h4>
         <p>&copy; <a href="https://pixabay.com/users/clker-free-vector-images-3736/">Clker-Free-Vector-Images</a>. <a href="https://pixabay.com/service/license/">Pixabay Licence</a>. <a href="https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/">Source</a>.</p>
@@ -398,6 +523,8 @@
         
         <button onclick="hideWindows();">close</button>
       </div>
+      
+      <!---------------------- Color settings screen ---------------------->
       <div id="color-settings" class="window">
         <h2>Color Settings</h2>
         <!-- Uses previousElementSibling, so be careful about adding new elements -->
@@ -479,7 +606,7 @@
       </div>
     </div>
     
-    <!-- Game container -->
+    <!--------------------------- Game container -------------------------->
     <div id="container" style="text-align: center; display: inline-block">
       <div id = "gamearea">
         <div id="option-bar">
@@ -487,7 +614,15 @@
             <p>Game</p>
             <ul>
               <li onclick="showWindow('new-game')">New game..</li>
-              <li class = 'button-disable'>Connect to server..</li>
+              <li>
+                <div class="dropdown inner-menu-button">
+                  <p>Server &gt;</p>
+                  <ul>
+                    <li onclick="showWindow('manage-connection')" style="width:150%">Manage connection..</li>
+                    <li id="menu-open-ge" class = 'button-disable' onclick="if(Server.connection_verified) showWindow('game-explorer')" style="width:150%">Join/create game</li>
+                  </ul>
+                </div>
+              </li>
               <li class = 'button-disable'>Tutorial scenarios</li>
             </ul>
           </div>
@@ -499,9 +634,9 @@
                 <div class="dropdown inner-menu-button">
                   <p>Board orientation &gt;</p>
                   <ul>
-                    <li data-value="w" class="orientation-radio radio-selected" onclick="setOrientation(this)">White at bottom</li>
-                    <li data-value="b" class="orientation-radio" onclick="setOrientation(this)">Black at bottom</li>
-                    <li data-value="t" class="orientation-radio" onclick="setOrientation(this)">Current turn at bottom</li>
+                    <li data-value="w" class="orientation-radio radio-selected" onclick="setOrientation(this)" style="width:300%">White at bottom</li>
+                    <li data-value="b" class="orientation-radio" onclick="setOrientation(this)" style="width:300%">Black at bottom</li>
+                    <li data-value="t" class="orientation-radio" onclick="setOrientation(this)" style="width:300%">Current turn at bottom</li>
                   </ul>
                 </div>
               </li>
@@ -534,6 +669,7 @@
             </div>
             <div id="ai-load-bar"><div id="load-slider"></div></div>
           </div>
+          <button onclick="resign()" id="resign_button" style="display: none;">Resign</button>
         </div>
       </div>
     </div>

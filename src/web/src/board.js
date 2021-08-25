@@ -358,7 +358,7 @@ function selectPromotion(p)
     to: selectedSquares.to,
     promotion: selectedSquares.promotion
   };
-  Game.game.commitMove(move);
+  makeMove(move);
   let board = Game.game.board;
   dispboard(board);
   board.delete();
@@ -441,11 +441,16 @@ function squareClicked(e, which)
     e.preventDefault()
   
   // do not allow the player to move on the AI's turn
-  // TODO when adding online vs, add an `|| .isAway` condition
   if(getCurrentPlayerSets().usingAI)
     return;
   if(gameIsOver())
     return;
+  if(Server.in_online_game)
+  {
+    let turn = Game.game.board.turn == Module.PlayerColor.WHITE ? 'w' : 'b';
+    if(turn != Server.play_as)
+      return;
+  }
   
   let s = stringToSquare(which.id);
   
@@ -564,7 +569,7 @@ function squareClicked(e, which)
         to: move.to,
         promotion: move.promotion
       };
-      Game.game.commitMove(move);
+      makeMove(move);
       move.delete();
       board.delete();
       board = Game.game.board;
@@ -611,6 +616,16 @@ function copyAISettings(src, dest)
 
 function newGame()
 {
+  if(Server.in_online_game)
+  {
+    if(!confirm("This will close the online game you're currently in. Continue anyway?"))
+      return;
+    Server.server.send(JSON.stringify({
+      req: "close_game"
+    }));
+    Server.requested_close = true;
+  }
+
   alreadyShowedResultScreen = false;
   
   if(!prelimSettings.white)
@@ -705,10 +720,18 @@ function newGame()
     Game.game.clock = clock;
   }
   
-  Game.game.startClock();
+  Game.game.startClock(Module.PlayerColor.WHITE);
   selectedSquares.prev_move = {};
   
   let board = Game.game.board;
   dispboard(Game.game.board);
   board.delete();
+}
+
+function makeMove(move)
+{
+  if(!Server.in_online_game)
+    Game.game.commitMove(move);
+  else
+    sendMove(move);
 }

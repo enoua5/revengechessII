@@ -16,11 +16,13 @@ Game::Game()
   #endif
 }
 
-void Game::startClock()
+void Game::startClock(PlayerColor pc)
 {
   if(clock.isWhiteRunning() || clock.isBlackRunning())
     return;
   clock.toggle();
+  if(pc == BLACK)
+    clock.toggle();
 }
 
 void Game::takeBack()

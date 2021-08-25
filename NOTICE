@@ -1,0 +1,14 @@
+This project uses third party open-source code. The sources for these works are
+linked to, rather than included in the distribution. URLS to the repositories
+containing the code and licenses of the code linked are provided below.
+
+PLEASE NOTE: compiled versions of this project do not contain all the legal
+documentation required for standalone distribution.
+DO NOT distribute copies of this work in its compiled form without first
+reading, and taking action to comply with, ALL license agreements from this work
+and ALL linked works.
+
+URLS of linked works:
+  https://github.com/nlohmann/json
+  https://github.com/zaphoyd/websocketpp
+  https://github.com/chriskohlhoff/asio/

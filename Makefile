@@ -1,28 +1,54 @@
 BDIR = build/
 NDIR = $(BDIR)native/
 WDIR = $(BDIR)web/
+SRVDIR = $(BDIR)server/
 EXE = $(NDIR)revengechess
 JSEXE = $(WDIR)revengechess.js
+SERVER_NAME = rc2serve
+SERVER_EXE = $(SRVDIR)$(SERVER_NAME)
 NCC = g++
 WCC = em++
-INCLUDE = -I inc/ -I third_party/nlohmann_json/include/
+INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
+SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++2a
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
-all: $(EXE) web
+all: native web server
 
 native: $(EXE)
 	
-web: $(JSEXE) webui
+web: js_exe webui
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/error.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js
+js_exe: $(JSEXE)
+
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js
 
 test: $(EXE)
 	$(EXE)
 
 memcheck: $(EXE)
 	$(MEMCHECK) $(EXE)
+	
+test_server: server
+	(cd $(SRVDIR); ./$(SERVER_NAME))
+	
+memcheck_server: server
+	(cd $(SRVDIR); $(MEMCHECK) ./$(SERVER_NAME))
+	
+server: server_exe server_conf
+
+server_exe: $(SERVER_EXE)
+
+$(SERVER_EXE): src/server_main.cpp src/version.cpp src/game/* src/server/*.cpp inc/*
+	mkdir -p $(SRVDIR)
+	$(NCC) $(SOPTIONS) -o $(SERVER_EXE) $(INCLUDE) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/version.cpp
+
+server_conf: $(SRVDIR)conf.json
+
+$(SRVDIR)conf.json: src/server/default_conf.json
+	mkdir -p $(SRVDIR)
+	cp src/server/default_conf.json $(SRVDIR)conf.json
 	
 clean:
 	rm -r $(BDIR)
@@ -51,9 +77,9 @@ $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
 	
-$(WDIR)img/error.png: img/error.png
+$(WDIR)img/*.png: img/*.png
 	mkdir -p $(WDIR)img
-	cp img/error.png $(WDIR)img
+	cp img/*.png $(WDIR)img
 	
 $(WDIR)src/board.js: src/web/src/board.js
 	mkdir -p $(WDIR)src
@@ -75,4 +101,6 @@ $(WDIR)src/ai.js: src/web/src/ai.js
 	mkdir -p $(WDIR)src
 	cp src/web/src/ai.js $(WDIR)src/
 	
-	
+$(WDIR)src/client.js: src/web/src/client.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/client.js $(WDIR)src/

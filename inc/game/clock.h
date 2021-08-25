@@ -3,6 +3,7 @@
 
 #include "enum.h"
 #include <chrono>
+#include <string>
 typedef std::chrono::milliseconds timer_res;
 typedef std::chrono::time_point<std::chrono::system_clock> TimerTime;
 
@@ -13,6 +14,12 @@ enum IncrementMethod
   BRONSTEIN,
   NO_CLOCK
 };
+
+std::string inctToString(IncrementMethod);
+IncrementMethod stringToInct(std::string);
+
+TimerTime get_current_time(); 
+unsigned int time_to_mill(TimerTime t);
 
 class Timer
 {
@@ -26,6 +33,7 @@ class Timer
     unsigned int getDelayLeft();
     unsigned int getTimeSpentThisTurn();
     
+    void setToNoClock();
     inline IncrementMethod getIncType();
     inline unsigned int getIncrementAmount();
   protected:
@@ -48,6 +56,7 @@ class Clock
     Clock(unsigned int startingTimeWhite, unsigned int incrementWhite, IncrementMethod inctWhite, unsigned int startingTimeBlack, unsigned int incrementBlack, IncrementMethod inctBlack);
     unsigned int toggle();
     void stop();
+    void setToNoClock();
     unsigned int getWhiteTime();
     unsigned int getBlackTime();
     bool isWhiteRunning();

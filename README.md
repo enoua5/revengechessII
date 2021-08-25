@@ -11,7 +11,7 @@ Build all versions of the project: `make all` or simply `make`
 
 ### Command line version
 
-Build just the exe version: `make native`
+Build the native command-line version: `make native`
 
 Build and run: `make test`
 
@@ -19,6 +19,17 @@ Build and run memory leak analysis: `make memcheck`
 
 ### Web version
 
-Build just the web version: `make web`
+Build the web version: `make web`
 
-Build the web version, skipping wasm: `make webui`
+Build the web version, skipping WASM: `make webui`
+
+Only compile the WASM files: `make js_exe`
+
+### Server
+
+Build the server: `make server`
+
+Build just the server executable, skipping config files: `make server_exe`
+
+Only copy the default configuation file to the server directory: `make server_conf`
+

@@ -214,7 +214,6 @@ body
   color: white;
   margin: 0.1em;
   padding: 0.1em 0.25em 0.1em 0.25em;
-  display: inline-block;
   overflow-x: visible;
 }
 
@@ -228,7 +227,7 @@ body
 }
 .dropdown > :not(:first-child)
 {
-  font-size: 0.8em;
+  /*font-size: 0.8em;*/
   text-align: left;
 }
 .dropdown:not(:hover) > ul
@@ -255,10 +254,6 @@ body
   border: 1px solid black;
   border-top: 0;
   background: dimgrey;
-}
-.inner-menu-button > ul > li
-{
-  width: 300%;
 }
 .dropdown > ul > li:hover:not(.button-disable)
 {
@@ -346,6 +341,14 @@ body
 
 }
 
+#resign_button
+{
+  position: absolute;
+  bottom: 0.5em;
+  width: 80%;
+  left: 10%;
+}
+
 #load-slider
 {
   margin: 0;
@@ -401,7 +404,7 @@ body
   text-align: left;
 }
 
-#new-game input[type=number]
+#new-game input[type=number], #new-online-game-screen input[type=number]
 {
   width: 3em;
 }
@@ -414,4 +417,70 @@ body
 .setting-disable
 {
   display: none;
+}
+
+#connection-info
+{
+  font-size: 0.8em;
+}
+
+#connection-info.error
+{
+  color: red;
+}
+#connection-info.success
+{
+  color: green;
+}
+#new-online-game
+{
+  float: right;
+}
+
+#game-list
+{
+  border: 1px solid white;
+  font-size: 0.75em;
+}
+
+.game-list-entry
+{
+  border: 1px solid white;
+  column-count: 2;
+  padding: 1em;
+}
+
+.game-list-clock-box
+{
+  text-align: right;
+}
+
+.game-list-clock-box img
+{
+  height: 1em;
+  display: inline-block;
+}
+
+.game-list-clock-box p
+{
+  display: inline;
+}
+
+.game-list-player-box
+{
+  text-align: left;
+}
+
+.game-list-player-box img
+{
+  height: 1em;
+  display: inline-block;
+}
+
+.game-list-player-box p
+{
+  overflow: hidden; /* To prevent zalgo-text from crowding the list */
+  display: inline-block; /* inline-block to allow for overflow: hidden */
+  margin: 0; /* to realign it after inline-block */
+  margin-left: 0.5em;
 }

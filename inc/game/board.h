@@ -14,11 +14,11 @@ class Board
     Board();
     Board(const Board*);
     
-    #ifdef __EMSCRIPTEN__
+    //#ifdef __EMSCRIPTEN__
       // the board has to be serialized to be passed to the Web Worker
       std::string serialize();
       Board(std::string); // deserialize
-    #endif
+    //#endif
   
     PlayerColor turn 
     #ifndef __EMSCRIPTEN__
