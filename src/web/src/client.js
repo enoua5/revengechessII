@@ -2,6 +2,7 @@ var Server = {
   server: undefined,
   connection_verified: false,
   in_online_game: false,
+  requested_close: false,
   url_base: "",
   play_as: 'x'
 };
@@ -346,11 +347,13 @@ function onServerMessage(e)
     else if(res == "game_start")
     {
       Server.in_online_game = true;
-      Server.play_as = response.playAsWhite ? 'w' : 'b';
+      Server.play_as = response.play_as_white ? 'w' : 'b';
       hideWindows();
       Server.server.send(JSON.stringify({
         req: "get_board"
       }));
+
+      Server.requested_close = false;
 
       // TODO proably a lot more tbh
     }
@@ -358,6 +361,14 @@ function onServerMessage(e)
     {
       Server.in_online_game = false;
       Server.play_as = 'x';
+
+      if(!Server.requested_close)
+      {
+        alert("Opponent disconnected.");
+
+        Game.game.clock.delete();
+        Game.game.clock = new Module.Clock(1000, 0, Module.IncrementMethod.NO_CLOCK);
+      }
       // TODO probably a lot more tbh
     }
     else if(res == "game_created")
@@ -469,4 +480,35 @@ function updateGameList()
   }
 
   // response will be handled in onServerMessage
+}
+
+function pieceTypeToString(pt)
+{
+  if(pt == Module.PieceType.PAWN)
+    return "PAWN";
+  if(pt == Module.PieceType.ROOK)
+    return "ROOK";
+  if(pt == Module.PieceType.KNIGHT)
+    return "KNIGHT";
+  if(pt == Module.PieceType.BISHOP)
+    return "BISHOP";
+  if(pt == Module.PieceType.QUEEN)
+    return "QUEEN";
+  if(pt == Module.PieceType.KING)
+    return "KING";
+  return "NO";
+}
+
+function sendMove(move)
+{
+  let from = move.from.toIndex();
+  let to = move.to.toIndex();
+  let promo = pieceTypeToString(move.promotion);
+
+  Server.server.send(JSON.stringify({
+    req: "make_move",
+    from,
+    to,
+    promo
+  }));
 }
