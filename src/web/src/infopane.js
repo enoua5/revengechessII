@@ -44,7 +44,9 @@ function showPieceInfo(pid, captures)
   let name = getPieceName(pid);
 
   l("piece-img").src = createPieceImage(Module.colorOfPiece(pid), Module.typeOfPiece(pid)).src;
-  resizeTextToLine(l("piece-name"), name, 0.9, 30);
+
+  l("piece-name").innerText = name;
+  //resizeTextToLine(l("piece-name"), name, 0.9, 30);
   
   // get the piece to access it's capture list
   let piece = Game.game.board.getBoardPiece(pid.value)
@@ -64,7 +66,8 @@ function showPieceInfo(pid, captures)
       
       let text = `+${numCaptures - i} more`;
       
-      resizeTextToLine(nameBox, text, 0.8, 30);
+      nameBox.innerText = text;
+      //resizeTextToLine(nameBox, text, 0.8, 30);
       
       break;
     }
@@ -84,7 +87,8 @@ function showPieceInfo(pid, captures)
     l("capture-list").appendChild(li);
     
     let name = getPieceName(cid);
-    resizeTextToLine(nameBox, name, 0.8, 30);
+    nameBox.innerText = name;
+    //resizeTextToLine(nameBox, name, 0.8, 30);
     
     // resize the li element to fit snuggly with it's contents.
     // not 100% sure why this is needed, my guess is that the li tries

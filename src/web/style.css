@@ -4,6 +4,11 @@
  * Sorry. 
  */
 
+:root
+{
+  --default-font-size: 1.2em;
+}
+
 body
 {
   margin: /*10px*/0;
@@ -16,7 +21,7 @@ body
 {
   width: 100%;
   display: inline-grid;
-  grid-template-rows: [header] 1.5em [mainarea] auto;
+  grid-template-rows: [header] 2em [mainarea] auto;
   grid-template-columns: [board] auto [info] 25%; 
 }
 #option-bar
@@ -173,11 +178,6 @@ body
   height: 5vh;
 }
 
-#capture-list>.info-piece-name
-{
-  font-size: 5vh;
-}
-
 #white_clock:not(.active_clock)
 {
   background-color: #aaa;
@@ -219,7 +219,7 @@ body
 
 .header-button > :first-child
 {
-  font-size: 0.75em;
+  font-size: var(--default-font-size);
 }
 .dropdown > :first-child
 {
@@ -240,7 +240,7 @@ body
   padding: initial;
   margin: initial;
   position: absolute;
-  margin-top: 0.1em;
+  margin-left: -0.1em;
   z-index: 3;
 }
 .inner-menu-button > ul
@@ -320,7 +320,7 @@ body
 
 #about-page p
 {
-  font-size: 0.8em;
+  font-size: var(--default-font-size);
 }
 
 #ai-load-bar
@@ -375,7 +375,7 @@ body
   position: absolute;
   left: -50%;
   bottom: 0.1em;
-  font-size: 0.7em;
+  font-size: var(--default-font-size);
 }
 
 .tooltip-holder
@@ -390,7 +390,7 @@ body
 
 .delay-left-indicator
 {
-  font-size: 0.75em;
+  font-size: var(--default-font-size);
 }
 
 .window :is(h1,h2,h3,h4,h5,h6)
@@ -421,7 +421,7 @@ body
 
 #connection-info
 {
-  font-size: 0.8em;
+  font-size: var(--default-font-size);
 }
 
 #connection-info.error
@@ -440,7 +440,7 @@ body
 #game-list
 {
   border: 1px solid white;
-  font-size: 0.75em;
+  font-size: var(--default-font-size);
 }
 
 .game-list-entry
