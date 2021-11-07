@@ -444,6 +444,14 @@ body
 {
   float: right;
 }
+#aftergame-info.disconnect
+{
+  color: red;
+}
+#aftergame-info.rematch
+{
+  color: green;
+}
 
 #game-list
 {

@@ -582,10 +582,13 @@ void Server::respond(connection_hdl conn, std::string req, json full)
       else
       {
         json response = {
-          {"res", "ack"}
+          {"res", "rematch_reqd"}
         };
         
-        endpoint.send(conn, response.dump(), ws_text);
+        connection_hdl black = games.at(id).black;
+        connection_hdl white = games.at(id).white;
+        endpoint.send(white, response.dump(), ws_text);
+        endpoint.send(black, response.dump(), ws_text);
       }
       
     }

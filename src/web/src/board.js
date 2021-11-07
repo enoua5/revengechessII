@@ -626,6 +626,12 @@ function newGame()
     }));
     Server.requested_close = true;
   }
+  else
+  {
+    l("resign_button").style.display = "none";
+    l("offline-aftergame").style.display = "";
+    l("online-aftergame").style.display = "none";
+  }
 
   alreadyShowedResultScreen = false;
   l("show_results_button").style.display = "none";
