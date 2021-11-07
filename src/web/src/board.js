@@ -64,6 +64,7 @@ function showResultScreen()
     l("winner-info").innerText = "";
     
   showWindow("result-screen");
+  l("show_results_button").style.display = "";
   
   board.delete();
   clock.delete();
@@ -627,6 +628,7 @@ function newGame()
   }
 
   alreadyShowedResultScreen = false;
+  l("show_results_button").style.display = "none";
   
   if(!prelimSettings.white)
     prelimSettings.white = {};

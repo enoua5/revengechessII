@@ -93,7 +93,9 @@ function showPieceInfo(pid, captures)
     // resize the li element to fit snuggly with it's contents.
     // not 100% sure why this is needed, my guess is that the li tries
     // making room for its bullets
-    li.style.height = img.getBoundingClientRect().height + 5 + "px";
+
+    // update 2021-11-07: undoing this to make the text flow better after removing non-wrapping
+    //li.style.height = img.getBoundingClientRect().height + 5 + "px";
     
   }
 }
