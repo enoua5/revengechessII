@@ -31,5 +31,9 @@ Build the server: `make server`
 
 Build just the server executable, skipping config files: `make server_exe`
 
+Build the server, enabling tls: `make server_tls`
+
+Build just the server executable, enabling tls, skipping config files: `make server_tls_exe`
+
 Only copy the default configuation file to the server directory: `make server_conf`
 

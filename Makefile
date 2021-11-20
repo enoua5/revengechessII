@@ -11,6 +11,8 @@ WCC = em++
 INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
 SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++2a
+SLIB = -lssl -lcrypto
+SDEFS =
 WOPTIONS = -O3 --bind --no-entry
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
@@ -36,13 +38,19 @@ test_server: server
 memcheck_server: server
 	(cd $(SRVDIR); $(MEMCHECK) ./$(SERVER_NAME))
 	
+server_tls: SDEFS += -DRC_SERV_USE_TLS
+server_tls: server
+
 server: server_exe server_conf
+
+server_exe_tls: SDEFS += -DRC_SERV_USE_TLS
+server_exe_tls: server_exe
 
 server_exe: $(SERVER_EXE)
 
 $(SERVER_EXE): src/server_main.cpp src/version.cpp src/game/* src/server/*.cpp inc/*
 	mkdir -p $(SRVDIR)
-	$(NCC) $(SOPTIONS) -o $(SERVER_EXE) $(INCLUDE) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/version.cpp
+	$(NCC) $(SOPTIONS) -o $(SERVER_EXE) $(INCLUDE) $(SDEFS) src/server_main.cpp src/game/*.cpp src/server/*.cpp src/version.cpp $(SLIB)
 
 server_conf: $(SRVDIR)conf.json
 

@@ -19,14 +19,14 @@ function connectToServer(fromURLParam = false)
   }
   else
     ip = l("server-ip").value;
-  Server.url_base = ip.split(/[\/\?\#]/)[0];
+  Server.url_base = ip.split(/wss?\:\/\/[\/\?\#]/)[0];
   try
   {
     Server.server.close();
   } catch(e){}
   try
   {
-    Server.server = new WebSocket("ws://" + ip);
+    Server.server = new WebSocket(ip);
     if(fromURLParam)
     {
       // zero ms timeout so that this is deferred long enough for the window

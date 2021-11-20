@@ -10,7 +10,11 @@ using nlohmann::json;
 
 #define ASIO_STANDALONE
 
+#ifdef RC_SERV_USE_TLS
+#include <websocketpp/config/asio.hpp>
+#else
 #include <websocketpp/config/asio_no_tls.hpp>
+#endif
 #include <websocketpp/server.hpp>
 
 #include <iostream>
@@ -20,7 +24,13 @@ using nlohmann::json;
 
 #include <websocketpp/common/thread.hpp>
 
+#ifdef RC_SERV_USE_TLS
+typedef websocketpp::server<websocketpp::config::asio_tls> server;
+typedef websocketpp::lib::shared_ptr<websocketpp::lib::asio::ssl::context> context_ptr;
+#else
 typedef websocketpp::server<websocketpp::config::asio> server;
+#endif
+
 using websocketpp::connection_hdl;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
@@ -33,6 +43,13 @@ using websocketpp::lib::unique_lock;
 using websocketpp::lib::condition_variable;
 
 typedef server::message_ptr message_ptr;
+
+#ifdef RC_SERV_USE_TLS
+enum TLS_Mode {
+  MOZILLA_INTERMEDIATE = 1,
+  MOZILLA_MODERN = 2
+};
+#endif
 
 enum ServerAction {
   SUBSCRIBE,
@@ -114,6 +131,9 @@ class Server
     void on_open(connection_hdl);
     void on_close(connection_hdl);
     void on_message(connection_hdl, server::message_ptr);
+    #ifdef RC_SERV_USE_TLS
+    context_ptr on_tls_init(TLS_Mode, connection_hdl);
+    #endif
     void process_messages();
     
     bool verify_compatible_version(json version, connection_hdl);
