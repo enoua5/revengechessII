@@ -203,6 +203,13 @@ function makeAIMove()
 {
   if(gameIsOver())
     return;
+
+  if(Server.in_online_game)
+  {
+    Settings.ai.white.usingAI = false;
+    Settings.ai.black.usingAI = false;
+    return engineError({message: "AI tried plaing a move during an online match."});
+  }
   
   let sets = getCurrentPlayerSets();
   if(!sets.usingAI)
