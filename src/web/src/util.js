@@ -107,6 +107,8 @@ function showWindow(id)
 {
   l("pane").style.display = "block";
   l(id).style.display = "inline-block";
+  if(id=="game-explorer")
+    updateGameList();
 }
 function hideWindows()
 {
