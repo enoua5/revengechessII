@@ -65,15 +65,42 @@ function shouldWhiteBeOnTop()
 {
   if(Settings.orientation == "b")
     return true;
-  if(Settings.orientation == "w")
+  else if(Settings.orientation == "w")
     return false;
-  
-  let board = Game.game.board;
-  let turn = board.turn;
-  board.delete();
-  if(turn == Module.PlayerColor.WHITE)
-    return false;
-  return true;
+  else if(Settings.orientation == "t")
+  {
+    let board = Game.game.board;
+    let turn = board.turn;
+    board.delete();
+    if(turn == Module.PlayerColor.WHITE)
+      return false;
+    return true;
+  }
+  else
+  {
+    if(Server.in_online_game)
+    {
+      return (Server.play_as == "b");
+    }
+    else
+    {
+      if(Settings.ai.white.usingAI == Settings.ai.black.usingAI)
+      {
+        // if both are players or both are AI
+        let board = Game.game.board;
+        let turn = board.turn;
+        board.delete();
+        if(turn == Module.PlayerColor.WHITE)
+          return false;
+        return true;
+      }
+      else
+      {
+        // exactly one player is an AI
+        return Settings.ai.white.usingAI;
+      }
+    }
+  }
 }
 
 function showWindow(id)

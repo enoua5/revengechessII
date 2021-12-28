@@ -26,7 +26,7 @@
       function l(what){return document.getElementById(what)}
       
       var Settings = {
-        orientation: "w",
+        orientation: "p",
         ai: {
           white: defaultEngineSettings(),
           black: defaultEngineSettings()
@@ -637,7 +637,8 @@
                 <div class="dropdown inner-menu-button">
                   <p>Board orientation &gt;</p>
                   <ul>
-                    <li data-value="w" class="orientation-radio radio-selected" onclick="setOrientation(this)" style="width:300%">White at bottom</li>
+                    <li data-value="p" class="orientation-radio radio-selected" onclick="setOrientation(this)" style="width:300%">Local player at bottom</li>
+                    <li data-value="w" class="orientation-radio" onclick="setOrientation(this)" style="width:300%">White at bottom</li>
                     <li data-value="b" class="orientation-radio" onclick="setOrientation(this)" style="width:300%">Black at bottom</li>
                     <li data-value="t" class="orientation-radio" onclick="setOrientation(this)" style="width:300%">Current turn at bottom</li>
                   </ul>
