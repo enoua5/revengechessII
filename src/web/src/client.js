@@ -115,6 +115,9 @@ function giveUpWaitingForOpponent()
 
 function createOnlineGame()
 {
+  if(Server.in_online_game && !confirm("This will close the online game you're currently in. Continue anyway?"))
+    return;
+
   let sets = prelimSettings.online;
   if(sets == undefined)
     sets = {};
@@ -355,6 +358,7 @@ function onServerMessage(e)
       l("offline-aftergame").style.display = "none";
       l("online-aftergame").style.display = "";
       l("rematch-button").innerText = "Request rematch";
+      l("rematch-button").disabled = false;
       Server.play_as = response.play_as_white ? 'w' : 'b';
       hideWindows();
       Server.server.send(JSON.stringify({
@@ -370,9 +374,7 @@ function onServerMessage(e)
     else if(res == "game_closed")
     {
       Server.in_online_game = false;
-      //l("resign_button").style.display = "none";
-      //l("offline-aftergame").style.display = "";
-      //l("online-aftergame").style.display = "none";
+      l("resign_button").style.display = "none";
 
       Server.play_as = 'x';
 
@@ -381,6 +383,14 @@ function onServerMessage(e)
         l("aftergame-info").innerText = "Opponent disconnected";
         l("aftergame-info").classList.remove("rematch");
         l("aftergame-info").classList.add("disconnect");
+
+        l("show_results_button").style.display = "";
+        l("offline-aftergame").style.display = "none";
+        l("online-aftergame").style.display = "";
+
+        l("rematch-button").disabled = true;
+
+        showWindow("result-screen");
 
         Game.game.clock.delete();
         Game.game.clock = new Module.Clock(1000, 0, Module.IncrementMethod.NO_CLOCK);
