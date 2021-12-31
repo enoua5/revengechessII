@@ -130,6 +130,7 @@ function resetColor(inputEl)
   let rule = inputEl.dataset.appliesto;
   setableStyles().setProperty("--"+rule, inputEl.dataset.resetcolor);
   setDefaultColor(inputEl);
+  delete changedColors[rule];
 }
 function setDefaultColor(inputEl)
 {
@@ -141,7 +142,12 @@ function setDefaultColor(inputEl)
 function setThemeColor(inputEl)
 {
   let rule = inputEl.dataset.appliesto;
-  setableStyles().setProperty("--"+rule, inputEl.value);
+  setThemeColorByValue(rule, inputEl.value);
+}
+function setThemeColorByValue(rule, val)
+{
+  setableStyles().setProperty("--"+rule, val);
+  changedColors[rule] = val;
 }
 
 function versionToString(v)

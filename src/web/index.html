@@ -34,6 +34,15 @@
       };
       
       var prelimSettings = {};
+
+      var persistentSettings = {};
+      try
+      {
+        persistentSettings = JSON.parse(localStorage.e5_rcii_persistent_settings);
+      }
+      catch(e){}
+
+      var changedColors = persistentSettings.theme || {};
       
       var client_version = {
         name: "Revenge Chess UI, standard compliant",
@@ -159,6 +168,11 @@
         let colorSelectors = document.getElementsByClassName("colorSelect");
         for(c of colorSelectors)
           setDefaultColor(c);
+
+        for(let i in changedColors)
+        {
+          setThemeColorByValue(i, changedColors[i]);
+        }
         
         ///////////////////////////////////////////////////////
         
@@ -604,7 +618,7 @@
         </div>
         
         <br/>
-        <button disabled>Save color scheme (coming soon)</button>
+        <button onclick="persistentSettings.theme=changedColors; localStorage.e5_rcii_persistent_settings=JSON.stringify(persistentSettings); alert('theme saved')">Save color scheme</button>
         <button onclick="hideWindows();">close</button>
       </div>
     </div>
