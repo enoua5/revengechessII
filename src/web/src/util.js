@@ -65,21 +65,50 @@ function shouldWhiteBeOnTop()
 {
   if(Settings.orientation == "b")
     return true;
-  if(Settings.orientation == "w")
+  else if(Settings.orientation == "w")
     return false;
-  
-  let board = Game.game.board;
-  let turn = board.turn;
-  board.delete();
-  if(turn == Module.PlayerColor.WHITE)
-    return false;
-  return true;
+  else if(Settings.orientation == "t")
+  {
+    let board = Game.game.board;
+    let turn = board.turn;
+    board.delete();
+    if(turn == Module.PlayerColor.WHITE)
+      return false;
+    return true;
+  }
+  else
+  {
+    if(Server.in_online_game)
+    {
+      return (Server.play_as == "b");
+    }
+    else
+    {
+      if(Settings.ai.white.usingAI == Settings.ai.black.usingAI)
+      {
+        // if both are players or both are AI
+        let board = Game.game.board;
+        let turn = board.turn;
+        board.delete();
+        if(turn == Module.PlayerColor.WHITE)
+          return false;
+        return true;
+      }
+      else
+      {
+        // exactly one player is an AI
+        return Settings.ai.white.usingAI;
+      }
+    }
+  }
 }
 
 function showWindow(id)
 {
   l("pane").style.display = "block";
   l(id).style.display = "inline-block";
+  if(id=="game-explorer")
+    updateGameList();
 }
 function hideWindows()
 {
@@ -101,6 +130,7 @@ function resetColor(inputEl)
   let rule = inputEl.dataset.appliesto;
   setableStyles().setProperty("--"+rule, inputEl.dataset.resetcolor);
   setDefaultColor(inputEl);
+  delete changedColors[rule];
 }
 function setDefaultColor(inputEl)
 {
@@ -112,7 +142,12 @@ function setDefaultColor(inputEl)
 function setThemeColor(inputEl)
 {
   let rule = inputEl.dataset.appliesto;
-  setableStyles().setProperty("--"+rule, inputEl.value);
+  setThemeColorByValue(rule, inputEl.value);
+}
+function setThemeColorByValue(rule, val)
+{
+  setableStyles().setProperty("--"+rule, val);
+  changedColors[rule] = val;
 }
 
 function versionToString(v)

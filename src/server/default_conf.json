@@ -8,7 +8,7 @@
   // set to true after reading the terms to run the program normally
   "agreement_accept": false,
   // local port on which to open the server
-  "port": 9000,
+  "port": 9000
 
   // ***NOTE***
   // `use_ssl` goes unused in this file, because the TLS ended up being a different build

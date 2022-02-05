@@ -13,9 +13,9 @@ using nlohmann::json;
 
 // When making forks of this project, version names should end in
 // "standard compliant" if they are compatible with the vanilla client
-Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 0, 1, 0);
+Version Server::version = Version("Revenge Chess Server, standard compliant", 'x', 1, 0, 0);
 // change the version name here if the server should reject the vanilla client
-Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 3, 0);
+Version Server::minimum_client_version = Version("standard compliant", 'x', 2, 5, 0);
 
 connection_info::connection_info()
 {
