@@ -228,3 +228,8 @@ function setupEnterToSubmit()
     });
   }
 }
+
+function showSaveCode()
+{
+  l("save-board-box").innerText = Game.game.board.serialize();
+}

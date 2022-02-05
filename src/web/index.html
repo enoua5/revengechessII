@@ -306,6 +306,15 @@
         <button onclick="hideWindows();">close</button>
       </div>
       
+      <!------------------------ Save board screen ------------------------>
+      <div id="save-board-screen" class="window">
+        <h2>Save board</h2>
+        <p>Copy this code, you can use it in when creating a game to set up the board</p>
+        <textarea id="save-board-box"></textarea>
+        <br/>
+        <button onclick="hideWindows();">close</button>
+      </div>
+
       <!------------------------- New game screen ------------------------->
       <div id="new-game" class="window">
         <h2>New game</h2>
@@ -450,6 +459,14 @@
               <span>centipawns worse than the best move</span>
             </div>
           </details>
+        </details>
+        <hr/>
+        <details>
+          <summary>Board settings</summary>
+          <input type="checkbox" id="use-board-code" onclick="l('load-board-code').disabled=!this.checked">
+          <label for="use-board-code">Use board code</label>
+          <br/>
+          <textarea id="load-board-code" disabled></textarea>
         </details>
         
         <button onclick="hideWindows();">close</button>
@@ -641,6 +658,7 @@
                 </div>
               </li>
               <li class = 'button-disable'>Tutorial scenarios</li>
+              <li onclick="showSaveCode(); showWindow('save-board-screen')">Save board..</li>
             </ul>
           </div>
           <div class="dropdown header-button">

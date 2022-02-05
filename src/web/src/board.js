@@ -731,6 +731,20 @@ function newGame()
   Game.game.startClock(Module.PlayerColor.WHITE);
   selectedSquares.prev_move = {};
   
+  if(l('use-board-code').checked)
+  {
+    try
+    {
+      Game.game.board.delete();
+      Game.game.board = new Module.Board(l('load-board-code').value);
+    }
+    catch(e)
+    {
+      alert("invalid game code, using default instead!");
+      Game.game.board = new Module.Board();
+    }
+  }
+
   let board = Game.game.board;
   dispboard(Game.game.board);
   board.delete();
