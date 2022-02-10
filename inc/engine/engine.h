@@ -68,7 +68,7 @@ class Engine
     static const int BISHOP_VAL = 340;
     static const int ROOK_VAL = 500;
     static const int KNIGHT_VAL = 325;
-    #ifdef QUEEN_IS_COUNCELOR
+    #ifndef QUEEN_IS_COUNCELOR
     static const int QUEEN_VAL = 900;
     #else
     static const int QUEEN_VAL = 200;
