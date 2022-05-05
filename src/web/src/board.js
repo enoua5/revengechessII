@@ -612,7 +612,7 @@ function copyAISettings(src, dest)
     
     dest.minDelta = (src.minDelta == undefined) ? def.minDelta : parseInt(src.minDelta);
     
-    dest.maxDelta = (src.minDelta == undefined) ? def.maxDelta : parseInt(src.maxDelta);
+    dest.maxDelta = (src.maxDelta == undefined) ? def.maxDelta : parseInt(src.maxDelta);
 }
 
 function newGame()
