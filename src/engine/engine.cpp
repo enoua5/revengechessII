@@ -15,7 +15,7 @@
   int branches_pruned = 0;
 #endif
 
-Version Engine::version = Version("Vengence", 'b', 1, 1, 4);
+Version Engine::version = Version("Vengence", 'b', 1, 1, 5);
 
 int Engine::pawn_squares[64] = {
 	0,  0,  0,  0,  0,  0,  0,  0,
@@ -321,11 +321,17 @@ int Engine::eval_piece(const Board& board, const Piece piece) const
   if(!piece.isOnBoard)
     return 0;
   
-  unsigned char table_index = piece.current.toIndex();
+
+
+  unsigned char table_index;
   
   if(piece.color == WHITE)
   {
     table_index = Square(piece.current.file, 7-piece.current.rank).toIndex();
+  }
+  else
+  {
+    table_index = piece.current.toIndex();
   }
   
   //Square opp_king_sqr = board.pieces[idFromStats((PlayerColor)!piece.color, KING, E)].current;
@@ -360,5 +366,14 @@ int Engine::eval_piece(const Board& board, const Piece piece) const
     break;
     default: break;
   }
+
+  // staying on the square of a piece you captured grants safety
+  for(int i = 0; i < piece.numCaptures; i++)
+    if(piece.current == board.pieces[piece.captures[i]].home)
+    {
+      val *= 2;
+      break;
+    }
+
   return val;
 }
