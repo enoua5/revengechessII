@@ -503,7 +503,7 @@ function onServerClose(e)
   l("connection-info").classList.remove("success");
   //server = undefined;
   l("connect-button").innerText = "Connect";
-  l("connect-button").onclick = connectToServer;
+  l("connect-button").onclick = ()=>connectToServer();
   l("name-box").style.display = "none";
 
   if(l("manage-connection").style.display == "")
