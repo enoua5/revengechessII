@@ -404,7 +404,8 @@ void Board::addKingMoves(std::vector<Move>& moves, const Piece p) const
   // castle
   if(!p.hasMoved)
   {
-    if(!this->pieces[idFromStats(p.color, ROOK, A)].hasMoved)
+    Piece rook = this->pieces[idFromStats(p.color, ROOK, A)];
+    if(!rook.hasMoved && rook.isOnBoard)
     {
       #ifdef DEBUG
         Move::info_template = "KING:CASTLE:QUEENSIDE";
@@ -423,7 +424,8 @@ void Board::addKingMoves(std::vector<Move>& moves, const Piece p) const
       if(all_empty)
         moves.push_back(Move(from, from.translate(-2, 0)));
     }
-    if(!this->pieces[idFromStats(p.color, ROOK, H)].hasMoved)
+    rook = this->pieces[idFromStats(p.color, ROOK, H)];
+    if(!rook.hasMoved && rook.isOnBoard)
     {
       #ifdef DEBUG
         Move::info_template = "KING:CASTLE:KINGSIDE";
