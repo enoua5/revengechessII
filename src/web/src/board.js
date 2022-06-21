@@ -62,8 +62,10 @@ function showResultScreen()
     l("winner-info").innerText = "By checkmate";
   else if(!byTime)
     l("winner-info").innerText = "";
-    
-  showWindow("result-screen");
+  
+  setTimeout(() => {
+    showWindow("result-screen");
+  }, 1000);
   l("show_results_button").style.display = "";
   
   board.delete();
@@ -588,54 +590,15 @@ function squareClicked(e, which)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-function copyAISettings(src, dest)
-{
-  let def = defaultEngineSettings();
-
-    dest.usingAI = (src.usingAI == undefined) ? def.usingAI : src.usingAI;
-    
-    dest.limitMode = (src.limitMode == undefined) ? def.limitMode : src.limitMode;
-    if(dest.limitMode == "time")
-      dest.limitMode = SearchLimits.CONSTANT_TIME;
-    else if(dest.limitMode == "depth")
-      dest.limitMode = SearchLimits.CONSTANT_DEPTH;
-    else if(dest.limitMode == "auto")
-      dest.limitMode = SearchLimits.AUTOMATIC;
-      
-    dest.maxTime = (src.maxTime == undefined) ? def.maxTime : parseInt(src.maxTime)*1000;
-    
-    dest.limitSeconds = (src.limitSeconds == undefined) ? def.limitSeconds : parseInt(src.limitSeconds)*1000;
-    
-    dest.limitPlys = (src.limitPlys == undefined) ? def.limitPlys : parseInt(src.limitPlys);
-    
-    dest.flagBuffer = (src.flagBuffer == undefined) ? def.flagBuffer : parseInt(src.flagBuffer);
-    
-    dest.minDelta = (src.minDelta == undefined) ? def.minDelta : parseInt(src.minDelta);
-    
-    dest.maxDelta = (src.maxDelta == undefined) ? def.maxDelta : parseInt(src.maxDelta);
-}
-
 function newGame()
 {
-  if(Server.in_online_game)
-  {
-    if(!confirm("This will close the online game you're currently in. Continue anyway?"))
-      return;
-    Server.server.send(JSON.stringify({
-      req: "close_game"
-    }));
-    Server.requested_close = true;
-  }
-  else
-  {
-    l("resign_button").style.display = "none";
-    l("offline-aftergame").style.display = "";
-    l("online-aftergame").style.display = "none";
-  }
-
-  alreadyShowedResultScreen = false;
-  l("show_results_button").style.display = "none";
   
+  if(!confirmCloseOfOnlineGameIfNeeded())
+    return;
+
+  disposeOfCurrentGame();
+  Game.game = new Module.Game();
+
   if(!prelimSettings.white)
     prelimSettings.white = {};
   if(!prelimSettings.black)
@@ -643,9 +606,6 @@ function newGame()
   copyAISettings(prelimSettings.white, Settings.ai.white);
   copyAISettings(prelimSettings.black, Settings.ai.black);
   
-  if(Game.game)
-    Game.game.delete();
-  Game.game = new Module.Game();
   
   // TODO less hardcoded values please
   let wIncAmt = prelimSettings.white.incrementAmount;
@@ -753,7 +713,21 @@ function newGame()
 function makeMove(move)
 {
   if(!Server.in_online_game)
+  {
+    let move_str = move.toString();
+    let other_color = (Game.game.board.turn == Module.PlayerColor.BLACK) ? "white" : "black";
+    let ai_sets = Settings.ai[other_color];
+    if(ai_sets.usingAI && Object.keys(ai_sets.book).length > 0)
+    {
+      if(ai_sets.book[move_str] != undefined)
+        ai_sets.book = ai_sets.book[move_str];
+      else
+        ai_sets.book = {};
+    }
+
+
     Game.game.commitMove(move);
+  }
   else
     sendMove(move);
 }

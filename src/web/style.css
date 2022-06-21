@@ -282,7 +282,7 @@ body
 }
 .window
 {
-  background: darkgrey;
+  background: var(--popup-color);
   color: white;
   padding: 1em;
   border: 3px solid white;
@@ -499,4 +499,19 @@ body
   display: inline-block; /* inline-block to allow for overflow: hidden */
   margin: 0; /* to realign it after inline-block */
   margin-left: 0.5em;
+}
+
+#tutorial-list
+{
+  color: rgb(95, 255, 175);
+  text-decoration: underline;
+  text-align: left;
+}
+#tutorial-list a
+{
+  cursor: pointer;
+}
+#tutorial-list li
+{
+  margin-bottom: 0.5em;
 }

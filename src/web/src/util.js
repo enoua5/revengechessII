@@ -103,6 +103,88 @@ function shouldWhiteBeOnTop()
   }
 }
 
+function resetAftergameOptions()
+{
+  l("tutorial-aftergame").style.display = "none";
+  l("offline-aftergame").style.display = "none";
+  l("online-aftergame").style.display = "none";
+}
+
+function confirmCloseOfOnlineGameIfNeeded()
+{
+  if(Server.in_online_game)
+  {
+    if(!confirm("This will close the online game you're currently in. Continue anyway?"))
+      return false;
+    Server.server.send(JSON.stringify({
+      req: "close_game"
+    }));
+    Server.requested_close = true;
+  }
+  else
+  {
+    l("resign_button").style.display = "none";
+    resetAftergameOptions();
+    l("offline-aftergame").style.display = "";
+  }
+
+  return true;
+}
+
+function disposeOfCurrentGame()
+{
+  alreadyShowedResultScreen = false;
+  l("show_results_button").style.display = "none";
+
+  if(Game.game)
+    Game.game.delete();
+}
+
+var selectedTutorial = {};
+function selectTutorial(name)
+{
+  selectedTutorial = tutorials[name] || {};
+
+  if(Object.keys(selectedTutorial).length == 0)
+    return;
+
+  l("tutorial-title").innerText = selectedTutorial["title"];
+  l("tutorial-desc").innerText = selectedTutorial["description"];
+
+  switchWindow("tutorial-expl-screen");
+}
+function startSelectedTutorial()
+{
+  if(Object.keys(selectedTutorial).length == 0)
+    return;
+
+  if(!confirmCloseOfOnlineGameIfNeeded())
+    return;
+
+  resetAftergameOptions();
+  l("tutorial-aftergame").style.display = "";
+
+  disposeOfCurrentGame();
+  Game.game = new Module.Game();
+  Game.game.board.delete();
+  Game.game.board = new Module.Board(JSON.stringify(selectedTutorial["board_state"]));
+  Game.game.clock.delete();
+  Game.game.clock = new Module.Clock(1000, 1000, Module.IncrementMethod.NO_CLOCK,
+                                     1000, 1000, Module.IncrementMethod.NO_CLOCK);
+  copyAISettings(selectedTutorial["ai_settings"], Settings.ai.black);
+  Settings.ai.white.usingAI = false;
+
+  hideWindows();
+  dispboard(Game.game.board);
+  clearPrevMove();
+}
+
+function switchWindow(id)
+{
+  hideWindows();
+  showWindow(id);
+}
+
 function showWindow(id)
 {
   l("pane").style.display = "block";

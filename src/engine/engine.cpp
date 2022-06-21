@@ -263,7 +263,8 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
       {
         SearchResult sr(-Engine::static_eval(*b), gr, 1);
         ms_list[i] = MoveScore(move, sr);
-        foundWinningMove = true;
+        if(sr.score > 0)
+          foundWinningMove = true;
       }
       
       //if(abort)
@@ -295,6 +296,25 @@ int Engine::static_eval(const Board& board) const
     case STALEMATE:
       return -100;
     default: break;
+    /*
+    // I want to use this version, but the differing numbers is breaking something somewhere else.
+    case WHITE_VICTORY:
+      if(board.turn == WHITE)
+        sum += Engine::pos_inf;
+      else
+        sum += Engine::neg_inf;
+    break;
+    case BLACK_VICTORY:
+      if(board.turn == BLACK)
+        sum += Engine::pos_inf;
+      else
+        sum += Engine::neg_inf;
+    break;
+    case STALEMATE:
+      sum += -100;
+    default: break;
+
+    */
   }
   
   int sum = 0;

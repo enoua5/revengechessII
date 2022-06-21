@@ -355,7 +355,7 @@ function onServerMessage(e)
       Server.in_online_game = true;
       l("resign_button").style.display = "";
       l("show_results_button").style.display = "none";
-      l("offline-aftergame").style.display = "none";
+      resetAftergameOptions();
       l("online-aftergame").style.display = "";
       l("rematch-button").innerText = "Request rematch";
       l("rematch-button").disabled = false;
@@ -385,7 +385,7 @@ function onServerMessage(e)
         l("aftergame-info").classList.add("disconnect");
 
         l("show_results_button").style.display = "";
-        l("offline-aftergame").style.display = "none";
+        resetAftergameOptions();
         l("online-aftergame").style.display = "";
 
         l("rematch-button").disabled = true;
@@ -516,8 +516,8 @@ function onServerClose(e)
   Server.connection_verified = false;
   Server.in_online_game = false;
   l("resign_button").style.display = "none";
+  resetAftergameOptions();
   l("offline-aftergame").style.display = "";
-  l("online-aftergame").style.display = "none";
   l("menu-open-ge").classList.add("button-disable");
   l("offline-go-online").disabled = false;
 }

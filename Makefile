@@ -24,7 +24,7 @@ web: js_exe webui
 
 js_exe: $(JSEXE)
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js $(WDIR)src/tutorials.data.js
 
 test: $(EXE)
 	$(EXE)
@@ -112,3 +112,7 @@ $(WDIR)src/ai.js: src/web/src/ai.js
 $(WDIR)src/client.js: src/web/src/client.js
 	mkdir -p $(WDIR)src
 	cp src/web/src/client.js $(WDIR)src/
+
+$(WDIR)src/tutorials.data.js: src/web/src/tutorials.data.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/tutorials.data.js $(WDIR)src/

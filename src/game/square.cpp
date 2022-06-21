@@ -60,7 +60,9 @@ std::string Move::toString() const
 {
   return
   #ifdef DEBUG
+  #ifndef __EMSCRIPTEN__
     info + ":" +
+  #endif
   #endif
   from.toString()+to.toString();
 }

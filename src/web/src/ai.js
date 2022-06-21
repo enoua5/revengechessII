@@ -214,23 +214,34 @@ function makeAIMove()
   let sets = getCurrentPlayerSets();
   if(!sets.usingAI)
     return engineError({message: "AI tried playing a move when it's not its turn."});
-    
-  let board = Game.game.board;
-  let clock = Game.game.clock;
-    
-  let time = getTimeForMove(board.turn);
   
-  let depth = 100;
-  if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
-    depth = sets.limitPlys;
+  if(Object.keys(sets.book).length == 0)
+  {
+    let board = Game.game.board;
+    let clock = Game.game.clock;
+      
+    let time = getTimeForMove(board.turn);
     
-  AI_status.running = true;
-  AI_status.thinking_time = time;
-  AI_status.time_spent_before_thining = clock.getTimeSpentThisTurn();
-  engine.postMessage({board: board.serialize(), time: time, depth: depth});
-  
-  board.delete();
-  clock.delete();
+    let depth = 100;
+    if(sets.limitMode == SearchLimits.CONSTANT_DEPTH)
+      depth = sets.limitPlys;
+      
+    AI_status.running = true;
+    AI_status.thinking_time = time;
+    AI_status.time_spent_before_thining = clock.getTimeSpentThisTurn();
+    engine.postMessage({board: board.serialize(), time: time, depth: depth});
+    
+    board.delete();
+    clock.delete();
+  }
+  else
+  {
+    let book_keys = Object.keys(sets.book);
+    let move = book_keys[randomIntInclusive(0, book_keys.length-1)];
+    sets.book = sets.book[move];
+    engine.postMessage({board: Game.game.board.serialize(), book_move:move});
+
+  }
 }
 
 var SearchLimits = {
@@ -256,7 +267,37 @@ function defaultEngineSettings()
     // worse than the best scoring move.
     minDelta: 0,
     maxDelta: 10,
-    
+    book: {}
     
   };
+}
+
+
+function copyAISettings(src, dest)
+{
+  let def = defaultEngineSettings();
+
+    dest.usingAI = (src.usingAI == undefined) ? def.usingAI : src.usingAI;
+    
+    dest.limitMode = (src.limitMode == undefined) ? def.limitMode : src.limitMode;
+    if(dest.limitMode == "time")
+      dest.limitMode = SearchLimits.CONSTANT_TIME;
+    else if(dest.limitMode == "depth")
+      dest.limitMode = SearchLimits.CONSTANT_DEPTH;
+    else if(dest.limitMode == "auto")
+      dest.limitMode = SearchLimits.AUTOMATIC;
+      
+    dest.maxTime = (src.maxTime == undefined) ? def.maxTime : parseInt(src.maxTime)*1000;
+    
+    dest.limitSeconds = (src.limitSeconds == undefined) ? def.limitSeconds : parseInt(src.limitSeconds)*1000;
+    
+    dest.limitPlys = (src.limitPlys == undefined) ? def.limitPlys : parseInt(src.limitPlys);
+    
+    dest.flagBuffer = (src.flagBuffer == undefined) ? def.flagBuffer : parseInt(src.flagBuffer);
+    
+    dest.minDelta = (src.minDelta == undefined) ? def.minDelta : parseInt(src.minDelta);
+    
+    dest.maxDelta = (src.maxDelta == undefined) ? def.maxDelta : parseInt(src.maxDelta);
+
+    dest.book = (src.book == undefined) ? {} : JSON.parse(JSON.stringify(src.book));
 }
