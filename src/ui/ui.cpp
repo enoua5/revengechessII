@@ -74,7 +74,16 @@ void UI::startUI(Game& game)
     }
     else if(input == "rank")
     {
-      std::vector<MoveScore> ms = engine.rankMoves(game.board, 15, 100);
+      std::vector<MoveScore> msv = engine.rankMoves(game.board, 60, 100);
+      for(MoveScore ms : msv)
+      {
+        SearchResult sr = ms.score;
+        std::cout << std::endl << "--------------------" << std::endl;
+        std::cout << ms.move.toString() << ", score: " << sr.score << std::endl;
+        std::cout << sr.depth << " ply, res: " << sr.result << std::endl;
+        for(std::list<Move>::iterator i = sr.pv.end(); i != sr.pv.begin(); /**/)
+          std::cout << (*(--i)).toString() << " ";
+      }
     }
     else if(input == "pass")
     {
