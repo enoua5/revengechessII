@@ -93,7 +93,7 @@ var tutorials = {
 
     "respawn-cap": {
         "title": "Capture by Respawn",
-        "description": "When respawning, pieces always return to their starting square.\nIf that square happens to be occupied, the respawning piece will capture the piece that's in the way.\n\nHere is another position that would normally be lost for white.\nHowever, the black king is standing on the white queen's starting square...\n\nNote: like the last tutorial, this position is simplified, and not actually reachable in a real game.",
+        "description": "When respawning, pieces always return to their starting square.\nIf that square happens to be occupied, the respawning piece will capture the piece that's in the way.\n\nHere is another position that would normally be lost for white.\nHowever, the black king is standing on a captured white piece's square...\n\nNote: like the last tutorial, this position is simplified, and not actually reachable in a real game.",
         "board_state": {
             "turn": true,
             "pawnEnPassantFile": "X",
