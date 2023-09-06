@@ -726,7 +726,7 @@ function makeMove(move)
     }
 
 
-    Game.game.commitMove(move);
+    console.log(Module.getBoardFromInfo(Game.game.commitMove(move)));
   }
   else
     sendMove(move);

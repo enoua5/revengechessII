@@ -13,7 +13,7 @@ NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
 SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++2a
 SLIB = -lssl -lcrypto
 SDEFS =
-WOPTIONS = -O3 --bind --no-entry
+WOPTIONS = -O3 --bind --no-entry -s ASSERTIONS=1
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
 all: native web server

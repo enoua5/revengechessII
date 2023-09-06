@@ -7,28 +7,28 @@
 #include "game/clock.h"
 
 #ifndef __EMSCRIPTEN__
-  #include <stack>
+#include <stack>
 #else
-  #include <vector>
+#include <vector>
 #endif
 
 class Game
 {
-  public:
-    static Version version;
-  
-    Game();
-    
-    Board board;
-    Clock clock;
-    
-    #ifndef __EMSCRIPTEN__
-      std::stack<Board> prevBoards;
-    #else
-      std::vector<Board> prevBoards;
-    #endif
-    
-    void takeBack();
-    void commitMove(Move);
-    void startClock(PlayerColor pc = WHITE);
+public:
+  static Version version;
+
+  Game();
+
+  Board board;
+  Clock clock;
+
+#ifndef __EMSCRIPTEN__
+  std::stack<Board> prevBoards;
+#else
+  std::vector<Board> prevBoards;
+#endif
+
+  void takeBack();
+  MoveInfo commitMove(Move);
+  void startClock(PlayerColor pc = WHITE);
 };
