@@ -41,7 +41,7 @@ bool Server::verify_compatible_version(json version, connection_hdl conn)
   try
   {
     std::string_view v_name = std::string_view((std::string)version.at("name"));
-    if(!v_name.ends_with(Server::minimum_client_version.name))
+    if(v_name.find(Server::minimum_client_version.name) == std::string_view::npos)
       return false;
       
     unsigned int v_major = version.at("major");

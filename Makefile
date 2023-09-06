@@ -10,7 +10,7 @@ NCC = g++
 WCC = em++
 INCLUDE = -I inc/ -I third_party/nlohmann_json/include/ -I third_party/websocketpp/ -I third_party/asio/asio/include
 NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
-SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++2a
+SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++17
 SLIB = -lssl -lcrypto
 SDEFS =
 WOPTIONS = -O3 --bind --no-entry
