@@ -16,7 +16,6 @@ using namespace emscripten;
 
 Version core_v() { return Game::version; }
 Version engine_v() { return Engine::version; }
-Board getBoardFromInfo(MoveInfo mi) { return mi.newBoard; }
 
 EMSCRIPTEN_BINDINGS(mod)
 {
@@ -32,7 +31,6 @@ EMSCRIPTEN_BINDINGS(mod)
       .field("movedPiece", &MoveInfo::movedPiece)
       .field("wasCapture", &MoveInfo::wasCapture)
       .field("respawns", select_overload<std::vector<std::vector<PieceIdentifier>>>(&MoveInfo::respawns));
-  function("getBoardFromInfo", &getBoardFromInfo);
 
   function("colorOfPiece", &colorOfPiece);
   function("typeOfPiece", &typeOfPiece);
@@ -82,6 +80,7 @@ EMSCRIPTEN_BINDINGS(mod)
       .property("turn", &Board::turn)
       .property("pawnEnPassantFile", &Board::pawnEnPassantFile)
       .property("halfMoveClock", &Board::halfMoveClock)
+      .property("prevMoveInfo", &Board::prevMoveInfo)
       .function("getPlayField", &Board::getPlayField)
       .function("getBoardPiece", &Board::getBoardPiece)
       .function("getValidMoves", select_overload<std::vector<Move>(void) const>(&Board::getValidMoves))

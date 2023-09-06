@@ -725,8 +725,7 @@ function makeMove(move)
         ai_sets.book = {};
     }
 
-
-    console.log(Module.getBoardFromInfo(Game.game.commitMove(move)));
+    Game.game.commitMove(move);
   }
   else
     sendMove(move);

@@ -41,15 +41,11 @@ void Game::takeBack()
   }
 }
 
-MoveInfo Game::commitMove(Move m)
+void Game::commitMove(Move m)
 {
-  MoveInfo moveInfo;
-
   if (clock.getResultFromFlag() == ONGOING)
   {
-    moveInfo = board.makeMove(m);
-    board = moveInfo.newBoard;
-
+    board = board.makeMove(m);
 #ifndef __EMSCRIPTEN__
     prevBoards.push(board);
 #else
@@ -65,6 +61,4 @@ MoveInfo Game::commitMove(Move m)
   {
     clock.stop();
   }
-
-  return moveInfo;
 }

@@ -123,7 +123,7 @@ SearchResult Engine::alpha_beta(const Board& board, int depth, int alpha, int be
     if(abort)
       break;
     
-    Board next = board.makeMove(*i, true).newBoard;
+    Board next = board.makeMove(*i, true);
     SearchResult sr = alpha_beta(next, depth - 1, -beta, -alpha);
     
     if(sr.result != STALEMATE)
@@ -227,7 +227,7 @@ std::vector<MoveScore> Engine::rankMoves(const Board& board, const float maxSeco
   
   for(std::vector<Move>::iterator i = moves.begin(); i != moves.end(); i++)
   {
-    nextBoards.push_back(board.makeMove(*i, true).newBoard);
+    nextBoards.push_back(board.makeMove(*i, true));
   }
   
   std::vector<MoveScore> ms_list(nextBoards.size());

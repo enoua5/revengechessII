@@ -29,6 +29,6 @@ public:
 #endif
 
   void takeBack();
-  MoveInfo commitMove(Move);
+  void commitMove(Move);
   void startClock(PlayerColor pc = WHITE);
 };

@@ -41,13 +41,15 @@ public:
       PieceIdentifier playField[64];
       Piece pieces[32];
 
+      MoveInfo prevMoveInfo;
+
       PieceIdentifier getPlayField(unsigned char i) const;
       Piece getBoardPiece(unsigned char i) const;
 
       std::vector<Move> getValidMoves() const;
       std::vector<Move> getValidMoves(PlayerColor) const;
       std::vector<Move> getValidMoves(PieceIdentifier) const; // get all moves for a particular piece.
-      MoveInfo makeMove(const Move, bool trusted = false) const;
+      Board makeMove(const Move, bool trusted = false) const;
 
       GameResult getGameResult(bool checkMoves = true) const;
       bool hasKing(PlayerColor) const;

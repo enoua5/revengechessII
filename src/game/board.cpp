@@ -517,13 +517,14 @@ std::vector<Move> Board::getValidMoves(PlayerColor c) const
 
   return moves;
 }
-int valgrind_test_please_remove = 0;
-MoveInfo Board::makeMove(const Move move, bool trusted) const
+
+Board Board::makeMove(const Move move, bool trusted) const
 {
   Board next(this);
   MoveInfo mi;
   mi.move = move;
   mi.valid = true; // tentative
+  mi.wasCapture = false;
   //mi.newBoard = &next;
   mi.movedPiece = getPlayField(move.from.toIndex());
 
@@ -560,8 +561,8 @@ MoveInfo Board::makeMove(const Move move, bool trusted) const
     std::cerr << "Attempt to move EMPTY. Aborting." << std::endl;
     std::cerr << "Illegal move was: " << move.toString() << std::endl;
     mi.valid = false;
-    mi.newBoard = new Board(next);
-    return mi;
+    next.prevMoveInfo = mi;
+    return;
   }
 #endif
 
@@ -688,8 +689,8 @@ MoveInfo Board::makeMove(const Move move, bool trusted) const
     std::cerr << "DESTINATION SQUARE LEFT EMPTY BY MOVE: " << move.toString() << std::endl;
 #endif
 
-  mi.newBoard = new Board(next);
-  return mi;
+  next.prevMoveInfo = mi;
+  return next;
 }
 
 bool Board::hasKing(PlayerColor c) const
