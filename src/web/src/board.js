@@ -122,7 +122,7 @@ function dispboard(board)
     }
   }
   
-  dispPrevMove();
+  dispPrevMove(board);
   clearPieceInfo();
   squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
   
@@ -191,7 +191,7 @@ function clearPrevMove()
   }
 }
 
-function dispPrevMove()
+function dispPrevMove(board)
 {
   clearPrevMove();
   
@@ -213,7 +213,15 @@ function dispPrevMove()
     console.error("Something went wrong with displaying the previous move.");
     console.warn("If this was not triggered intentially, there is probably a much larger problem at play")
   }
-  
+
+  if(board.prevMoveInfo.wasCapture)
+  {
+    play_capture_sfx();
+  }
+  else
+  {
+    play_move_sfx();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
