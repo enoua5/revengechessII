@@ -251,6 +251,11 @@ function randomIntInclusive(min, max)
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+function randomSelection(list)
+{
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 function gameIsOver()
 {
   let board = Game.game.board;

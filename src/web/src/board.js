@@ -1,3 +1,10 @@
+/*
+ * TODO:
+ * This file is too long and hard to navigate.
+ * Some of this should be moved to util.js
+ * Some should be broken apart into smaller more-relavant modules
+ */
+
 ////////////////////////////////////////////////////////////////////////////////
 function numCoordToString(x, y)
 {
@@ -724,7 +731,6 @@ function makeMove(move)
       else
         ai_sets.book = {};
     }
-
 
     Game.game.commitMove(move);
   }

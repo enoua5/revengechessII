@@ -13,7 +13,7 @@ NOPTIONS = -Wall -Wextra -pedantic -g -Ofast
 SOPTIONS = -Wall -Wextra -pedantic -g -pthread --std=c++17
 SLIB = -lssl -lcrypto
 SDEFS =
-WOPTIONS = -O3 --bind --no-entry
+WOPTIONS = -O3 --bind --no-entry -s ASSERTIONS=1
 MEMCHECK = valgrind --tool=memcheck --leak-check=yes --show-reachable=yes
 
 all: native web server
@@ -24,7 +24,7 @@ web: js_exe webui
 
 js_exe: $(JSEXE)
 
-webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js $(WDIR)src/tutorials.data.js
+webui: $(WDIR)index.html $(WDIR)style.css $(WDIR)img/pieces/* $(WDIR)sound/*.mp3 $(WDIR)img/*.png $(WDIR)favicon.ico $(WDIR)src/board.js $(WDIR)src/infopane.js $(WDIR)src/util.js $(WDIR)engine.worker.js $(WDIR)src/ai.js $(WDIR)src/client.js $(WDIR)src/tutorials.data.js $(WDIR)src/sound_manager.js
 
 test: $(EXE)
 	$(EXE)
@@ -85,6 +85,10 @@ $(WDIR)favicon.ico: img/favicon.ico
 	mkdir -p $(WDIR)img
 	cp img/favicon.ico $(WDIR)favicon.ico
 	
+$(WDIR)sound/*.mp3: sound/*.mp3
+	mkdir -p $(WDIR)sound
+	cp sound/*.mp3 $(WDIR)sound
+
 $(WDIR)img/*.png: img/*.png
 	mkdir -p $(WDIR)img
 	cp img/*.png $(WDIR)img
@@ -116,3 +120,7 @@ $(WDIR)src/client.js: src/web/src/client.js
 $(WDIR)src/tutorials.data.js: src/web/src/tutorials.data.js
 	mkdir -p $(WDIR)src
 	cp src/web/src/tutorials.data.js $(WDIR)src/
+
+$(WDIR)src/sound_manager.js: src/web/src/sound_manager.js
+	mkdir -p $(WDIR)src
+	cp src/web/src/sound_manager.js $(WDIR)src/

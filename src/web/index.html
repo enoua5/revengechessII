@@ -18,6 +18,7 @@
     </style>
     <link href="style.css" rel="stylesheet"/>
     <link rel="icon" type="image/png" href="./favicon.ico"/>
+    <script src = "src/sound_manager.js"></script>
     <script src = "src/tutorials.data.js"></script>
     <script src = "src/util.js"></script>
     <script src = "src/board.js"></script>
@@ -33,6 +34,7 @@
           white: defaultEngineSettings(),
           black: defaultEngineSettings()
         },
+        sound: true,
       };
       
       var prelimSettings = {};
@@ -49,8 +51,8 @@
       var client_version = {
         name: "Revenge Chess UI, standard compliant",
         major: 2,
-        minor: 7,
-        patch: 1
+        minor: 8,
+        patch: 0
       };
       
       var Game = {
