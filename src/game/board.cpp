@@ -639,6 +639,7 @@ Board Board::makeMove(const Move move, bool trusted) const
   {
     // a capture has happened
     next.halfMoveClock = 0;
+    mi.wasCapture = true;
 
     PieceIdentifier captured;
     if (!enPassant)
