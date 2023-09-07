@@ -255,6 +255,10 @@ std::string Board::serialize()
   }
   json += "]";
 
+  json += ", \"prevMoveInfo\":";
+
+  json += prevMoveInfo.serialize();
+
   json += "}";
   return json;
 }
@@ -280,6 +284,8 @@ Board::Board(std::string data) // deserialize
     playField[i] = EMPTY;
 
   nlohmann::json parsed = nlohmann::json::parse(data);
+
+  prevMoveInfo = MoveInfo(parsed.at("prevMoveInfo").dump());
 
   turn = parsed.value("turn", true) ? WHITE : BLACK;
   switch (parsed.value("pawnEnPassantFile", "X")[0])

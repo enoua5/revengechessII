@@ -14,14 +14,14 @@ class Square
     Square(unsigned char i);
 
     unsigned char file
-    #ifndef __EMSCRIPTEN__
-      : 3
-    #endif
+    // #ifndef __EMSCRIPTEN__
+    //   : 3
+    // #endif
     ;
     unsigned char rank
-    #ifndef __EMSCRIPTEN__
-      : 3
-    #endif
+    // #ifndef __EMSCRIPTEN__
+    //   : 3
+    // #endif
     ;
     
     bool eq(const Square& other) const;

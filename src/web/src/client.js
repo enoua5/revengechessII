@@ -449,7 +449,7 @@ function onServerError(e) {
   l("connection-info").classList.add("error");
 
   if (l("manage-connection").style.display == "")
-    alert(text);
+    alert("Error:"+text);
 }
 
 function onServerClose(e) {
