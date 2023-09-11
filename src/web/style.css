@@ -131,6 +131,11 @@ body
 {
   background: var(--prev-move-color);
 }
+.respawn-happened
+{
+  /* background-image is a bit of a hacky workaround so we can apply it over background-color */
+  background-image: radial-gradient(var(--respawn-happened-color), transparent);
+}
 .possible_move:not(.respawn_point):empty::after
 {
   background: var(--possible-move-color);

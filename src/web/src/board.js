@@ -174,7 +174,7 @@ function dispValidDestinations()
 
 function clearPrevMove()
 {
-  let HTML_list = document.querySelectorAll(".square.prev_move");
+  let HTML_list = document.querySelectorAll(".square.prev_move, .square.respawn-happened");
   // document.get[whatever]() returns an HTMLCollection
   // HTMLCollections have weird behaviour when itterating and modifying
   // Namely, they are removed from the collection if their selector no longer matches
@@ -187,7 +187,7 @@ function clearPrevMove()
   
   for(let i in list)
   {
-    list[i].classList.remove("prev_move")
+    list[i].classList.remove("prev_move", "respawn-happened")
   }
 }
 
@@ -217,6 +217,16 @@ function dispPrevMove(board)
   if(board.prevMoveInfo.wasCapture)
   {
     play_capture_sfx();
+
+    for(let wave = 0; wave < board.prevMoveInfo.respawns.size(); wave++)
+    {
+      for(let i = 0; i < board.prevMoveInfo.respawns.get(wave).size(); i++)
+      {
+        let pieceID = board.prevMoveInfo.respawns.get(wave).get(i);
+        let square = squareToBoard(Module.homeOfPiece(pieceID));
+        square.classList.add("respawn-happened");
+      }
+    }
   }
   else
   {

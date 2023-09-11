@@ -276,6 +276,7 @@ function onServerMessage(e) {
           clock.style.height = "1em";
           clockBox.appendChild(clock);
 
+          // TODO #34: don't display this info if the game is untimed
           let startingTime = g.starting_time;
 
           let seconds = Math.floor(startingTime / 1000);
@@ -303,6 +304,7 @@ function onServerMessage(e) {
             incTimeText = hours + ":" + incTimeText;
 
           let timeBox = document.createElement("p");
+          // TODO #34: choose a better way to show the increment type
           timeBox.innerText = " " + timeText + " | " + incTimeText + " " + g.inct.toLowerCase();
 
           clockBox.appendChild(timeBox);
