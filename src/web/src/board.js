@@ -127,7 +127,7 @@ function dispboard(board)
   squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
   
   // start the AI if it needs to be started
-  if(getCurrentPlayerSets().usingAI)
+  if(getCurrentPlayerSets().usingAI && !AI_status.running)
     makeAIMove();
     
 }
