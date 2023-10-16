@@ -303,17 +303,16 @@ body
   border: 3px solid white;
   height: 80vh;
   top: 5vh;
-  overflow-y: scroll;
   position: relative;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
   width: fit-content;
   display: inline-block;
+  overflow-y: hidden;
 }
 #window-holder>header
 {
   text-align: right;
 }
+
 #window-holder .close-button
 {
   height: 1.1em;
@@ -321,9 +320,13 @@ body
 .window
 {
   display: none;
+  overflow-y: scroll;
+  height: 95%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
 }
-#window-holder::-webkit-scrollbar
+.window::-webkit-scrollbar
 {
   display: none;
 }

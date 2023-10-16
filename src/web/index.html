@@ -53,7 +53,7 @@
         name: "Revenge Chess UI, standard compliant",
         major: 2,
         minor: 8,
-        patch: 1
+        patch: 2
       };
       
       var Game = {
@@ -340,8 +340,6 @@
             <br/>
             <button onclick="hideWindows();showWindow('game-explorer')">Find a game</button>
           </div>
-          <br/><br/>
-          <button onclick="hideWindows();">close</button>
         </div>
 
         <!----------------------- Game explorer screen ---------------------->
@@ -360,9 +358,6 @@
           <br/>
           <br/>
           <button onclick="switchWindow('manage-connection')">Back to connection management</button>
-          <br/>
-          <br/>
-          <button onclick="hideWindows();">close</button>
         </div>
         
         <!------------------------ Save board screen ------------------------>
@@ -370,8 +365,6 @@
           <h2>Save board</h2>
           <p>Copy this code, you can use it in when creating a game to set up the board</p>
           <textarea id="save-board-box"></textarea>
-          <br/>
-          <button onclick="hideWindows();">close</button>
         </div>
 
         <!------------------------- New game screen ------------------------->
@@ -528,7 +521,6 @@
             <textarea id="load-board-code" disabled></textarea>
           </details>
           
-          <button onclick="hideWindows();">close</button>
           <button onclick = "newGame(); hideWindows()">create new game</button>
         </div>
         
@@ -614,7 +606,6 @@
           <p>&copy; Jacob Allen, 2021-2022. <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="https://github.com/enoua5/revengechessII">Github</a>.</p>
           <hr/>
           
-          <button onclick="hideWindows();">close</button>
         </div>
         
         <!---------------------- Color settings screen ---------------------->
@@ -695,7 +686,6 @@
           
           <br/>
           <button onclick="persistentSettings.theme=changedColors; localStorage.e5_rcii_persistent_settings=JSON.stringify(persistentSettings); alert('theme saved')">Save color scheme</button>
-          <button onclick="hideWindows();">close</button>
         </div>
       </div>
     </div>
