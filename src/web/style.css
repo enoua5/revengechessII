@@ -294,22 +294,36 @@ body
   background: #0008;
   display: none;
 }
-.window
+#window-holder
 {
+  padding: 1em;
+  padding-top: 0.5em;
   background: var(--popup-color);
   color: white;
-  padding: 1em;
   border: 3px solid white;
   height: 80vh;
   top: 5vh;
   overflow-y: scroll;
   position: relative;
-  display: none;
-
   -ms-overflow-style: none;
   scrollbar-width: none;
+  width: fit-content;
+  display: inline-block;
 }
-.window::-webkit-scrollbar
+#window-holder>header
+{
+  text-align: right;
+}
+#window-holder .close-button
+{
+  height: 1.1em;
+}
+.window
+{
+  display: none;
+
+}
+#window-holder::-webkit-scrollbar
 {
   display: none;
 }
@@ -425,6 +439,10 @@ body
 .window :is(h1,h2,h3,h4,h5,h6)
 {
   text-decoration: underline;
+}
+.window :is(h1,h2,h3,h4,h5,h6):first-child
+{
+  margin-top: 0;
 }
 
 #new-game details
