@@ -187,6 +187,8 @@ function switchWindow(id)
 
 function showWindow(id)
 {
+  document.getElementsByClassName('home-button')[0].style.display = id == 'home-screen' ? 'none' : 'initial';
+
   l("pane").style.display = "block";
   l(id).style.display = "inline-block";
   if(id=="game-explorer")

@@ -241,6 +241,7 @@
       <div id="window-holder">
         <header>
           <image class="close-button" src="img/close-button.png" aria-role="button" aria-label="Close" onclick="hideWindows();" />
+          <image class="home-button" src="img/home-button.png" aria-role="button" aria-label="Home" onclick="switchWindow('home-screen')" />
         </header>
         <!-------------------------- Home screen ---------------------------->
         <div id="home-screen" class="window">
@@ -264,8 +265,6 @@
             <li><a onclick="selectTutorial('king-respawn')">King Respawn</a></li>
             <li><a onclick="selectTutorial('king-promo')">Promotion to King</a></li>
           </ol>
-          <br/><br/>
-          <button onclick="switchWindow('home-screen')">Back to home screen</button>
         </div>
 
         <!------------------- Tutorial explanation screen ------------------->

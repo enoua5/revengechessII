@@ -310,13 +310,22 @@ body
 }
 #window-holder>header
 {
-  text-align: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  
 }
 
-#window-holder .close-button
+#window-holder .close-button, .home-button
 {
   height: 1.1em;
 }
+
+.close-button
+{
+  align-self: flex-end;
+}
+
 .window
 {
   display: none;
