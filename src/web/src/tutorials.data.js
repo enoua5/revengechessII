@@ -39,7 +39,8 @@ var tutorials = {
                 {"isOnBoard": true, "hasMoved": false, "color": false, "type": "PAWN", "home": "F7", "current": "F7", "captures": []},
                 {"isOnBoard": true, "hasMoved": false, "color": false, "type": "PAWN", "home": "G7", "current": "G7", "captures": []},
                 {"isOnBoard": true, "hasMoved": false, "color": false, "type": "PAWN", "home": "H7", "current": "H7", "captures": []}
-            ]
+            ],
+            "prevMoveInfo":{"move":{"from":{"file":255,"rank":255},"promotion":6,"to":{"file":255,"rank":255}},"movedPiece":32,"respawns":[],"valid":false,"wasCapture":false}
         },
         "ai_settings": {"usingAI":true,"limitMode":2,"maxTime":10000,"limitSeconds":15000,"limitPlys":3,"flagBuffer":500,"minDelta":0,"maxDelta":0}
     },
@@ -85,7 +86,8 @@ var tutorials = {
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "F7", "current": "F7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "G7", "current": "G7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "H7", "current": "H7", "captures": []}
-            ]
+            ],
+            "prevMoveInfo":{"move":{"from":{"file":255,"rank":255},"promotion":6,"to":{"file":255,"rank":255}},"movedPiece":32,"respawns":[],"valid":false,"wasCapture":false}
         },
         "ai_settings": {"usingAI":true,"limitMode":2,"maxTime":10000,"limitSeconds":15000,"limitPlys":3,"flagBuffer":500,"minDelta":0,"maxDelta":0}
     },
@@ -131,7 +133,8 @@ var tutorials = {
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "F7", "current": "F7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "G7", "current": "G7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "H7", "current": "H7", "captures": []}
-            ]
+            ],
+            "prevMoveInfo":{"move":{"from":{"file":255,"rank":255},"promotion":6,"to":{"file":255,"rank":255}},"movedPiece":32,"respawns":[],"valid":false,"wasCapture":false}
         },
         "ai_settings": {"usingAI":true,"limitMode":2,"maxTime":10000,"limitSeconds":15000,"limitPlys":3,"flagBuffer":500,"minDelta":0,"maxDelta":0}
     },
@@ -177,7 +180,8 @@ var tutorials = {
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "F7", "current": "F7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "G7", "current": "G7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "H7", "current": "H7", "captures": []}
-            ]
+            ],
+            "prevMoveInfo":{"move":{"from":{"file":255,"rank":255},"promotion":6,"to":{"file":255,"rank":255}},"movedPiece":32,"respawns":[],"valid":false,"wasCapture":false}
         },
         "ai_settings": {
             "usingAI":true,
@@ -238,7 +242,8 @@ var tutorials = {
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "F7", "current": "F7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "G7", "current": "G7", "captures": []},
                 {"isOnBoard": false, "hasMoved": false, "color": false, "type": "PAWN", "home": "H7", "current": "H7", "captures": []}
-            ]
+            ],
+            "prevMoveInfo":{"move":{"from":{"file":255,"rank":255},"promotion":6,"to":{"file":255,"rank":255}},"movedPiece":32,"respawns":[],"valid":false,"wasCapture":false}
         },
         "ai_settings": {"usingAI":true,"limitMode":2,"maxTime":10000,"limitSeconds":15000,"limitPlys":3,"flagBuffer":500,"minDelta":0,"maxDelta":0}
     }

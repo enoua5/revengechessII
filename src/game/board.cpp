@@ -255,6 +255,10 @@ std::string Board::serialize()
   }
   json += "]";
 
+  json += ", \"prevMoveInfo\":";
+
+  json += prevMoveInfo.serialize();
+
   json += "}";
   return json;
 }
@@ -280,6 +284,8 @@ Board::Board(std::string data) // deserialize
     playField[i] = EMPTY;
 
   nlohmann::json parsed = nlohmann::json::parse(data);
+
+  prevMoveInfo = MoveInfo(parsed.at("prevMoveInfo").dump());
 
   turn = parsed.value("turn", true) ? WHITE : BLACK;
   switch (parsed.value("pawnEnPassantFile", "X")[0])
@@ -657,8 +663,14 @@ Board Board::makeMove(const Move move, bool trusted) const
     mover->captures[mover->numCaptures++] = captured;
     next.pieces[captured].isOnBoard = false;
     std::queue<PieceIdentifier> toRespawn;
+    PieceIdentifier firstOfWave;
     for (unsigned char i = 0; i < next.pieces[captured].numCaptures; i++)
+    {
+      if(i == 0)
+        // we need to keep track of the first of each wave so we can split them up
+        firstOfWave = next.pieces[captured].captures[i];
       toRespawn.push(next.pieces[captured].captures[i]);
+    }
 
     while (!toRespawn.empty())
     {
@@ -668,6 +680,13 @@ Board Board::makeMove(const Move move, bool trusted) const
       unsigned char respPoint = next.pieces[resp].home.toIndex();
       toRespawn.pop();
 
+      if(resp == firstOfWave)
+      {
+        // start the new wave
+        mi.respawns.push_back(std::vector<PieceIdentifier>());
+      }
+      mi.respawns.back().push_back(resp);
+
       PieceIdentifier spawnOver = next.playField[respPoint];
       if (spawnOver != EMPTY)
       {
@@ -676,6 +695,11 @@ Board Board::makeMove(const Move move, bool trusted) const
 
         for (unsigned char i = 0; i < next.pieces[spawnOver].numCaptures; i++)
         {
+          // if resp is the first of the wave, its first respawn is the first of the next wave
+          if(resp == firstOfWave && i == 0)
+          {
+            firstOfWave = next.pieces[spawnOver].captures[i];
+          }
           toRespawn.push(next.pieces[spawnOver].captures[i]);
         }
       }

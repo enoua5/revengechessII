@@ -122,12 +122,12 @@ function dispboard(board)
     }
   }
   
-  dispPrevMove();
+  dispPrevMove(board);
   clearPieceInfo();
   squareHovered(selectedSquares.hover); // rehover the square now that things have moved around
   
   // start the AI if it needs to be started
-  if(getCurrentPlayerSets().usingAI)
+  if(getCurrentPlayerSets().usingAI && !AI_status.running)
     makeAIMove();
     
 }
@@ -174,7 +174,7 @@ function dispValidDestinations()
 
 function clearPrevMove()
 {
-  let HTML_list = document.querySelectorAll(".square.prev_move");
+  let HTML_list = document.querySelectorAll(".square.prev_move, .square.respawn-happened");
   // document.get[whatever]() returns an HTMLCollection
   // HTMLCollections have weird behaviour when itterating and modifying
   // Namely, they are removed from the collection if their selector no longer matches
@@ -187,11 +187,11 @@ function clearPrevMove()
   
   for(let i in list)
   {
-    list[i].classList.remove("prev_move")
+    list[i].classList.remove("prev_move", "respawn-happened")
   }
 }
 
-function dispPrevMove()
+function dispPrevMove(board)
 {
   clearPrevMove();
   
@@ -213,7 +213,25 @@ function dispPrevMove()
     console.error("Something went wrong with displaying the previous move.");
     console.warn("If this was not triggered intentially, there is probably a much larger problem at play")
   }
-  
+
+  if(board.prevMoveInfo.wasCapture)
+  {
+    play_capture_sfx();
+
+    for(let wave = 0; wave < board.prevMoveInfo.respawns.size(); wave++)
+    {
+      for(let i = 0; i < board.prevMoveInfo.respawns.get(wave).size(); i++)
+      {
+        let pieceID = board.prevMoveInfo.respawns.get(wave).get(i);
+        let square = squareToBoard(Module.homeOfPiece(pieceID));
+        square.classList.add("respawn-happened");
+      }
+    }
+  }
+  else
+  {
+    play_move_sfx();
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

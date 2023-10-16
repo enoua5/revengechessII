@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Version Game::version = Version("Revenge Chess Core", 'b', 2, 1, 1);
+Version Game::version = Version("Revenge Chess Core", 'b', 2, 2, 0);
 
 Game::Game()
 {

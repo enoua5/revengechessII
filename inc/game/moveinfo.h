@@ -2,6 +2,7 @@
 #define MOVEINFO_H
 
 #include <vector>
+#include <string>
 
 #include "square.h"
 #include "enum.h"
@@ -12,6 +13,11 @@ class Board;
 
 struct MoveInfo
 {
+
+    std::string serialize();
+    MoveInfo();
+    MoveInfo(std::string); // deserialize
+
     Move move;
     PieceIdentifier movedPiece;
     bool wasCapture;
