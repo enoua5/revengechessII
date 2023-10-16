@@ -216,6 +216,10 @@ body
   padding: 0.1em 0.25em 0.1em 0.25em;
   overflow-x: visible;
 }
+.header-button:hover
+{
+  background-color: black;
+}
 
 .header-button > :first-child
 {
@@ -240,22 +244,27 @@ body
   padding: initial;
   margin: initial;
   position: absolute;
-  margin-left: -0.1em;
+  margin-left: -0.4em;
   z-index: 3;
 }
 .inner-menu-button > ul
 {
   left: 100%;
-  top: 1.5em;
+  top: 2.2em;
 }
 
-.dropdown > ul > li, .inner-menu-button
+.dropdown > ul > li:not(:has(.inner-menu-button)), .inner-menu-button
 {
   border: 1px solid black;
   border-top: 0;
   background: dimgrey;
+  padding: 0.5em;
 }
-.dropdown > ul > li:hover:not(.button-disable)
+.inner-menu-button:hover:not(.button-disable)
+{
+  background: none;
+}
+.dropdown > ul  li:hover:not(.button-disable)
 {
   background: black;
 }
