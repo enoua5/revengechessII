@@ -296,6 +296,13 @@ body
   overflow-y: scroll;
   position: relative;
   display: none;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.window::-webkit-scrollbar
+{
+  display: none;
 }
 
 .sidebar-example
