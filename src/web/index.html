@@ -53,7 +53,7 @@
         name: "Revenge Chess UI, standard compliant",
         major: 2,
         minor: 8,
-        patch: 2
+        patch: 3
       };
       
       var Game = {
@@ -698,7 +698,7 @@
             <ul>
               <li onclick="showWindow('home-screen')">Home..</li>
               <li onclick="showWindow('new-game')">New game..</li>
-              <li>
+              <li class="outer-menu-button">
                 <div class="dropdown inner-menu-button">
                   <p>Server &gt;</p>
                   <ul>
@@ -707,7 +707,7 @@
                   </ul>
                 </div>
               </li>
-              <li onclick = "showWindow('tutorial-select-screen')">Tutorial scenarios</li>
+              <li onclick = "showWindow('tutorial-select-screen')">Tutorial scenarios..</li>
               <li onclick="showSaveCode(); showWindow('save-board-screen')">Save board..</li>
             </ul>
           </div>
@@ -715,7 +715,7 @@
             <p>Appearance</p>
             <ul>
               <li onclick="showWindow('color-settings')">Colors..</li>
-              <li>
+              <li class="outer-menu-button">
                 <div class="dropdown inner-menu-button">
                   <p>Board orientation &gt;</p>
                   <ul>

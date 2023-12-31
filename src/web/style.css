@@ -263,7 +263,7 @@ body
   top: 0;
 }
 
-.dropdown > ul > li:not(:has(.inner-menu-button)), .inner-menu-button
+.dropdown > ul > li:not(.outer-menu-button), .inner-menu-button
 {
   border: 1px solid black;
   border-top: 0;
