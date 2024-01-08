@@ -123,18 +123,26 @@ body
 {
   background-color: var(--white-square-color);
 }
-.selected
+.selected.white_square
 {
-  background-color: var(--selected-color);
+  background-color: color-mix(in oklch, var(--selected-color) 90%, var(--white-square-color));
 }
-.prev_move
+.selected.black_square
 {
-  background: var(--prev-move-color);
+  background-color: color-mix(in oklch, var(--selected-color) 90%, var(--black-square-color));
+}
+.prev_move.black_square
+{
+  background-color: color-mix(in oklch, var(--prev-move-color) 90%, var(--black-square-color));
+}
+.prev_move.white_square
+{
+  background-color: color-mix(in oklch, var(--prev-move-color) 90%, var(--white-square-color));
 }
 .respawn-happened
 {
   /* background-image is a bit of a hacky workaround so we can apply it over background-color */
-  background-image: radial-gradient(var(--respawn-happened-color), transparent);
+  background-image: radial-gradient(at 80% 20%, var(--respawn-happened-color) 9%, transparent 10%);
 }
 .possible_move:not(.respawn_point):empty::after
 {
@@ -301,8 +309,6 @@ body
 }
 #window-holder
 {
-  padding: 1em;
-  padding-top: 0.5em;
   background: var(--popup-color);
   color: white;
   border: 3px solid white;
@@ -312,12 +318,20 @@ body
   width: fit-content;
   display: inline-block;
   overflow-y: hidden;
+  padding-bottom: 0.5em;
+}
+.window
+{
+  padding: 1em;
+  padding-bottom: 0;
 }
 #window-holder>header
 {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  border-bottom: 1px solid white;
+  padding: 0.5em;
   
 }
 
@@ -335,7 +349,7 @@ body
 {
   display: none;
   overflow-y: scroll;
-  height: 95%;
+  height: calc(100% - 3.6em);
   -ms-overflow-style: none;
   scrollbar-width: none;
 
@@ -349,6 +363,12 @@ body
 {
   background: var(--side-bar-color);
   color: var(--side-bar-text);
+}
+
+#color-setting-selectors
+{
+  display: grid;
+  grid-template-columns: auto auto auto;
 }
 
 .example-square
@@ -368,6 +388,12 @@ body
 .example-square::after
 {
   margin: 25%;
+}
+.example-square:not(:empty)::after
+{
+  position:relative;
+  margin-left: 0;
+  margin-top: -105% /* yeah, idk */
 }
 
 #about-page p

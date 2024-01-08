@@ -14,7 +14,7 @@
         --possible-move-color: #aaaaaa;
         --respawn-point-color: #ff4444;
         --prev-move-color: #cccc44;
-        --respawn-happened-color: #8000ff;
+        --respawn-happened-color: #bd3433;
       }
     </style>
     <link href="style.css" rel="stylesheet"/>
@@ -585,7 +585,7 @@
           <h3>User Interface</h3>
           <h4>Main code</h4>
           <p id="client-version"></p>
-          <p>&copy; Jacob Allen, 2021-2022. <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="https://github.com/enoua5/revengechessII">Github</a>.</p>
+          <p>&copy; Jacob Allen, 2021-2024. <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>. <a href="https://github.com/enoua5/revengechessII">Github</a>.</p>
           <h4>Piece images</h4>
           <p>&copy; <a href="https://pixabay.com/users/clker-free-vector-images-3736/">Clker-Free-Vector-Images</a>. <a href="https://pixabay.com/service/license/">Pixabay Licence</a>. <a href="https://pixabay.com/vectors/chess-pieces-set-symbols-game-26774/">Source</a>.</p>
           <hr/>
@@ -611,76 +611,200 @@
         <div id="color-settings" class="window">
           <h2>Color Settings</h2>
           <!-- Uses previousElementSibling, so be careful about adding new elements -->
-          <label>Black Square Color</label>
-          <input class="colorSelect" data-appliesTo="black-square-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>White Square Color</label>
-          <input class="colorSelect" data-appliesTo="white-square-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Selected Square Color</label>
-          <input class="colorSelect" data-appliesTo="selected-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Possible Move Color</label>
-          <input class="colorSelect" data-appliesTo="possible-move-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Respawn Point Color</label>
-          <input class="colorSelect" data-appliesTo="respawn-point-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Previous Move Color</label>
-          <input class="colorSelect" data-appliesTo="prev-move-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Side Bar Color</label>
-          <input class="colorSelect" data-appliesTo="side-bar-color" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
-          
-          <label>Side Bar Text</label>
-          <input class="colorSelect" data-appliesTo="side-bar-text" type="color" onchange="setThemeColor(this)"></input>
-          <button onclick="resetColor(this.previousElementSibling)">Reset</button>
-          <br/>
+          <div id="color-setting-selectors">
+            <label>Black Square Color</label>
+            <input class="colorSelect" data-appliesTo="black-square-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>White Square Color</label>
+            <input class="colorSelect" data-appliesTo="white-square-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Selected Square Color</label>
+            <input class="colorSelect" data-appliesTo="selected-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Possible Move Color</label>
+            <input class="colorSelect" data-appliesTo="possible-move-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Respawn Point Color</label>
+            <input class="colorSelect" data-appliesTo="respawn-point-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+
+            <label>Respawn Happened Color</label>
+            <input class="colorSelect" data-appliesTo="respawn-happened-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Previous Move Color</label>
+            <input class="colorSelect" data-appliesTo="prev-move-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Side Bar Color</label>
+            <input class="colorSelect" data-appliesTo="side-bar-color" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+            
+            <label>Side Bar Text</label>
+            <input class="colorSelect" data-appliesTo="side-bar-text" type="color" onchange="setThemeColor(this)"></input>
+            <button onclick="resetColor(this.previousElementSibling)">Reset</button>
+
+          </div>
           <div class="sidebar-example">
             <p>Example. Make sure this is readable.</p>
           </div>
+
           <div>
-            <div class="example-square black_square"></div>
-            <div class="example-square white_square"></div>
-            <div class="example-square black_square"></div>
-            <div class="example-square white_square"></div>
-            <br/>
             <div class="example-square white_square">
               <image src="img/pieces/bp.svg"></image>
             </div>
             <div class="example-square black_square">
-              <image src="img/pieces/bp.svg"></image>
+              <image src="img/pieces/wp.svg"></image>
             </div>
             <div class="example-square white_square">
               <image src="img/pieces/wp.svg"></image>
             </div>
             <div class="example-square black_square">
-              <image src="img/pieces/wp.svg"></image>
+              <image src="img/pieces/bp.svg"></image>
             </div>
-            <br/>
-            <div class="example-square black_square possible_move"></div>
-            <div class="example-square white_square respawn_point"></div>
-            <div class="example-square black_square prev_move"></div>
             <div class="example-square white_square selected"></div>
+            <div class="example-square black_square selected"></div>
+            <div class="example-square white_square prev_move"></div>
+            <div class="example-square black_square prev_move"></div>
+
             <br/>
-            <div class="example-square white_square prev_move possible_move"></div>
-            <div class="example-square black_square prev_move respawn_point"></div>
-            <div class="example-square white_square selected possible_move"></div>
-            <div class="example-square black_square selected respawn_point"></div>
+            
+            <div class="example-square black_square respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square black_square selected respawn-happened"></div>
+            <div class="example-square white_square selected respawn-happened"></div>
+            <div class="example-square black_square prev_move respawn-happened"></div>
+            <div class="example-square white_square prev_move respawn-happened"></div>
+
+            <br/>
+
+            <div class="example-square white_square"></div>
+            <div class="example-square black_square"></div>
+            <div class="example-square white_square"></div>
+            <div class="example-square black_square"></div>
+            <div class="example-square white_square selected">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square black_square selected">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square prev_move">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square prev_move">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+
+            <br/>
+
+            <div class="example-square black_square respawn-happened"></div>
+            <div class="example-square white_square respawn-happened"></div>
+            <div class="example-square black_square"></div>
+            <div class="example-square white_square"></div>
+            <div class="example-square black_square selected respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square selected respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square prev_move respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square prev_move respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+
+            <br/>
+
+            <div class="example-square white_square possible_move">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square possible_move"></div>
+            <div class="example-square white_square possible_move">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square black_square possible_move"></div>
+            <div class="example-square white_square possible_move selected">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square possible_move selected"></div>
+            <div class="example-square white_square possible_move prev_move">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square black_square possible_move prev_move"></div>
+
+            <br/>
+
+            <div class="example-square black_square possible_move respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square possible_move respawn-happened"></div>
+            <div class="example-square black_square possible_move">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square possible_move"></div>
+            <div class="example-square black_square possible_move selected respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square possible_move selected respawn-happened"></div>
+            <div class="example-square black_square possible_move prev_move respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square possible_move prev_move respawn-happened"></div>
+
+            <br/>
+
+            <div class="example-square white_square respawn_point"></div>
+            <div class="example-square black_square respawn_point">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square respawn_point"></div>
+            <div class="example-square black_square respawn_point">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square white_square respawn_point selected"></div>
+            <div class="example-square black_square respawn_point selected">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square white_square respawn_point prev_move"></div>
+            <div class="example-square black_square respawn_point prev_move">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+
+            <br/>
+
+            <div class="example-square black_square respawn_point respawn-happened"></div>
+            <div class="example-square white_square respawn_point respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square respawn_point"></div>
+            <div class="example-square white_square respawn_point">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+            <div class="example-square black_square respawn_point selected respawn-happened"></div>
+            <div class="example-square white_square respawn_point selected respawn-happened">
+              <image src="img/pieces/wp.svg"></image>
+            </div>
+            <div class="example-square black_square respawn_point prev_move respawn-happened"></div>
+            <div class="example-square white_square respawn_point prev_move respawn-happened">
+              <image src="img/pieces/bp.svg"></image>
+            </div>
+
+            <br/>
           </div>
           
           <br/>
