@@ -276,37 +276,57 @@ function onServerMessage(e) {
           clock.style.height = "1em";
           clockBox.appendChild(clock);
 
-          // TODO #34: don't display this info if the game is untimed
-          let startingTime = g.starting_time;
-
-          let seconds = Math.floor(startingTime / 1000);
-          let minutes = Math.floor(seconds / 60);
-          seconds %= 60;
-          let hours = Math.floor(minutes / 60);
-          minutes %= 60;
-
-          let timeText = (minutes + "").padStart(2, "0") + ":" + (seconds + "").padStart(2, "0");
-          if (hours != 0)
-            timeText = hours + ":" + timeText;
-
-          let increment = g.increment;
-
-          seconds = Math.floor(increment / 1000);
-          minutes = Math.floor(seconds / 60);
-          seconds %= 60;
-          hours = Math.floor(minutes / 60);
-          minutes %= 60;
-
-          let incTimeText = (seconds + "").padStart(2, "0");
-          if (minutes != 0 || hours != 0)
-            incTimeText = (minutes + "").padStart(2, "0") + ":" + incTimeText;
-          if (hours != 0)
-            incTimeText = hours + ":" + incTimeText;
-
           let timeBox = document.createElement("p");
-          // TODO #34: choose a better way to show the increment type
-          timeBox.innerText = " " + timeText + " | " + incTimeText + " " + g.inct.toLowerCase();
+          if (g.inct == "NO_CLOCK")
+          {
+            timeBox.innerHTML = " No Clock"
+          }
+          else
+          {
+            let startingTime = g.starting_time;
+  
+            let seconds = Math.floor(startingTime / 1000);
+            let minutes = Math.floor(seconds / 60);
+            seconds %= 60;
+            let hours = Math.floor(minutes / 60);
+            minutes %= 60;
+  
+            let timeText = (minutes + "").padStart(2, "0") + ":" + (seconds + "").padStart(2, "0");
+            if (hours != 0)
+              timeText = hours + ":" + timeText;
+  
+            let increment = g.increment;
+  
+            seconds = Math.floor(increment / 1000);
+            minutes = Math.floor(seconds / 60);
+            seconds %= 60;
+            hours = Math.floor(minutes / 60);
+            minutes %= 60;
+  
+            let incTimeText = (seconds + "").padStart(2, "0");
+            if (minutes != 0 || hours != 0)
+              incTimeText = (minutes + "").padStart(2, "0") + ":" + incTimeText;
+            if (hours != 0)
+              incTimeText = hours + ":" + incTimeText;
 
+            let niceInctName = g.inct.toLowerCase()
+            switch(g.inct)
+            {
+              case "BRONSTEIN":
+                niceInctName = "Bronstein";
+                break;
+              case "INCREMENT":
+                niceInctName = "Simple Increment";
+                break;
+              case "DELAY":
+                niceInctName = "Delay";
+                break;
+            }
+  
+            timeBox.innerText = " " + timeText + " | " + incTimeText + " " + niceInctName;
+  
+
+          }
           clockBox.appendChild(timeBox);
 
           div.appendChild(clockBox);
